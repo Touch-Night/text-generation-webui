@@ -65,7 +65,7 @@ class ModelDownloader:
             pattern = re.compile(r"^[a-zA-Z0-9._-]+$")
             if not pattern.match(branch):
                 raise ValueError(
-                    "Invalid branch name. Only alphanumeric characters, period, underscore and dash are allowed.")
+                    "分支名称无效。只允许使用字母、数字、点、下划线和破折号。")
 
         return model, branch
 
@@ -303,7 +303,7 @@ if __name__ == '__main__':
     try:
         model, branch = downloader.sanitize_model_and_branch_names(model, branch)
     except ValueError as err_branch:
-        print(f"Error: {err_branch}")
+        print(f"错误：{err_branch}")
         sys.exit()
 
     # Get the download links from Hugging Face

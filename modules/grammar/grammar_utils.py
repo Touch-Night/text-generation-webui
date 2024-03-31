@@ -492,7 +492,7 @@ class IncrementalGrammarConstraint(GrammarConstraint):
         if token_id == self.eos_token_id:
             if stacks and all(len(stack) != 0 for stack in stacks):
                 raise Exception(
-                    f"至少有一个堆栈在达到EOS时应为空。"
+                    f"至少有一个堆栈在达到序列终止符时应为空。"
                     f"然而，堆栈是{stacks}"
                 )
             return []
@@ -660,7 +660,7 @@ class TokenTrie:
                 return bytes(token, "utf-8")
 
         else:
-            print("警告：无法识别的分词器：使用默认的token格式。")
+            print("警告：无法识别的语素分析器：使用默认的语素格式。")
 
             def fmt_token(id):
                 token = tokenizer.convert_ids_to_tokens(id)

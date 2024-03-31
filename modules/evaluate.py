@@ -93,7 +93,7 @@ def calculate_perplexity(models, input_dataset, stride, _max_length):
                 continue
 
         cumulative_log += f"正在处理`{shared.model_name}`...\n\n"
-        yield cumulative_log + "正在对输入数据集进行分词...\n\n"
+        yield cumulative_log + "正在对输入数据集进行语素分析...\n\n"
         encodings = encode(text, add_special_tokens=False)
         seq_len = encodings.shape[1]
         if _max_length:

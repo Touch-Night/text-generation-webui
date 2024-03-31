@@ -66,7 +66,7 @@ def create_ui():
                         with gr.Column(scale=5):
                             lora_name = gr.Textbox(label='名称', info='新LoRA文件的名称')
                         with gr.Column():
-                            always_override = gr.Checkbox(label='覆盖现有文件', value=False, info='如果名称相同，选中将替换现有文件，未选中将加载并继续（排名必须相同）。', elem_classes=['no-background'])
+                            always_override = gr.Checkbox(label='覆盖现有文件', value=False, info='如果名称相同，选中将替换现有文件，未选中将加载并继续（秩必须相同）。', elem_classes=['no-background'])
 
                     with gr.Accordion(label='目标模块', open=False):
                         gr.Markdown("选择在训练中要针对的模块。针对更多模块更接近完整的微调，但会增加VRAM需求和适配器大小。\n注意：仅对model_id='llama'有效，其他类型将保留默认训练行为，不使用这些设置。")
@@ -88,8 +88,8 @@ def create_ui():
 
                     with gr.Row():
                         with gr.Column():
-                            lora_rank = gr.Slider(label='LoRA秩', value=32, minimum=0, maximum=1024, step=4, info='也称为维度计数。较高的值=更大的文件，更多的内容控制。较小的值=更小的文件，控制力较差。用4或8来表示风格，用128或256来教学，用1024+来细节处理大数据。更高的排名需要更多的VRAM。')
-                            lora_alpha = gr.Slider(label='LoRA Alpha', value=64, minimum=0, maximum=2048, step=4, info='这个除以排名成为LoRA的缩放。较高意味着更强。一个好的标准值是你排名的两倍。')
+                            lora_rank = gr.Slider(label='LoRA秩', value=32, minimum=0, maximum=1024, step=4, info='也称为维度计数。较高的值=更大的文件，更多的内容控制。较小的值=更小的文件，控制力较差。用4或8来表示风格，用128或256来教学，用1024+来细节处理大数据。更高的秩需要更多的VRAM。')
+                            lora_alpha = gr.Slider(label='LoRA Alpha', value=64, minimum=0, maximum=2048, step=4, info='这个除以秩为LoRA的缩放。较高意味着更强。一个好的标准值是秩的两倍。')
                             batch_size = gr.Slider(label='批量大小', value=128, minimum=0, maximum=1024, step=4, info='全局批量大小。这两个批量大小共同决定了梯度累积（gradientAccum = batch / microBatch）。较高的梯度累积值会带来更好的训练质量。')
                             micro_batch_size = gr.Slider(label='微批量大小', value=4, minimum=1, maximum=128, step=1, info='每个设备的批量大小（注意：多设备尚未实现）。增加这个将增加VRAM使用。')
                             cutoff_len = gr.Slider(label='截断长度', minimum=0, maximum=4096, value=256, step=32, info='文本输入的截断长度。本质上，一次输入多长的文本行。较高的值需要大量的VRAM。')
@@ -114,7 +114,7 @@ def create_ui():
                                 warmup_steps = gr.Number(label='热身步数', value=100, info='在开始时的这么多步骤中，学习率将低于正常水平。这有助于训练器准备模型并预先计算统计数据，以提高开始后的训练质量。')
                                 train_only_after = gr.Textbox(label='仅在此之后训练', value='', info='在任何给定的文本块中，只考虑*在此字符串之后*的文本进行训练。对于Alpaca数据集，使用"### Response:"仅训练响应并忽略输入。')
 
-                                add_eos_token = gr.Checkbox(label='添加EOS令牌', value=False, info="为每个数据集项目添加EOS令牌。如果是原始文本，则EOS将添加在硬切割处")
+                                add_eos_token = gr.Checkbox(label='添加序列终止符', value=False, info="为每个数据集项目添加序列中止符。如果是原始文本，则EOS将添加在硬切割处")
 
                                 higher_rank_limit = gr.Checkbox(label='启用更高秩', value=False, info='如果选中，将更改上面的秩/Alpha滑块，使其更高。如果没有数据中心级GPU，这将不起作用。')
                                 report_to = gr.Radio(label="保存详细日志至", value="None", choices=["None", "wandb", "tensorboard"], interactive=True)

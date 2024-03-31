@@ -220,7 +220,7 @@ if __name__ == "__main__":
             for i, model in enumerate(available_models):
                 print(f'{i+1}. {model}')
 
-            print(f'\n你想加载哪一个？1-{len(available_models)}\n')
+            print(f'\n您想加载哪一个？1-{len(available_models)}\n')
             i = int(input()) - 1
             print()
 

@@ -236,7 +236,7 @@ def install_webui():
         print_big_message(f"已基于GPU_CHOICE环境变量选择\"{choice}\"。")
     else:
         choice = get_user_choice(
-            "你的GPU是什么型号的?",
+            "您的GPU是什么型号的?",
             {
                 'A': 'NVIDIA/英伟达',
                 'B': 'AMD (仅限Linux/MacOS。在Linux上需要ROCm SDK 5.6)',
@@ -261,7 +261,7 @@ def install_webui():
     if selected_gpu == "NONE":
         with open(cmd_flags_path, 'r+') as cmd_flags_file:
             if "--cpu" not in cmd_flags_file.read():
-                print_big_message("正在添加--cpu标记到CMD_FLAGS.txt。")
+                print_big_message("正在添加--cpu命令行参数到CMD_FLAGS.txt。")
                 cmd_flags_file.write("\n--cpu\n")
 
     # Check if the user wants CUDA 11.8
@@ -269,7 +269,7 @@ def install_webui():
         if "USE_CUDA118" in os.environ:
             use_cuda118 = "Y" if os.environ.get("USE_CUDA118", "").lower() in ("yes", "y", "true", "1", "t", "on") else "N"
         else:
-            print("\n你想要使用CUDA 11.8而不是12.1吗？\n仅当您的 GPU 非常旧（Kepler 或更早）时才选择此选项。\n\n对于RTX和GTX系列GPU，请选择 \"N\"。\n如果不确定，选 \"N\"。\n")
+            print("\n您想要使用CUDA 11.8而不是12.1吗？\n仅当您的 GPU 非常旧（Kepler 或更早）时才选择此选项。\n\n对于RTX和GTX系列GPU，请选择 \"N\"。\n如果不确定，选 \"N\"。\n")
             use_cuda118 = input("输入 (Y/N)> ").upper().strip('"\'').strip()
             while use_cuda118 not in 'YN':
                 print("非法选择，请重试。")
@@ -323,7 +323,7 @@ def get_extensions_names():
 
 
 def install_extensions_requirements():
-    print_big_message("正在安装扩展需求。\n一些扩展可能在Windows上安装失败。\n如果看到错误消息，请不要担心，因为它们不会影响主程序。")
+    print_big_message("正在安装扩展依赖。\n一些扩展可能在Windows上安装失败。\n如果看到错误消息，请不要担心，因为它们不会影响主程序。")
     extensions = get_extensions_names()
     for i, extension in enumerate(extensions):
         print(f"\n\n--- [{i+1}/{len(extensions)}]: {extension}\n\n")
@@ -433,7 +433,7 @@ if __name__ == "__main__":
     if args.update_wizard:
         while True:
             choice = get_user_choice(
-                "你想做什么？",
+                "您想做什么？",
                 {
                     'A': '更新web UI',
                     'B': '安装/更新扩展依赖',
@@ -481,7 +481,7 @@ if __name__ == "__main__":
             model_dir = 'models'
 
         if len([item for item in glob.glob(f'{model_dir}/*') if not item.endswith(('.txt', '.yaml'))]) == 0:
-            print_big_message("你还没有下载任何模型。\n等Web UI启动之后，转到\"模型\"选项卡去下载一个。")
+            print_big_message("您还没有下载任何模型。\n等Web UI启动之后，可以转到\"模型\"选项卡去下载一个。")
 
         # Workaround for llama-cpp-python loading paths in CUDA env vars even if they do not exist
         conda_path_bin = os.path.join(conda_env_path, "bin")

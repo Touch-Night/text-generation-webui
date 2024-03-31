@@ -18,7 +18,7 @@
 * 精确的聊天模板，用于指令遵循模型，包括Llama-2-chat，Alpaca，Vicuna，Mistral。
 * LoRA: 使用自己的数据训练新的LoRA，即时加载/卸载LoRA。
 * Transformers库集成：通过bitsandbytes在4位或8位精度下加载模型，使用llama.cpp的同时使用transformers采样器（`llamacpp_HF` 加载器），使用PyTorch在32位精度下进行CPU推理。
-* OpenAI兼容的API服务器，具有Chat和Completions endpoints -- 请参阅[示例](https://github.com/Touch-Night/text-generation-webui/wiki/12-%E2%80%90-OpenAI-API#examples).
+* OpenAI兼容的API服务器，具有聊天和续写endpoint -- 请参阅[示例](https://github.com/Touch-Night/text-generation-webui/wiki/12-%E2%80%90-OpenAI-API#examples).
 
 ## 如何安装
 
@@ -45,14 +45,14 @@
 
 如果您需要在`installer_files`环境中手动安装某些内容，可以使用cmd脚本启动交互式shell：`cmd_linux.sh`，`cmd_windows.bat`，`cmd_macos.sh`或`cmd_wsl.bat`。
 
-* 无需以管理员/根用户身份运行这些脚本（`start_`，`update_wizard_`或`cmd_`）。
+* 无需以管理员/root用户身份运行这些脚本（`start_`，`update_wizard_`或`cmd_`）。
 * 要安装扩展的依赖，您可以使用您的操作系统的`extensions_reqs`脚本。最后，此脚本将安装项目的主依赖，以确保在版本冲突的情况下它们优先。
 * 有关AMD和WSL设置的其他说明，请参阅[此文档](https://github.com/Touch-Night/text-generation-webui/wiki)。
 * 为了自动安装，您可以使用`GPU_CHOICE`，`USE_CUDA118`，`LAUNCH_AFTER_INSTALL`和`INSTALL_EXTENSIONS`环境变量。例如：`GPU_CHOICE=A USE_CUDA118=FALSE LAUNCH_AFTER_INSTALL=FALSE INSTALL_EXTENSIONS=TRUE ./start_linux.sh`。
 
 ### 使用Conda手动安装
 
-如果您有使用命令行的经验，那可以推荐使用这种方式。
+如果您有使用命令行的经验，方可使用这种方式。
 
 #### 0.安装Conda
 
@@ -237,7 +237,7 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 | `--bf16`                                    | 使用bfloat16精度加载模型。需要Nvidia Ampere GPU。|
 | `--no-cache`                                | 生成文本时设置 `use_cache` 为 `False`。这略微减少了显存的使用，但这也导致性能损失。|
 | `--trust-remote-code`                       | 加载模型时设置 `trust_remote_code=True`。这对于某些模型是必需的。|
-| `--no_use_fast`                             | 加载tokenizer时设置use_fast=false（默认情况下为true）。如果您遇到与use_fast有关的任何问题，请使用此功能。|
+| `--no_use_fast`                             | 加载语素分析器时设置use_fast=false（默认情况下为true）。如果您遇到与use_fast有关的任何问题，请使用此功能。|
 | `--use_flash_attention_2`                   | 在加载模型时设置use_flash_attention_2=True。|
 
 #### bitsandbytes 4-比特
@@ -260,7 +260,7 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 | `--threads` | 要使用的线程数。|
 | `--threads-batch THREADS_BATCH` | 用于批处理/提示词处理的线程数。|
 | `--no_mul_mat_q` | 禁用mulmat内核。|
-| `--n_batch` | 在调用llama_eval时批量处理的提示词token的最大数量。|
+| `--n_batch` | 在调用llama_eval时批量处理的提示词语素的最大数量。|
 | `--no-mmap`   | 防止使用mmap。|
 | `--mlock`     | 强制系统将模型保留在RAM中。|
 | `--n-gpu-layers N_GPU_LAYERS` | 卸载到GPU的层数。|
@@ -271,7 +271,7 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 | `--cache-capacity CACHE_CAPACITY`   | 最大缓存容量（llama-cpp-python）。示例：2000MiB, 2GiB。如果没有提供单位，默认为字节。|
 | `--row_split`                               | 将模型按行分割到多个GPU上，这可能会提高多GPU的性能。 |
 | `--streaming-llm`                           | 激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。 |
-| `--attention-sink-size ATTENTION_SINK_SIZE` | StreamingLLM：sink token的数量。仅在修剪后的提示词与旧提示词前缀不同时使用。 |
+| `--attention-sink-size ATTENTION_SINK_SIZE` | StreamingLLM：下沉语素的数量。仅在修剪后的提示词与旧提示词前缀不同时使用。 |
 
 #### Exllamav2
 

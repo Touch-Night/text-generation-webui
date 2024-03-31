@@ -110,7 +110,7 @@ def create_chat_settings_ui():
 
                 with gr.Tab("用户"):
                     shared.gradio['name1'] = gr.Textbox(value=shared.settings['name1'], lines=1, label='名字')
-                    shared.gradio['user_bio'] = gr.Textbox(value=shared.settings['user_bio'], lines=10, label='描述', info='你可以在这里写下有关你自己的描述。', placeholder='{{user}}\'s personality: ...', elem_classes=['add_scrollbar'])
+                    shared.gradio['user_bio'] = gr.Textbox(value=shared.settings['user_bio'], lines=10, label='描述', info='您可以在这里写下有关您自己的描述。', placeholder='{{user}}\'s personality: ...', elem_classes=['add_scrollbar'])
 
                 with gr.Tab('聊天记录'):
                     with gr.Row():
@@ -140,8 +140,8 @@ def create_chat_settings_ui():
                         shared.gradio['Submit tavern character'] = gr.Button(value='提交', interactive=False)
 
             with gr.Column(scale=1):
-                shared.gradio['character_picture'] = gr.Image(label='角色图片', type='pil', interactive=not mu)
-                shared.gradio['your_picture'] = gr.Image(label='你的图片', type='pil', value=Image.open(Path('cache/pfp_me.png')) if Path('cache/pfp_me.png').exists() else None, interactive=not mu)
+                shared.gradio['character_picture'] = gr.Image(label='角色头像', type='pil', interactive=not mu)
+                shared.gradio['your_picture'] = gr.Image(label='您的头像', type='pil', value=Image.open(Path('cache/pfp_me.png')) if Path('cache/pfp_me.png').exists() else None, interactive=not mu)
 
     with gr.Tab('指令模板'):
         with gr.Row():
@@ -159,7 +159,7 @@ def create_chat_settings_ui():
         with gr.Row():
             with gr.Column():
                 shared.gradio['custom_system_message'] = gr.Textbox(value=shared.settings['custom_system_message'], lines=2, label='自定义系统消息', info='如果不为空，将代替默认消息使用。', elem_classes=['add_scrollbar'])
-                shared.gradio['instruction_template_str'] = gr.Textbox(value='', label='指令模板', lines=24, info='根据你正在使用的模型/LoRA进行更改。在指令和聊天指令模式下使用。', elem_classes=['add_scrollbar', 'monospace'])
+                shared.gradio['instruction_template_str'] = gr.Textbox(value='', label='指令模板', lines=24, info='根据您正在使用的模型/LoRA进行更改。在指令和聊天指令模式下使用。', elem_classes=['add_scrollbar', 'monospace'])
                 with gr.Row():
                     shared.gradio['send_instruction_to_default'] = gr.Button('发送至默认', elem_classes=['small-button'])
                     shared.gradio['send_instruction_to_notebook'] = gr.Button('发送至笔记本', elem_classes=['small-button'])

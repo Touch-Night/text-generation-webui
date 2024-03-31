@@ -85,7 +85,7 @@ def create_ui():
                                 shared.gradio['cpu_memory'] = gr.Slider(label="CPU内存（MiB）", maximum=total_cpu_mem, value=default_cpu_mem)
 
                             with gr.Blocks():
-                                shared.gradio['transformers_info'] = gr.Markdown('加载4比特参数：')
+                                shared.gradio['transformers_info'] = gr.Markdown('以4位量化加载参数：')
                                 shared.gradio['compute_dtype'] = gr.Dropdown(label="计算数据类型", choices=["bfloat16", "float16", "float32"], value=shared.args.compute_dtype)
                                 shared.gradio['quant_type'] = gr.Dropdown(label="量化类型", choices=["nf4", "fp4"], value=shared.args.quant_type)
 
@@ -94,9 +94,9 @@ def create_ui():
                             shared.gradio['n_ctx'] = gr.Slider(minimum=0, maximum=shared.settings['truncation_length_max'], step=256, label="n_ctx", value=shared.args.n_ctx, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。')
                             shared.gradio['tensor_split'] = gr.Textbox(label='张量分割', info='将模型分割到多个GPU的比例列表。示例：18,17')
                             shared.gradio['n_batch'] = gr.Slider(label="批处理大小", minimum=1, maximum=2048, step=1, value=shared.args.n_batch)
-                            shared.gradio['threads'] = gr.Slider(label="线程", minimum=0, step=1, maximum=32, value=shared.args.threads)
-                            shared.gradio['threads_batch'] = gr.Slider(label="批处理线程", minimum=0, step=1, maximum=32, value=shared.args.threads_batch)
-                            shared.gradio['wbits'] = gr.Dropdown(label="权重位", choices=["None", 1, 2, 3, 4, 8], value=shared.args.wbits if shared.args.wbits > 0 else "None")
+                            shared.gradio['threads'] = gr.Slider(label="线程数", minimum=0, step=1, maximum=32, value=shared.args.threads)
+                            shared.gradio['threads_batch'] = gr.Slider(label="批处理线程数", minimum=0, step=1, maximum=32, value=shared.args.threads_batch)
+                            shared.gradio['wbits'] = gr.Dropdown(label="权重位数", choices=["None", 1, 2, 3, 4, 8], value=shared.args.wbits if shared.args.wbits > 0 else "None")
                             shared.gradio['groupsize'] = gr.Dropdown(label="组大小", choices=["None", 32, 64, 128, 1024], value=shared.args.groupsize if shared.args.groupsize > 0 else "None")
                             shared.gradio['model_type'] = gr.Dropdown(label="模型类型", choices=["None"], value=shared.args.model_type or "None")
                             shared.gradio['pre_layer'] = gr.Slider(label="预处理层", minimum=0, maximum=100, value=shared.args.pre_layer[0] if shared.args.pre_layer is not None else 0)
@@ -111,14 +111,14 @@ def create_ui():
                             shared.gradio['quipsharp_info'] = gr.Markdown('QuIP#目前需要手动安装。')
 
                         with gr.Column():
-                            shared.gradio['load_in_8bit'] = gr.Checkbox(label="以8比特量化加载", value=shared.args.load_in_8bit)
-                            shared.gradio['load_in_4bit'] = gr.Checkbox(label="以4比特量化加载", value=shared.args.load_in_4bit)
+                            shared.gradio['load_in_8bit'] = gr.Checkbox(label="以8位量化加载", value=shared.args.load_in_8bit)
+                            shared.gradio['load_in_4bit'] = gr.Checkbox(label="以4位量化加载", value=shared.args.load_in_4bit)
                             shared.gradio['use_double_quant'] = gr.Checkbox(label="使用双重量化", value=shared.args.use_double_quant)
                             shared.gradio['use_flash_attention_2'] = gr.Checkbox(label="使用flash_attention_2", value=shared.args.use_flash_attention_2, info='加载模型时设置use_flash_attention_2=True。')
                             shared.gradio['auto_devices'] = gr.Checkbox(label="自动分配设备", value=shared.args.auto_devices)
                             shared.gradio['tensorcores'] = gr.Checkbox(label="张量核心", value=shared.args.tensorcores, info='仅限NVIDIA：使用支持张量核心的llama-cpp-python编译。这可以提高RTX卡的性能。')
                             shared.gradio['streaming_llm'] = gr.Checkbox(label="streaming_llm", value=shared.args.streaming_llm, info='（实验性功能）激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。')
-                            shared.gradio['attention_sink_size'] = gr.Number(label="attention_sink_size", value=shared.args.attention_sink_size, precision=0, info='StreamingLLM：sink token的数量。仅在修剪后的提示词不与旧提示词前缀相同时使用。')
+                            shared.gradio['attention_sink_size'] = gr.Number(label="attention_sink_size", value=shared.args.attention_sink_size, precision=0, info='StreamingLLM：下沉语素的数量。仅在修剪后的提示词不与旧提示词前缀相同时使用。')
                             shared.gradio['cpu'] = gr.Checkbox(label="CPU", value=shared.args.cpu, info='llama.cpp：使用没有GPU加速的llama-cpp-python编译。Transformers：使用PyTorch的CPU模式。')
                             shared.gradio['row_split'] = gr.Checkbox(label="行分割", value=shared.args.row_split, info='在GPU之间按行分割模型。这可能会提高多GPU性能。')
                             shared.gradio['no_offload_kqv'] = gr.Checkbox(label="不卸载KQV", value=shared.args.no_offload_kqv, info='不要将K、Q、V卸载到GPU。这可以节省VRAM，但会降低性能。')
@@ -127,28 +127,28 @@ def create_ui():
                             shared.gradio['no_inject_fused_attention'] = gr.Checkbox(label="不注入融合注意力", value=shared.args.no_inject_fused_attention, info='禁用融合注意力。融合注意力可以提高推理性能，但会使用更多的VRAM。融合AutoAWQ的层。如果VRAM不足，请禁用。')
                             shared.gradio['no_inject_fused_mlp'] = gr.Checkbox(label="不注入融合MLP", value=shared.args.no_inject_fused_mlp, info='仅影响Triton。禁用融合MLP。融合MLP可以提高性能，但会使用更多的VRAM。如果VRAM不足，请禁用。')
                             shared.gradio['no_use_cuda_fp16'] = gr.Checkbox(label="不使用cuda_fp16", value=shared.args.no_use_cuda_fp16, info='在某些系统上，这可以使模型更快。')
-                            shared.gradio['desc_act'] = gr.Checkbox(label="描述激活", value=shared.args.desc_act, info='\'描述激活\'、\'权重位\'和\'组大小\'用于没有quantize_config.json的旧模型。')
+                            shared.gradio['desc_act'] = gr.Checkbox(label="按递减激活顺序量化", value=shared.args.desc_act, info='\'按递减激活顺序量化\'、\'权重位\'和\'组大小\'用于没有quantize_config.json的旧模型。')
                             shared.gradio['no_mmap'] = gr.Checkbox(label="不使用内存映射", value=shared.args.no_mmap)
                             shared.gradio['mlock'] = gr.Checkbox(label="内存锁定", value=shared.args.mlock)
                             shared.gradio['numa'] = gr.Checkbox(label="NUMA", value=shared.args.numa, info='NUMA支持可以在具有非统一内存访问的系统上提供帮助。')
                             shared.gradio['disk'] = gr.Checkbox(label="磁盘", value=shared.args.disk)
                             shared.gradio['bf16'] = gr.Checkbox(label="bf16", value=shared.args.bf16)
-                            shared.gradio['cache_8bit'] = gr.Checkbox(label="8比特缓存", value=shared.args.cache_8bit, info='使用8比特缓存以节省VRAM。')
-                            shared.gradio['cache_4bit'] = gr.Checkbox(label="4比特缓存", value=shared.args.cache_4bit, info='使用Q4缓存以节省VRAM。')
+                            shared.gradio['cache_8bit'] = gr.Checkbox(label="8位缓存", value=shared.args.cache_8bit, info='使用8位缓存以节省VRAM。')
+                            shared.gradio['cache_4bit'] = gr.Checkbox(label="4位缓存", value=shared.args.cache_4bit, info='使用4位缓存以节省VRAM。')
                             shared.gradio['autosplit'] = gr.Checkbox(label="自动分割", value=shared.args.autosplit, info='自动在可用的GPU之间分割模型张量。')
                             shared.gradio['no_flash_attn'] = gr.Checkbox(label="不使用flash_attention", value=shared.args.no_flash_attn, info='强制不使用flash-attention。')
                             shared.gradio['cfg_cache'] = gr.Checkbox(label="CFG缓存", value=shared.args.cfg_cache, info='使用此加载器时，使用CFG是必需的。')
-                            shared.gradio['num_experts_per_token'] = gr.Number(label="每个标记的专家数量", value=shared.args.num_experts_per_token, info='仅适用于像Mixtral这样的MoE模型。')
+                            shared.gradio['num_experts_per_token'] = gr.Number(label="每个语素的专家数量", value=shared.args.num_experts_per_token, info='仅适用于像Mixtral这样的MoE模型。')
                             with gr.Blocks():
-                                shared.gradio['trust_remote_code'] = gr.Checkbox(label="信任远程代码(trust-remote-code)", value=shared.args.trust_remote_code, info='加载分词器/模型时设置trust_remote_code=True。要启用此选项，请使用--trust-remote-code参数启动Web UI。', interactive=shared.args.trust_remote_code)
-                                shared.gradio['no_use_fast'] = gr.Checkbox(label="不使用快速模式", value=shared.args.no_use_fast, info='加载分词器时设置use_fast=False。')
-                                shared.gradio['logits_all'] = gr.Checkbox(label="全部逻辑", value=shared.args.logits_all, info='使用此加载器进行困惑度评估时需要设置。否则，请忽略它，因为它会使提示处理速度变慢。')
+                                shared.gradio['trust_remote_code'] = gr.Checkbox(label="信任远程代码(trust-remote-code)", value=shared.args.trust_remote_code, info='加载语素分析器/模型时设置trust_remote_code=True。要启用此选项，请使用--trust-remote-code参数启动Web UI。', interactive=shared.args.trust_remote_code)
+                                shared.gradio['no_use_fast'] = gr.Checkbox(label="不使用快速模式", value=shared.args.no_use_fast, info='加载语素分析器时设置use_fast=False。')
+                                shared.gradio['logits_all'] = gr.Checkbox(label="全部应用Logit", value=shared.args.logits_all, info='使用此加载器进行困惑度评估时需要设置。否则，请忽略它，因为它会使提示词处理速度变慢。')
 
                             shared.gradio['disable_exllama'] = gr.Checkbox(label="禁用ExLlama", value=shared.args.disable_exllama, info='对于GPTQ模型，禁用ExLlama内核。')
                             shared.gradio['disable_exllamav2'] = gr.Checkbox(label="禁用ExLlamav2", value=shared.args.disable_exllamav2, info='对于GPTQ模型，禁用ExLlamav2内核。')
                             shared.gradio['gptq_for_llama_info'] = gr.Markdown('用于与旧GPU兼容的传统加载器。如果支持，推荐使用ExLlamav2_HF或AutoGPTQ适用于GPTQ模型。')
                             shared.gradio['exllamav2_info'] = gr.Markdown("相比于ExLlamav2，推荐使用ExLlamav2_HF，因为它与扩展有更好的集成，并且在加载器之间提供了更一致的采样行为。")
-                            shared.gradio['llamacpp_HF_info'] = gr.Markdown("llamacpp_HF将llama.cpp作为Transformers模型加载。要使用它，您需要将GGUF放在models/的子文件夹中，并提供必要的分词器文件。\n\n您可以使用'llamacpp_HF创建器'菜单自动完成。")
+                            shared.gradio['llamacpp_HF_info'] = gr.Markdown("llamacpp_HF将llama.cpp作为Transformers模型加载。要使用它，您需要将GGUF放在models/的子文件夹中，并提供必要的语素分析器文件。\n\n您可以使用'llamacpp_HF创建器'菜单自动完成。")
 
             with gr.Column():
                 with gr.Row():
@@ -168,7 +168,7 @@ def create_ui():
 
                     shared.gradio['unquantized_url'] = gr.Textbox(label="输入原始（未量化）模型的URL", info="示例：https://hf-mirror.com/lmsys/vicuna-13b-v1.5", max_lines=1)
                     shared.gradio['create_llamacpp_hf_button'] = gr.Button("提交", variant="primary", interactive=not mu)
-                    gr.Markdown("这将把你的gguf文件移动到`models`的子文件夹中，并附带必要的分词器文件。")
+                    gr.Markdown("这将把你的gguf文件移动到`models`的子文件夹中，并附带必要的语素分析器文件。")
 
                 with gr.Tab("自定义指令模板"):
                     with gr.Row():
@@ -310,11 +310,11 @@ def create_llamacpp_hf(gguf_name, unquantized_url, progress=gr.Progress()):
         progress(0.0)
         model, branch = downloader.sanitize_model_and_branch_names(unquantized_url, None)
 
-        yield ("从Hf Mirror获取分词器文件链接")
+        yield ("从Hf Mirror获取语素分析器文件链接")
         links, sha256, is_lora, is_llamacpp = downloader.get_download_links_from_huggingface(model, branch, text_only=True)
         output_folder = Path(shared.args.model_dir) / (re.sub(r'(?i)\.gguf$', '', gguf_name) + "-HF")
 
-        yield (f"下载分词器到`{output_folder}`")
+        yield (f"下载语素分析器到`{output_folder}`")
         downloader.download_model_files(model, branch, links, sha256, output_folder, progress_bar=progress, threads=4, is_llamacpp=False)
 
         # 移动GGUF文件

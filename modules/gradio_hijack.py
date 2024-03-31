@@ -28,7 +28,7 @@ def repair(grclass):
             if k in allowed_kwargs:
                 fixed_kwargs[k] = v
             else:
-                warnings.warn(f"unexpected argument for {grclass.__name__}: {k}", GradioDeprecationWarning, stacklevel=2)
+                warnings.warn(f"{grclass.__name__}收到了一个意料之外的参数：{k}", GradioDeprecationWarning, stacklevel=2)
 
         original(self, *args, **fixed_kwargs)
 

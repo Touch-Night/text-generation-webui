@@ -20,10 +20,10 @@ def create_ui():
                         shared.gradio['extensions_menu'] = gr.CheckboxGroup(choices=utils.get_available_extensions(), value=shared.args.extensions, label="可用扩展", info='注意，一些扩展可能需要通过命令手动安装Python需求：pip install -r extensions/extension_name/requirements.txt', elem_classes='checkboxgroup-table')
 
                     with gr.Column():
-                        shared.gradio['bool_menu'] = gr.CheckboxGroup(choices=get_boolean_arguments(), value=get_boolean_arguments(active=True), label="布尔命令行标志", elem_classes='checkboxgroup-table')
+                        shared.gradio['bool_menu'] = gr.CheckboxGroup(choices=get_boolean_arguments(), value=get_boolean_arguments(active=True), label="布尔命令行参数", elem_classes='checkboxgroup-table')
 
             with gr.Column():
-                extension_name = gr.Textbox(lines=1, label='安装或更新扩展', info='在下面输入GitHub URL并按Enter。扩展列表请见：https://github.com/oobabooga/text-generation-webui-extensions ⚠️  警告 ⚠️：扩展可以执行任意代码。在激活它们之前，请确保检查它们的源代码。', interactive=not mu)
+                extension_name = gr.Textbox(lines=1, label='安装或更新扩展', info='在下面输入GitHub URL并按Enter。扩展列表请见：https://github.com/oobabooga/text-generation-webui-extensions ⚠️ 警告 ⚠️：扩展可以执行任意代码。在激活它们之前，请确保检查它们的源代码。', interactive=not mu)
                 extension_status = gr.Markdown()
 
         shared.gradio['theme_state'] = gr.Textbox(visible=False, value='dark' if shared.settings['dark_theme'] else 'light')

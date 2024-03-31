@@ -219,10 +219,10 @@ def generate_chat_prompt(user_input, state, **kwargs):
                 prompt = make_prompt(messages)
                 encoded_length = get_encoded_length(prompt)
                 if encoded_length > max_length:
-                    logger.error(f"无法构建聊天提示词。 输入对于可用上下文长度太长。\n\n截断长度：{state['truncation_length']}\n最大新生成token数：{state['max_new_tokens']}（有可能它太高了）\n可用上下文长度：{max_length}\n")
+                    logger.error(f"无法构建聊天提示词。 输入对于可用上下文长度太长。\n\n截断长度：{state['truncation_length']}\n最大新生成语素数：{state['max_new_tokens']}（有可能它太高了）\n可用上下文长度：{max_length}\n")
                     raise ValueError
                 else:
-                    logger.warning(f"输入已被截断。上下文长度：{state['truncation_length']}, 最大新生成token数：{state['max_new_tokens']}, 可用上下文长度：{max_length}。")
+                    logger.warning(f"输入已被截断。上下文长度：{state['truncation_length']}, 最大新生成语素数：{state['max_new_tokens']}, 可用上下文长度：{max_length}。")
                     break
 
             prompt = make_prompt(messages)
@@ -309,7 +309,7 @@ def chatbot_wrapper(text, state, regenerate=False, _continue=False, loading_mess
                 }
 
     if shared.model_name == 'None' or shared.model is None:
-        raise ValueError("你还没有加载模型！请在模型选项卡中选择一个。")
+        raise ValueError("您还没有加载模型！请在模型选项卡中选择一个。")
 
     # Generate the prompt
     kwargs = {
@@ -356,7 +356,7 @@ def impersonate_wrapper(text, state):
     static_output = chat_html_wrapper(state['history'], state['name1'], state['name2'], state['mode'], state['chat_style'], state['character_menu'])
 
     if shared.model_name == 'None' or shared.model is None:
-        logger.error("你还没有加载模型！请在模型选项卡中选择一个。")
+        logger.error("您还没有加载模型！请在模型选项卡中选择一个。")
         yield '', static_output
         return
 
@@ -385,7 +385,7 @@ def generate_chat_reply(text, state, regenerate=False, _continue=False, loading_
 
 def character_is_loaded(state, raise_exception=False):
     if state['mode'] in ['chat', 'chat-instruct'] and state['name2'] == '':
-        logger.error('看起来你还没有加载角色卡。请在参数 > 角色下加载一个。')
+        logger.error('看起来您还没有加载角色卡。请在参数 > 角色下加载一个。')
         if raise_exception:
             raise ValueError
 

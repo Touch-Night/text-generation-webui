@@ -146,7 +146,7 @@ def add_lora_transformers(lora_names):
 
 def merge_loras():
     if len(list({shared.model.peft_config[adapter].r for adapter in shared.model.peft_config.keys()})) > 1:
-        logger.warning("加载的LoRAs无法合并，因为它们的等级不同。只有第一个将会被激活。")
+        logger.warning("加载的LoRAs无法合并，因为它们的秩不同。只有第一个将会被激活。")
         return
 
     shared.model.add_weighted_adapter(shared.lora_names, [1] * len(shared.lora_names), "__merged")
