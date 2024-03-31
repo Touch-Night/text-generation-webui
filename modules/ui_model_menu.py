@@ -75,7 +75,7 @@ def create_ui():
         with gr.Row():
             with gr.Column():
                 shared.gradio['loader'] = gr.Dropdown(label="模型加载器", choices=loaders.loaders_and_params.keys(), value=None)
-                with gr.Box():
+                with gr.Blocks():
                     with gr.Row():
                         with gr.Column():
                             with gr.Blocks():
@@ -310,7 +310,7 @@ def create_llamacpp_hf(gguf_name, unquantized_url, progress=gr.Progress()):
         progress(0.0)
         model, branch = downloader.sanitize_model_and_branch_names(unquantized_url, None)
 
-        yield ("从Hugging Face获取分词器文件链接")
+        yield ("从Hf Mirror获取分词器文件链接")
         links, sha256, is_lora, is_llamacpp = downloader.get_download_links_from_huggingface(model, branch, text_only=True)
         output_folder = Path(shared.args.model_dir) / (re.sub(r'(?i)\.gguf$', '', gguf_name) + "-HF")
 
