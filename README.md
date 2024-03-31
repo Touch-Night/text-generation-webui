@@ -11,7 +11,7 @@
 ## 功能
 
 * 三种界面模式：默认（两列），笔记本和聊天。
-* 多种模型后端：[Transformers](https://github.com/huggingface/transformers), [llama.cpp](https://github.com/ggerganov/llama.cpp) (through [llama-cpp-python](https://github.com/abetlen/llama-cpp-python)), [ExLlamaV2](https://github.com/turboderp/exllamav2), [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ), [AutoAWQ](https://github.com/casper-hansen/AutoAWQ), [GPTQ-for-LLaMa](https://github.com/qwopqwop200/GPTQ-for-LLaMa), [CTransformers](https://github.com/marella/ctransformers), [QuIP#](https://github.com/Cornell-RelaxML/quip-sharp)。
+* 多种模型后端：[Transformers](https://github.com/huggingface/transformers), [llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持), [ExLlamaV2](https://github.com/turboderp/exllamav2), [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ), [AutoAWQ](https://github.com/casper-hansen/AutoAWQ), [GPTQ-for-LLaMa](https://github.com/qwopqwop200/GPTQ-for-LLaMa), [CTransformers](https://github.com/marella/ctransformers), [QuIP#](https://github.com/Cornell-RelaxML/quip-sharp)。
 * 下拉菜单快速切换不同的模型。
 * 大量的扩展（内置和用户贡献），包括Coqui TTS用于逼真的语音输出，Whisper STT用于语音输入，翻译，[多模态模型](https://github.com/Touch-Night/text-generation-webui/tree/Chinese/extensions/multimodal)，向量库，Stable Diffusion集成，以及更多。请参阅[wiki](https://github.com/Touch-Night/text-generation-webui/wiki/07-%E2%80%90-Extensions)和[扩展列表](https://github.com/oobabooga/text-generation-webui-extensions)。
 * [和自定义角色聊天](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-Parameters-Tab#character)。
