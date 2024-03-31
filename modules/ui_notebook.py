@@ -42,9 +42,9 @@ def create_ui():
                         shared.gradio['logits-notebook'] = gr.Textbox(lines=23, label='输出', elem_classes=['textbox_logits_notebook', 'add_scrollbar'])
                         shared.gradio['logits-notebook-previous'] = gr.Textbox(lines=23, label='之前的输出', elem_classes=['textbox_logits_notebook', 'add_scrollbar'])
 
-                with gr.Tab('Tokens'):
+                with gr.Tab('语素'):
                     shared.gradio['get_tokens-notebook'] = gr.Button('获取输入的语素ID')
-                    shared.gradio['tokens-notebook'] = gr.Textbox(lines=23, label='Tokens', elem_classes=['textbox_logits_notebook', 'add_scrollbar', 'monospace'])
+                    shared.gradio['tokens-notebook'] = gr.Textbox(lines=23, label='语素', elem_classes=['textbox_logits_notebook', 'add_scrollbar', 'monospace'])
 
                 with gr.Row():
                     shared.gradio['Generate-notebook'] = gr.Button('生成', variant='primary', elem_classes='small-button')

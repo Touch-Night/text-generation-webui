@@ -17,7 +17,7 @@ def create_ui():
 
                 with gr.Row():
                     with gr.Column():
-                        shared.gradio['extensions_menu'] = gr.CheckboxGroup(choices=utils.get_available_extensions(), value=shared.args.extensions, label="可用扩展", info='注意，一些扩展可能需要通过命令手动安装Python需求：pip install -r extensions/extension_name/requirements.txt', elem_classes='checkboxgroup-table')
+                        shared.gradio['extensions_menu'] = gr.CheckboxGroup(choices=utils.get_available_extensions(), value=shared.args.extensions, label="可用扩展", info='注意，一些扩展可能需要通过命令手动安装Python依赖：pip install -r extensions/extension_name/requirements.txt', elem_classes='checkboxgroup-table')
 
                     with gr.Column():
                         shared.gradio['bool_menu'] = gr.CheckboxGroup(choices=get_boolean_arguments(), value=get_boolean_arguments(active=True), label="布尔命令行参数", elem_classes='checkboxgroup-table')

@@ -49,7 +49,7 @@ def create_ui(default_preset):
 
                             shared.gradio['penalty_alpha'] = gr.Slider(0, 5, value=generate_params['penalty_alpha'], label='惩罚系数α', info='用于对比搜索，必须取消勾选“使用采样算法”')
                             shared.gradio['guidance_scale'] = gr.Slider(-0.5, 2.5, step=0.05, value=generate_params['guidance_scale'], label='指导比例', info='用于CFG，1.5是个不错的值。')
-                            shared.gradio['negative_prompt'] = gr.Textbox(value=shared.settings['negative_prompt'], label='负面提示', lines=3, elem_classes=['add_scrollbar'])
+                            shared.gradio['negative_prompt'] = gr.Textbox(value=shared.settings['negative_prompt'], label='负面提示词', lines=3, elem_classes=['add_scrollbar'])
                             shared.gradio['mirostat_mode'] = gr.Slider(0, 2, step=1, value=generate_params['mirostat_mode'], label='mirostat模式', info='模式1仅适用于llama.cpp。')
                             shared.gradio['mirostat_tau'] = gr.Slider(0, 10, step=0.01, value=generate_params['mirostat_tau'], label='mirostat参数τ')
                             shared.gradio['mirostat_eta'] = gr.Slider(0, 1, step=0.01, value=generate_params['mirostat_eta'], label='mirostat参数η')
@@ -82,7 +82,7 @@ def create_ui(default_preset):
                             shared.gradio['sampler_priority'] = gr.Textbox(value=generate_params['sampler_priority'], lines=12, label='采样器优先级', info='参数名用新行或逗号分隔。')
 
                         with gr.Column():
-                            shared.gradio['truncation_length'] = gr.Slider(value=get_truncation_length(), minimum=shared.settings['truncation_length_min'], maximum=shared.settings['truncation_length_max'], step=256, label='将提示词截断至此长度', info='如果提示超出这个长度，最左边的语素将被移除。大多数模型要求这个长度最多为2048。')
+                            shared.gradio['truncation_length'] = gr.Slider(value=get_truncation_length(), minimum=shared.settings['truncation_length_min'], maximum=shared.settings['truncation_length_max'], step=256, label='将提示词截断至此长度', info='如果提示词超出这个长度，最左边的语素将被移除。大多数模型要求这个长度最多为2048。')
                             shared.gradio['prompt_lookup_num_tokens'] = gr.Slider(value=shared.settings['prompt_lookup_num_tokens'], minimum=0, maximum=10, step=1, label='提示词查找解码语素数', info='启用提示词查找解码。')
                             shared.gradio['max_tokens_second'] = gr.Slider(value=shared.settings['max_tokens_second'], minimum=0, maximum=20, step=1, label='每秒最多语素数', info='为了文本实时可读。')
                             shared.gradio['seed'] = gr.Number(value=shared.settings['seed'], label='Seed (-1 for random)')
