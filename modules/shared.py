@@ -88,7 +88,7 @@ group.add_argument('--chat-buttons', action='store_true', help='在聊天标签�
 
 # Model loader
 group = parser.add_argument_group('模型加载器')
-group.add_argument('--loader', type=str, help='手动选择模型加载器，否则将自动检测。有效选项包括：Transformers, llama.cpp, llamacpp_HF, ExLlamav2_HF, ExLlamav2, AutoGPTQ, AutoAWQ, GPTQ-for-LLaMa, ctransformers, QuIP#。')
+group.add_argument('--loader', type=str, help='手动选择模型加载器，否则将自动检测。有效选项包括：Transformers, llama.cpp, llamacpp_HF, ExLlamav2_HF, ExLlamav2, AutoGPTQ, AutoAWQ, GPTQ-for-LLaMa, QuIP#。')
 
 # Transformers/Accelerate
 group = parser.add_argument_group('Transformers/Accelerate')
@@ -259,8 +259,6 @@ def fix_loader_name(name):
         return 'ExLlamav2'
     elif name in ['exllamav2-hf', 'exllamav2_hf', 'exllama-v2-hf', 'exllama_v2_hf', 'exllama-v2_hf', 'exllama2-hf', 'exllama2_hf', 'exllama-2-hf', 'exllama_2_hf', 'exllama-2_hf']:
         return 'ExLlamav2_HF'
-    elif name in ['ctransformers', 'ctranforemrs', 'ctransformer']:
-        return 'ctransformers'
     elif name in ['autoawq', 'awq', 'auto-awq']:
         return 'AutoAWQ'
     elif name in ['quip#', 'quip-sharp', 'quipsharp', 'quip_sharp']:

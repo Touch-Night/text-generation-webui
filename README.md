@@ -11,7 +11,7 @@
 ## 功能
 
 * 三种界面模式：默认（两列），笔记本和聊天。
-* 多种模型后端：[Transformers](https://github.com/huggingface/transformers), [llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持), [ExLlamaV2](https://github.com/turboderp/exllamav2), [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ), [AutoAWQ](https://github.com/casper-hansen/AutoAWQ), [GPTQ-for-LLaMa](https://github.com/qwopqwop200/GPTQ-for-LLaMa), [CTransformers](https://github.com/marella/ctransformers), [QuIP#](https://github.com/Cornell-RelaxML/quip-sharp)。
+* 多种模型后端：[Transformers](https://github.com/huggingface/transformers), [llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持), [ExLlamaV2](https://github.com/turboderp/exllamav2), [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ), [AutoAWQ](https://github.com/casper-hansen/AutoAWQ), [GPTQ-for-LLaMa](https://github.com/qwopqwop200/GPTQ-for-LLaMa), [QuIP#](https://github.com/Cornell-RelaxML/quip-sharp)。
 * 下拉菜单快速切换不同的模型。
 * 大量的扩展（内置和用户贡献），包括Coqui TTS用于逼真的语音输出，Whisper STT用于语音输入，翻译，[多模态模型](https://github.com/Touch-Night/text-generation-webui/tree/Chinese/extensions/multimodal)，向量库，Stable Diffusion集成，以及更多。请参阅[wiki](https://github.com/Touch-Night/text-generation-webui/wiki/07-%E2%80%90-Extensions)和[扩展列表](https://github.com/oobabooga/text-generation-webui-extensions)。
 * [和自定义角色聊天](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-Parameters-Tab#character)。
@@ -221,7 +221,7 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 
 | 命令行参数 | 描述 |
 |--------------------------------------------|-------------|
-| `--loader LOADER`                          | 手动选择模型加载器，否则，它将被自动检测。可选选项：Transformers，llama.cpp，llamacpp_hf，Exllamav2_HF，Exllamav2，AutoGPTQ，AutoAWQ，GPTQ-for-LLaMa，ctransformers，QuIP#。|
+| `--loader LOADER`                          | 手动选择模型加载器，否则，它将被自动检测。可选选项：Transformers，llama.cpp，llamacpp_HF，Exllamav2_HF，Exllamav2，AutoGPTQ，AutoAWQ，GPTQ-for-LLaMa，QuIP#。|
 
 #### Accelerate/transformers
 
@@ -307,12 +307,6 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 | `--pre_layer PRE_LAYER [PRE_LAYER ...]`  | 分配给GPU的层数。设置此参数可启用4位模的CPU卸载。对于多GPU，将数字用空格分隔，例如`--pre_layer 30 60` 。|
 | `--checkpoint CHECKPOINT` | 量化检查点文件的路径。如果未指定，将自动检测。|
 | `--monkey-patch`          | 应用monkey patch以使用量化模型的LoRAs。|
-
-#### ctransformers
-
-| 命令行参数 | 描述 |
-|-------------|-------------|
-| `--model_type MODEL_TYPE` | 预量化模型的模型类型。目前支持gpt2、gptj、gptneox、falcon、llama、mpt、starcoder（gptbigcode）、dollyv2和replit。|
 
 #### HQQ
 
