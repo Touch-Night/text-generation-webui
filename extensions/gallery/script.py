@@ -100,7 +100,7 @@ def select_character(evt: gr.SelectData):
 
 def custom_js():
     path_to_js = Path(__file__).parent.resolve() / 'script.js'
-    return open(path_to_js, 'r').read()
+    return open(path_to_js, 'r', encoding='utf-8').read()
 
 
 def ui():
