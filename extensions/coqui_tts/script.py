@@ -128,7 +128,7 @@ def input_modifier(string, state):
     if not params['activate']:
         return string
 
-    shared.processing_message = "*Is recording a voice message...*"
+    shared.processing_message = "*正在录制语音信息...*"
     return string
 
 
@@ -139,7 +139,7 @@ def output_modifier(string, state):
     original_string = string
     string = preprocess(html.unescape(string))
     if string == '':
-        string = '*Empty reply, try regenerating*'
+        string = '*回复为空，正在尝试重新生成*'
     else:
         output_file = Path(f'extensions/coqui_tts/outputs/{state["character_menu"]}_{int(time.time())}.wav')
         model.tts_to_file(
@@ -154,7 +154,7 @@ def output_modifier(string, state):
         if params['show_text']:
             string += f'\n\n{original_string}'
 
-    shared.processing_message = "*Is typing...*"
+    shared.processing_message = "*正在打字...*"
     return string
 
 
@@ -165,38 +165,38 @@ def custom_css():
 
 def setup():
     global model
-    print("[XTTS] Loading XTTS...")
+    print("[XTTS] 正在加载XTTS...")
     model = load_model()
-    print("[XTTS] Done!")
+    print("[XTTS] 加载完毕！")
     Path(f"{this_dir}/outputs").mkdir(parents=True, exist_ok=True)
 
 
 def ui():
     with gr.Accordion("Coqui TTS (XTTSv2)"):
         with gr.Row():
-            activate = gr.Checkbox(value=params['activate'], label='Activate TTS')
-            autoplay = gr.Checkbox(value=params['autoplay'], label='Play TTS automatically')
+            activate = gr.Checkbox(value=params['activate'], label='启用TTS')
+            autoplay = gr.Checkbox(value=params['autoplay'], label='自动播放TTS音频')
 
         with gr.Row():
-            show_text = gr.Checkbox(value=params['show_text'], label='Show message text under audio player')
-            remove_trailing_dots = gr.Checkbox(value=params['remove_trailing_dots'], label='Remove trailing "." from text segments before converting to audio')
+            show_text = gr.Checkbox(value=params['show_text'], label='在音频播放器下显示消息文本')
+            remove_trailing_dots = gr.Checkbox(value=params['remove_trailing_dots'], label='在转换为音频之前从文本段中删除尾随的句点“.”')
 
         with gr.Row():
             with gr.Row():
-                voice = gr.Dropdown(get_available_voices(), label="Voice wav", value=params["voice"])
+                voice = gr.Dropdown(get_available_voices(), label="声音wav", value=params["voice"])
                 create_refresh_button(voice, lambda: None, lambda: {'choices': get_available_voices(), 'value': params["voice"]}, 'refresh-button')
 
-            language = gr.Dropdown(languages.keys(), label="Language", value=params["language"])
+            language = gr.Dropdown(languages.keys(), label="语言", value=params["language"])
 
         with gr.Row():
-            preview_text = gr.Text(show_label=False, placeholder="Preview text", elem_id="silero_preview_text")
-            preview_play = gr.Button("Preview")
+            preview_text = gr.Text(show_label=False, placeholder="预览文本", elem_id="silero_preview_text")
+            preview_play = gr.Button("预览")
             preview_audio = gr.HTML(visible=False)
 
         with gr.Row():
-            convert = gr.Button('Permanently replace audios with the message texts')
-            convert_cancel = gr.Button('Cancel', visible=False)
-            convert_confirm = gr.Button('Confirm (cannot be undone)', variant="stop", visible=False)
+            convert = gr.Button('永久替换音频为消息文本')
+            convert_cancel = gr.Button('取消', visible=False)
+            convert_confirm = gr.Button('确认（无法撤销）', variant="stop", visible=False)
 
     # Convert history with confirmation
     convert_arr = [convert_confirm, convert, convert_cancel]

@@ -139,5 +139,5 @@ def ui():
     https://gradio.app/docs/
     """
 
-    min_length = gr.Slider(0, 800, step=10, value=params['min_length'], label='Minimum reply length')
+    min_length = gr.Slider(0, 800, step=10, value=params['min_length'], label='最小回复长度')
     min_length.change(lambda x: params.update({'min_length': x}), min_length, None)

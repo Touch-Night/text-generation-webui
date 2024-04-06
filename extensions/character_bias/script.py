@@ -54,9 +54,9 @@ def bot_prefix_modifier(string):
 
 def ui():
     # Gradio elements
-    activate = gr.Checkbox(value=params['activate'], label='Activate character bias')
-    dropdown_string = gr.Dropdown(choices=bias_options, value=params["bias string"], label='Character bias', info='To edit the options in this dropdown edit the "bias_options.txt" file')
-    custom_string = gr.Textbox(value=params['custom string'], placeholder="Enter custom bias string", label="Custom Character Bias", info='If not empty, will be used instead of the value above')
+    activate = gr.Checkbox(value=params['activate'], label='启用角色偏置')
+    dropdown_string = gr.Dropdown(choices=bias_options, value=params["bias string"], label='角色偏置', info='要编辑此下拉选单的选项，请编辑“bias_options.txt”文件')
+    custom_string = gr.Textbox(value=params['custom string'], placeholder="输入自定义偏置字符串", label="自定义角色偏置", info='如果非空，将会使用此自定义偏置而不是上面的值')
 
     # Event functions to update the parameters in the backend
     def update_bias_string(x):

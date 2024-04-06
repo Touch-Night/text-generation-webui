@@ -104,12 +104,12 @@ def custom_js():
 
 
 def ui():
-    with gr.Accordion("Character gallery", open=settings["gallery-open"], elem_id='gallery-extension'):
+    with gr.Accordion("角色库", open=settings["gallery-open"], elem_id='gallery-extension'):
         gr.HTML(value="<style>" + generate_css() + "</style>")
         with gr.Row():
-            filter_box = gr.Textbox(label='', placeholder='Filter', lines=1, max_lines=1, container=False, elem_id='gallery-filter-box')
-            gr.ClearButton(filter_box, value='Clear', elem_classes='refresh-button')
-            update = gr.Button("Refresh", elem_classes='refresh-button')
+            filter_box = gr.Textbox(label='', placeholder='过滤器', lines=1, max_lines=1, container=False, elem_id='gallery-filter-box')
+            gr.ClearButton(filter_box, value='清除', elem_classes='refresh-button')
+            update = gr.Button("刷新", elem_classes='refresh-button')
 
         gallery = gr.Dataset(
             components=[gr.HTML(visible=False)],

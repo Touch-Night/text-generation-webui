@@ -49,7 +49,7 @@ def ui():
 
     # Gradio elements
     with gr.Row():
-        activate = gr.Checkbox(value=params['activate'], label='Activate translation')
+        activate = gr.Checkbox(value=params['activate'], label='启用翻译')
 
     with gr.Row():
         language = gr.Dropdown(value=language_name, choices=[k for k in language_codes], label='Language')
