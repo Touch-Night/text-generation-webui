@@ -40,20 +40,20 @@ function switch_to_default() {
 function switch_to_notebook() {
   let notebook_tab_button = main_parent.childNodes[0].childNodes[9];
   notebook_tab_button.click();
-  findButtonsByText("Raw")[1].click();
+  findButtonsByText("原始")[1].click();
   scrollToTop();
 }
 
 function switch_to_generation_parameters() {
   let parameters_tab_button = main_parent.childNodes[0].childNodes[13];
   parameters_tab_button.click();
-  findButtonsByText("Generation")[0].click();
+  findButtonsByText("生成")[0].click();
   scrollToTop();
 }
 
 function switch_to_character() {
   let parameters_tab_button = main_parent.childNodes[0].childNodes[13];
   parameters_tab_button.click();
-  findButtonsByText("Character")[0].click();
+  findButtonsByText("角色")[0].click();
   scrollToTop();
 }
