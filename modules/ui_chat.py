@@ -68,14 +68,14 @@ def create_ui():
                 with gr.Row():
                     shared.gradio['rename_chat'] = gr.Button('重命名', elem_classes='refresh-button', interactive=not mu)
                     shared.gradio['delete_chat'] = gr.Button('🗑️', elem_classes='refresh-button', interactive=not mu)
-                    shared.gradio['delete_chat-confirm'] = gr.Button('确认', variant='stop', visible=False, elem_classes='refresh-button')
-                    shared.gradio['delete_chat-cancel'] = gr.Button('取消', visible=False, elem_classes='refresh-button')
-                    shared.gradio['Start new chat'] = gr.Button('新建聊天', elem_classes='refresh-button')
+                    shared.gradio['delete_chat-confirm'] = gr.Button('确认', variant='stop', visible=False, elem_classes=['refresh-button', 'focus-on-chat-input'])
+                    shared.gradio['delete_chat-cancel'] = gr.Button('取消', visible=False, elem_classes=['refresh-button', 'focus-on-chat-input'])
+                    shared.gradio['Start new chat'] = gr.Button('新建聊天', elem_classes=['refresh-button', 'focus-on-chat-input'])
 
                 with gr.Row(elem_id='rename-row'):
                     shared.gradio['rename_to'] = gr.Textbox(label='重命名为：', placeholder='新名称', visible=False, elem_classes=['no-background'])
-                    shared.gradio['rename_to-confirm'] = gr.Button('确认', visible=False, elem_classes='refresh-button')
-                    shared.gradio['rename_to-cancel'] = gr.Button('取消', visible=False, elem_classes='refresh-button')
+                    shared.gradio['rename_to-confirm'] = gr.Button('确认', visible=False, elem_classes=['refresh-button', 'focus-on-chat-input'])
+                    shared.gradio['rename_to-cancel'] = gr.Button('取消', visible=False, elem_classes=['refresh-button', 'focus-on-chat-input'])
 
         with gr.Row(elem_id='chat-controls', elem_classes=['pretty_scrollbar']):
             with gr.Column():
@@ -378,4 +378,4 @@ def create_event_handlers():
         partial(chat.generate_chat_prompt, '', _continue=True), gradio('interface_state'), gradio('textbox-notebook')).then(
         lambda: None, None, None, js=f'() => {{{ui.switch_tabs_js}; switch_to_notebook()}}')
 
-    shared.gradio['show_controls'].change(None, gradio('show_controls'), None, js=f'(x) => {{{ui.show_controls_js}; toggle_controls(x)}}')
+    shared.gradio['show_controls'].change(lambda x: None, gradio('show_controls'), None, js=f'(x) => {{{ui.show_controls_js}; toggle_controls(x)}}')
