@@ -46,9 +46,25 @@ if [ "$conda_exists" == "F" ]; then
     rm "$INSTALL_DIR/miniconda_installer.sh"
 fi
 
+# Ascend environment variables
+pythonpath=$(echo $PYTHONPATH | tr ":" "\n")
+ASCEND_ENV=""
+for pth in $pythonpath
+do 
+    if [[ $pth == *"Ascend"* ]]; then
+        ASCEND_ENV=$pth:$ASCEND_ENV
+    fi 
+done
+
 # create the installer env
 if [ ! -e "$INSTALL_ENV_DIR" ]; then
     "$CONDA_ROOT_PREFIX/bin/conda" create -y -k --prefix "$INSTALL_ENV_DIR" -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ python=3.11
+    if [ -z "$ASCEND_ENV" ]; then
+        "$CONDA_ROOT_PREFIX/bin/conda" create -y -k --prefix "$INSTALL_ENV_DIR" -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ python=3.11
+    else
+        # Install python310 because torch-npu doesn't support python311
+        "$CONDA_ROOT_PREFIX/bin/conda" create -y -k --prefix "$INSTALL_ENV_DIR" -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ python=3.10
+    fi
 fi
 
 # check if conda environment was actually created
@@ -63,6 +79,7 @@ unset PYTHONPATH
 unset PYTHONHOME
 export CUDA_PATH="$INSTALL_ENV_DIR"
 export CUDA_HOME="$CUDA_PATH"
+export PYTHONPATH=$ASCEND_ENV
 
 # activate installer env
 source "$CONDA_ROOT_PREFIX/etc/profile.d/conda.sh" # otherwise conda complains about 'shell not initialized' (needed when running in a script)
