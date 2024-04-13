@@ -21,7 +21,7 @@ import tqdm
 from requests.adapters import HTTPAdapter
 from tqdm.contrib.concurrent import thread_map
 
-base = "https://hf-mirror.com"
+base = os.environ.get("HF_ENDPOINT") or "https://hf-mirror.com"
 
 
 class ModelDownloader:
@@ -112,12 +112,12 @@ class ModelDownloader:
                         sha256.append([fname, dict[i]['lfs']['oid']])
 
                     if is_text:
-                        links.append(f"https://hf-mirror.com/{model}/resolve/{branch}/{fname}")
+                        links.append(f"{base}/{model}/resolve/{branch}/{fname}")
                         classifications.append('text')
                         continue
 
                     if not text_only:
-                        links.append(f"https://hf-mirror.com/{model}/resolve/{branch}/{fname}")
+                        links.append(f"{base}/{model}/resolve/{branch}/{fname}")
                         if is_safetensors:
                             has_safetensors = True
                             classifications.append('safetensors')
