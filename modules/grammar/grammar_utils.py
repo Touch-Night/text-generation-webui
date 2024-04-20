@@ -660,7 +660,7 @@ class TokenTrie:
                 return bytes(token, "utf-8")
 
         else:
-            print("警告：无法识别的语素分析器：使用默认的语素格式。")
+            print("警告：无法识别的词符化器：使用默认的词符格式。")
 
             def fmt_token(id):
                 token = tokenizer.convert_ids_to_tokens(id)

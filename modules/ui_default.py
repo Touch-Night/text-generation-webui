@@ -48,7 +48,7 @@ def create_ui():
                 with gr.Tab('Logits'):
                     with gr.Row():
                         with gr.Column(scale=10):
-                            shared.gradio['get_logits-default'] = gr.Button('获取下一个语素概率')
+                            shared.gradio['get_logits-default'] = gr.Button('获取下一个词符概率')
                         with gr.Column(scale=1):
                             shared.gradio['use_samplers-default'] = gr.Checkbox(label='使用采样器', value=True, elem_classes=['no-background'])
 
@@ -56,9 +56,9 @@ def create_ui():
                         shared.gradio['logits-default'] = gr.Textbox(lines=23, label='输出', elem_classes=['textbox_logits', 'add_scrollbar'])
                         shared.gradio['logits-default-previous'] = gr.Textbox(lines=23, label='先前输出', elem_classes=['textbox_logits', 'add_scrollbar'])
 
-                with gr.Tab('语素'):
-                    shared.gradio['get_tokens-default'] = gr.Button('获取输入的语素ID')
-                    shared.gradio['tokens-default'] = gr.Textbox(lines=23, label='语素', elem_classes=['textbox_logits', 'add_scrollbar', 'monospace'])
+                with gr.Tab('词符'):
+                    shared.gradio['get_tokens-default'] = gr.Button('获取输入的词符ID')
+                    shared.gradio['tokens-default'] = gr.Textbox(lines=23, label='词符', elem_classes=['textbox_logits', 'add_scrollbar', 'monospace'])
 
 
 def create_event_handlers():

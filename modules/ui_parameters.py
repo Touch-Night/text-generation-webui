@@ -27,7 +27,7 @@ def create_ui(default_preset):
                 with gr.Column():
                     with gr.Row():
                         with gr.Column():
-                            shared.gradio['max_new_tokens'] = gr.Slider(minimum=shared.settings['max_new_tokens_min'], maximum=shared.settings['max_new_tokens_max'], step=1, label='最大新语素数', value=shared.settings['max_new_tokens'])
+                            shared.gradio['max_new_tokens'] = gr.Slider(minimum=shared.settings['max_new_tokens_min'], maximum=shared.settings['max_new_tokens_max'], step=1, label='最大新词符数', value=shared.settings['max_new_tokens'])
                             shared.gradio['temperature'] = gr.Slider(0.01, 5, value=generate_params['temperature'], step=0.01, label='采样温度')
                             shared.gradio['top_p'] = gr.Slider(0.0, 1.0, value=generate_params['top_p'], step=0.01, label='Top P')
                             shared.gradio['top_k'] = gr.Slider(0, 200, value=generate_params['top_k'], step=1, label='Top K')
@@ -36,17 +36,17 @@ def create_ui(default_preset):
                             shared.gradio['repetition_penalty'] = gr.Slider(1.0, 1.5, value=generate_params['repetition_penalty'], step=0.01, label='重复度惩罚因子')
                             shared.gradio['frequency_penalty'] = gr.Slider(0, 2, value=generate_params['frequency_penalty'], step=0.05, label='按出现频率的重复度惩罚因子')
                             shared.gradio['presence_penalty'] = gr.Slider(0, 2, value=generate_params['presence_penalty'], step=0.05, label='按是否存在的重复度惩罚加数')
-                            shared.gradio['repetition_penalty_range'] = gr.Slider(0, 4096, step=64, value=generate_params['repetition_penalty_range'], label='用于重复度惩罚计算的语素范围')
+                            shared.gradio['repetition_penalty_range'] = gr.Slider(0, 4096, step=64, value=generate_params['repetition_penalty_range'], label='用于重复度惩罚计算的词符范围')
                             shared.gradio['do_sample'] = gr.Checkbox(value=generate_params['do_sample'], label='使用采样算法')
                             gr.Markdown("[了解更多](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-Parameters-Tab)")
 
                         with gr.Column():
                             with gr.Group():
-                                shared.gradio['auto_max_new_tokens'] = gr.Checkbox(value=shared.settings['auto_max_new_tokens'], label='自动确定最大新语素数', info='将最大新语素数扩展到可用的上下文长度。')
+                                shared.gradio['auto_max_new_tokens'] = gr.Checkbox(value=shared.settings['auto_max_new_tokens'], label='自动确定最大新词符数', info='将最大新词符数扩展到可用的上下文长度。')
                                 shared.gradio['ban_eos_token'] = gr.Checkbox(value=shared.settings['ban_eos_token'], label='禁用序列终止符', info='强制模型永不过早结束生成。')
                                 shared.gradio['add_bos_token'] = gr.Checkbox(value=shared.settings['add_bos_token'], label='在提示词开头添加序列起始符', info='禁用此项可以使回复更加具有创造性。')
                                 shared.gradio['custom_stopping_strings'] = gr.Textbox(lines=2, value=shared.settings["custom_stopping_strings"] or None, label='自定义停止字符串', info='用英文半角逗号分隔，用""包裹。', placeholder='"\\n", "\\nYou:"')
-                                shared.gradio['custom_token_bans'] = gr.Textbox(value=shared.settings['custom_token_bans'] or None, label='禁用语素', info='填入要禁用的语素ID，用英文半角逗号分隔。你可以在默认或笔记本选项卡获得语素的ID。')
+                                shared.gradio['custom_token_bans'] = gr.Textbox(value=shared.settings['custom_token_bans'] or None, label='禁用词符', info='填入要禁用的词符ID，用英文半角逗号分隔。你可以在默认或笔记本选项卡获得词符的ID。')
 
                             shared.gradio['penalty_alpha'] = gr.Slider(0, 5, value=generate_params['penalty_alpha'], label='惩罚系数α', info='用于对比搜索，必须取消勾选“使用采样算法”')
                             shared.gradio['guidance_scale'] = gr.Slider(-0.5, 2.5, step=0.05, value=generate_params['guidance_scale'], label='指导比例', info='用于CFG，1.5是个不错的值。')
@@ -82,11 +82,11 @@ def create_ui(default_preset):
                             shared.gradio['sampler_priority'] = gr.Textbox(value=generate_params['sampler_priority'], lines=12, label='采样器优先级', info='参数名用新行或逗号分隔。')
 
                         with gr.Column():
-                            shared.gradio['truncation_length'] = gr.Slider(value=get_truncation_length(), minimum=shared.settings['truncation_length_min'], maximum=shared.settings['truncation_length_max'], step=256, label='将提示词截断至此长度', info='如果提示词超出这个长度，最左边的语素将被移除。大多数模型要求这个长度最多为2048。')
-                            shared.gradio['prompt_lookup_num_tokens'] = gr.Slider(value=shared.settings['prompt_lookup_num_tokens'], minimum=0, maximum=10, step=1, label='提示词查找解码语素数', info='启用提示词查找解码。')
-                            shared.gradio['max_tokens_second'] = gr.Slider(value=shared.settings['max_tokens_second'], minimum=0, maximum=20, step=1, label='每秒最多语素数', info='为了文本实时可读。')
+                            shared.gradio['truncation_length'] = gr.Slider(value=get_truncation_length(), minimum=shared.settings['truncation_length_min'], maximum=shared.settings['truncation_length_max'], step=256, label='将提示词截断至此长度', info='如果提示词超出这个长度，最左边的词符将被移除。大多数模型要求这个长度最多为2048。')
+                            shared.gradio['prompt_lookup_num_tokens'] = gr.Slider(value=shared.settings['prompt_lookup_num_tokens'], minimum=0, maximum=10, step=1, label='提示词查找解码词符数', info='启用提示词查找解码。')
+                            shared.gradio['max_tokens_second'] = gr.Slider(value=shared.settings['max_tokens_second'], minimum=0, maximum=20, step=1, label='每秒最多词符数', info='为了文本实时可读。')
                             shared.gradio['seed'] = gr.Number(value=shared.settings['seed'], label='种子（-1表示随机）')
-                            shared.gradio['skip_special_tokens'] = gr.Checkbox(value=shared.settings['skip_special_tokens'], label='跳过特殊语素', info='有些特定的模型需要取消这个设置。')
+                            shared.gradio['skip_special_tokens'] = gr.Checkbox(value=shared.settings['skip_special_tokens'], label='跳过特殊词符', info='有些特定的模型需要取消这个设置。')
                             shared.gradio['stream'] = gr.Checkbox(value=shared.settings['stream'], label='激活文本流式输出')
 
         ui_chat.create_chat_settings_ui()

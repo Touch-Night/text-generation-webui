@@ -34,7 +34,7 @@ def create_ui():
                 with gr.Tab('Logits'):
                     with gr.Row():
                         with gr.Column(scale=10):
-                            shared.gradio['get_logits-notebook'] = gr.Button('获取下一个语素概率')
+                            shared.gradio['get_logits-notebook'] = gr.Button('获取下一个词符概率')
                         with gr.Column(scale=1):
                             shared.gradio['use_samplers-notebook'] = gr.Checkbox(label='使用采样器', value=True, elem_classes=['no-background'])
 
@@ -42,9 +42,9 @@ def create_ui():
                         shared.gradio['logits-notebook'] = gr.Textbox(lines=23, label='输出', elem_classes=['textbox_logits_notebook', 'add_scrollbar'])
                         shared.gradio['logits-notebook-previous'] = gr.Textbox(lines=23, label='之前的输出', elem_classes=['textbox_logits_notebook', 'add_scrollbar'])
 
-                with gr.Tab('语素'):
-                    shared.gradio['get_tokens-notebook'] = gr.Button('获取输入的语素ID')
-                    shared.gradio['tokens-notebook'] = gr.Textbox(lines=23, label='语素', elem_classes=['textbox_logits_notebook', 'add_scrollbar', 'monospace'])
+                with gr.Tab('词符'):
+                    shared.gradio['get_tokens-notebook'] = gr.Button('获取输入的词符ID')
+                    shared.gradio['tokens-notebook'] = gr.Textbox(lines=23, label='词符', elem_classes=['textbox_logits_notebook', 'add_scrollbar', 'monospace'])
 
                 with gr.Row():
                     shared.gradio['Generate-notebook'] = gr.Button('生成', variant='primary', elem_classes='small-button')

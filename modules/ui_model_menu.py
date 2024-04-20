@@ -121,7 +121,7 @@ def create_ui():
                             shared.gradio['auto_devices'] = gr.Checkbox(label="自动分配设备", value=shared.args.auto_devices)
                             shared.gradio['tensorcores'] = gr.Checkbox(label="张量核心", value=shared.args.tensorcores, info='仅限NVIDIA：使用支持张量核心的llama-cpp-python编译。这可以提高RTX卡的性能。')
                             shared.gradio['streaming_llm'] = gr.Checkbox(label="streaming_llm", value=shared.args.streaming_llm, info='（实验性功能）激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。')
-                            shared.gradio['attention_sink_size'] = gr.Number(label="attention_sink_size", value=shared.args.attention_sink_size, precision=0, info='StreamingLLM：下沉语素的数量。仅在修剪后的提示词不与旧提示词前缀相同时使用。')
+                            shared.gradio['attention_sink_size'] = gr.Number(label="attention_sink_size", value=shared.args.attention_sink_size, precision=0, info='StreamingLLM：下沉词符的数量。仅在修剪后的提示词不与旧提示词前缀相同时使用。')
                             shared.gradio['cpu'] = gr.Checkbox(label="CPU", value=shared.args.cpu, info='llama.cpp：使用没有GPU加速的llama-cpp-python编译。Transformers：使用PyTorch的CPU模式。')
                             shared.gradio['row_split'] = gr.Checkbox(label="行分割", value=shared.args.row_split, info='在GPU之间按行分割模型。这可能会提高多GPU性能。')
                             shared.gradio['no_offload_kqv'] = gr.Checkbox(label="不卸载KQV", value=shared.args.no_offload_kqv, info='不要将K、Q、V卸载到GPU。这可以节省VRAM，但会降低性能。')
@@ -141,17 +141,17 @@ def create_ui():
                             shared.gradio['autosplit'] = gr.Checkbox(label="自动分割", value=shared.args.autosplit, info='自动在可用的GPU之间分割模型张量。')
                             shared.gradio['no_flash_attn'] = gr.Checkbox(label="不使用flash_attention", value=shared.args.no_flash_attn, info='强制不使用flash-attention。')
                             shared.gradio['cfg_cache'] = gr.Checkbox(label="CFG缓存", value=shared.args.cfg_cache, info='使用此加载器时，使用CFG是必需的。')
-                            shared.gradio['num_experts_per_token'] = gr.Number(label="每个语素的专家数量", value=shared.args.num_experts_per_token, info='仅适用于像Mixtral这样的MoE模型。')
+                            shared.gradio['num_experts_per_token'] = gr.Number(label="每个词符的专家数量", value=shared.args.num_experts_per_token, info='仅适用于像Mixtral这样的MoE模型。')
                             with gr.Blocks():
-                                shared.gradio['trust_remote_code'] = gr.Checkbox(label="信任远程代码(trust-remote-code)", value=shared.args.trust_remote_code, info='加载语素分析器/模型时设置trust_remote_code=True。要启用此选项，请使用--trust-remote-code参数启动Web UI。', interactive=shared.args.trust_remote_code)
-                                shared.gradio['no_use_fast'] = gr.Checkbox(label="不使用快速模式", value=shared.args.no_use_fast, info='加载语素分析器时设置use_fast=False。')
+                                shared.gradio['trust_remote_code'] = gr.Checkbox(label="信任远程代码(trust-remote-code)", value=shared.args.trust_remote_code, info='加载词符化器/模型时设置trust_remote_code=True。要启用此选项，请使用--trust-remote-code参数启动Web UI。', interactive=shared.args.trust_remote_code)
+                                shared.gradio['no_use_fast'] = gr.Checkbox(label="不使用快速模式", value=shared.args.no_use_fast, info='加载词符化器时设置use_fast=False。')
                                 shared.gradio['logits_all'] = gr.Checkbox(label="全部应用Logit", value=shared.args.logits_all, info='使用此加载器进行困惑度评估时需要设置。否则，请忽略它，因为它会使提示词处理速度变慢。')
 
                             shared.gradio['disable_exllama'] = gr.Checkbox(label="禁用ExLlama", value=shared.args.disable_exllama, info='对于GPTQ模型，禁用ExLlama内核。')
                             shared.gradio['disable_exllamav2'] = gr.Checkbox(label="禁用ExLlamav2", value=shared.args.disable_exllamav2, info='对于GPTQ模型，禁用ExLlamav2内核。')
                             shared.gradio['gptq_for_llama_info'] = gr.Markdown('用于与旧GPU兼容的传统加载器。如果支持，推荐使用ExLlamav2_HF或AutoGPTQ适用于GPTQ模型。')
                             shared.gradio['exllamav2_info'] = gr.Markdown("相比于ExLlamav2，推荐使用ExLlamav2_HF，因为它与扩展有更好的集成，并且在加载器之间提供了更一致的采样行为。")
-                            shared.gradio['llamacpp_HF_info'] = gr.Markdown("llamacpp_HF将llama.cpp作为Transformers模型加载。要使用它，您需要将GGUF放在models/的子文件夹中，并提供必要的语素分析器文件。\n\n您可以使用'llamacpp_HF创建器'菜单自动完成。")
+                            shared.gradio['llamacpp_HF_info'] = gr.Markdown("llamacpp_HF将llama.cpp作为Transformers模型加载。要使用它，您需要将GGUF放在models/的子文件夹中，并提供必要的词符化器文件。\n\n您可以使用'llamacpp_HF创建器'菜单自动完成。")
 
             with gr.Column():
                 with gr.Row():
@@ -171,7 +171,7 @@ def create_ui():
 
                     shared.gradio['unquantized_url'] = gr.Textbox(label="输入原始（未量化）模型的URL", info="示例：https://hf-mirror.com/lmsys/vicuna-13b-v1.5", max_lines=1)
                     shared.gradio['create_llamacpp_hf_button'] = gr.Button("提交", variant="primary", interactive=not mu)
-                    gr.Markdown("这将把你的gguf文件移动到`models`的子文件夹中，并附带必要的语素分析器文件。")
+                    gr.Markdown("这将把你的gguf文件移动到`models`的子文件夹中，并附带必要的词符化器文件。")
 
                 with gr.Tab("自定义指令模板"):
                     with gr.Row():
@@ -319,11 +319,11 @@ def create_llamacpp_hf(gguf_name, unquantized_url, progress=gr.Progress()):
         progress(0.0)
         model, branch = downloader.sanitize_model_and_branch_names(unquantized_url, None)
 
-        yield ("从Hf Mirror获取语素分析器文件链接")
+        yield ("从Hf Mirror获取词符化器文件链接")
         links, sha256, is_lora, is_llamacpp = downloader.get_download_links_from_huggingface(model, branch, text_only=True)
         output_folder = Path(shared.args.model_dir) / (re.sub(r'(?i)\.gguf$', '', gguf_name) + "-HF")
 
-        yield (f"下载语素分析器到`{output_folder}`")
+        yield (f"下载词符化器到`{output_folder}`")
         downloader.download_model_files(model, branch, links, sha256, output_folder, progress_bar=progress, threads=4, is_llamacpp=False)
 
         # 移动GGUF文件

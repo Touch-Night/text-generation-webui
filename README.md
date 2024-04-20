@@ -237,7 +237,7 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 | `--bf16`                                    | 使用bfloat16精度加载模型。需要Nvidia Ampere GPU。|
 | `--no-cache`                                | 生成文本时设置 `use_cache` 为 `False`。这略微减少了显存的使用，但这也导致性能损失。|
 | `--trust-remote-code`                       | 加载模型时设置 `trust_remote_code=True`。这对于某些模型是必需的。|
-| `--no_use_fast`                             | 加载语素分析器时设置use_fast=false（默认情况下为true）。如果您遇到与use_fast有关的任何问题，请使用此功能。|
+| `--no_use_fast`                             | 加载词符化器时设置use_fast=false（默认情况下为true）。如果您遇到与use_fast有关的任何问题，请使用此功能。|
 | `--use_flash_attention_2`                   | 在加载模型时设置use_flash_attention_2=True。|
 
 #### bitsandbytes 4-比特
@@ -260,7 +260,7 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 | `--threads` | 要使用的线程数。|
 | `--threads-batch THREADS_BATCH` | 用于批处理/提示词处理的线程数。|
 | `--no_mul_mat_q` | 禁用mulmat内核。|
-| `--n_batch` | 在调用llama_eval时批量处理的提示词语素的最大数量。|
+| `--n_batch` | 在调用llama_eval时批量处理的提示词词符的最大数量。|
 | `--no-mmap`   | 防止使用mmap。|
 | `--mlock`     | 强制系统将模型保留在RAM中。|
 | `--n-gpu-layers N_GPU_LAYERS` | 卸载到GPU的层数。|
@@ -271,7 +271,7 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 | `--cache-capacity CACHE_CAPACITY`   | 最大缓存容量（llama-cpp-python）。示例：2000MiB, 2GiB。如果没有提供单位，默认为字节。|
 | `--row_split`                               | 将模型按行分割到多个GPU上，这可能会提高多GPU的性能。 |
 | `--streaming-llm`                           | 激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。 |
-| `--attention-sink-size ATTENTION_SINK_SIZE` | StreamingLLM：下沉语素的数量。仅在修剪后的提示词与旧提示词前缀不同时使用。 |
+| `--attention-sink-size ATTENTION_SINK_SIZE` | StreamingLLM：下沉词符的数量。仅在修剪后的提示词与旧提示词前缀不同时使用。 |
 
 #### Exllamav2
 

@@ -116,7 +116,7 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
 
 def encode(prompt, add_special_tokens=True, add_bos_token=True, truncation_length=None):
     if shared.tokenizer is None:
-        raise ValueError('没有加载语素分析器')
+        raise ValueError('没有加载词符化器')
 
     if shared.model.__class__.__name__ in ['LlamaCppModel', 'Exllamav2Model']:
         input_ids = shared.tokenizer.encode(str(prompt))
@@ -152,7 +152,7 @@ def encode(prompt, add_special_tokens=True, add_bos_token=True, truncation_lengt
 
 def decode(output_ids, skip_special_tokens=True):
     if shared.tokenizer is None:
-        raise ValueError('没有加载语素分析器')
+        raise ValueError('没有加载词符化器')
 
     return shared.tokenizer.decode(output_ids, skip_special_tokens=skip_special_tokens)
 
@@ -411,7 +411,7 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
         t1 = time.time()
         original_tokens = len(original_input_ids[0])
         new_tokens = len(output) - (original_tokens if not shared.is_seq2seq else 0)
-        print(f'输出生成耗时{(t1-t0):.2f}秒（速率为{new_tokens/(t1-t0):.2f} 语素/秒，共{new_tokens}个语素，上下文长度为{original_tokens}，种子为{seed}）')
+        print(f'输出生成耗时{(t1-t0):.2f}秒（速率为{new_tokens/(t1-t0):.2f} 词符/秒，共{new_tokens}个词符，上下文长度为{original_tokens}，种子为{seed}）')
         return
 
 
@@ -440,5 +440,5 @@ def generate_reply_custom(question, original_question, seed, state, stopping_str
         t1 = time.time()
         original_tokens = len(encode(original_question)[0])
         new_tokens = len(encode(original_question + reply)[0]) - original_tokens
-        print(f'输出生成耗时{(t1-t0):.2f}秒（速率为{new_tokens/(t1-t0):.2f} 语素/秒，共{new_tokens}个语素，上下文长度为{original_tokens}，种子为{seed}）')
+        print(f'输出生成耗时{(t1-t0):.2f}秒（速率为{new_tokens/(t1-t0):.2f} 词符/秒，共{new_tokens}个词符，上下文长度为{original_tokens}，种子为{seed}）')
         return

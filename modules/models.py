@@ -119,7 +119,7 @@ def load_tokenizer(model_name, model):
     path_to_model = Path(f"{shared.args.model_dir}/{model_name}/")
     if path_to_model.exists():
         if shared.args.no_use_fast:
-            logger.info('正在use_fast设置为False的情况下加载语素分析器。')
+            logger.info('正在use_fast设置为False的情况下加载词符化器。')
 
         tokenizer = AutoTokenizer.from_pretrained(
             path_to_model,
@@ -281,9 +281,9 @@ def llamacpp_HF_loader(model_name):
 
     # Check if a HF tokenizer is available for the model
     if all((path / file).exists() for file in ['tokenizer_config.json']):
-        logger.info(f'正在使用来自：“{path}”的语素分析器')
+        logger.info(f'正在使用来自：“{path}”的词符化器')
     else:
-        logger.error("无法加载模型，因为找不到Transformers格式的语素分析器。")
+        logger.error("无法加载模型，因为找不到Transformers格式的词符化器。")
         return None, None
 
     model = LlamacppHF.from_pretrained(model_name)
@@ -327,7 +327,7 @@ def QuipSharp_loader(model_name):
 
     model_dir = Path(f'{shared.args.model_dir}/{model_name}')
     if not all((model_dir / file).exists() for file in ['tokenizer_config.json', 'special_tokens_map.json', 'tokenizer.model']):
-        logger.error(f"无法加载模型，因为在模型文件夹中找不到语素分析器文件。请从原始（未量化的）模型中下载以下文件到{model_dir}：special_tokens_map.json、tokenizer.json、tokenizer.model、tokenizer_config.json。")
+        logger.error(f"无法加载模型，因为在模型文件夹中找不到词符化器文件。请从原始（未量化的）模型中下载以下文件到{model_dir}：special_tokens_map.json、tokenizer.json、tokenizer.model、tokenizer_config.json。")
         return None, None
 
     model, model_str = model_from_hf_path(
