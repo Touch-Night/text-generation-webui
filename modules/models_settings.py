@@ -71,7 +71,7 @@ def get_model_metadata(model):
             template = template.replace('bos_token', "'{}'".format(bos_token))
 
             template = re.sub(r'raise_exception\([^)]*\)', "''", template)
-            model_settings['instruction_template'] = 'Custom (obtained from model metadata)'
+            model_settings['instruction_template'] = '其他（从模型元数据中获取）'
             model_settings['instruction_template_str'] = template
 
     else:
@@ -130,7 +130,7 @@ def get_model_metadata(model):
                     template = template.replace(k, "'{}'".format(value))
 
             template = re.sub(r'raise_exception\([^)]*\)', "''", template)
-            model_settings['instruction_template'] = 'Custom (obtained from model metadata)'
+            model_settings['instruction_template'] = '其他（从模型元数据中获取）'
             model_settings['instruction_template_str'] = template
 
     if 'instruction_template' not in model_settings:
@@ -148,7 +148,7 @@ def get_model_metadata(model):
                 model_settings[k] = settings[pat][k]
 
     # Load instruction template if defined by name rather than by value
-    if model_settings['instruction_template'] != 'Custom (obtained from model metadata)':
+    if model_settings['instruction_template'] != '其他（从模型元数据中获取）':
         model_settings['instruction_template_str'] = chat.load_instruction_template(model_settings['instruction_template'])
 
     return model_settings
