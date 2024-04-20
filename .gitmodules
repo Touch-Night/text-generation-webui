@@ -1,0 +1,3 @@
+[submodule "extensions/more_translators"]
+	path = extensions/more_translators
+	url = https://gitee.com/touchnight/more_translators.git
