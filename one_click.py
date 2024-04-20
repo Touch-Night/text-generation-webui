@@ -342,7 +342,7 @@ def install_webui():
         run_cmd("conda install -y -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ libuv")
 
     # Install the webui requirements
-    update_requirements(initial_installation=True)
+    update_requirements(initial_installation=True, pull=False)
 
 
 def get_extensions_names():
