@@ -100,7 +100,7 @@ conda install -y -c "nvidia/label/cuda-12.1.1" cuda
 #### 3.安装Web UI
 
 ```
-git clone -b Chinese https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui
+git clone --recursive -b Chinese https://gitee.com/touchnight/text-generation-webui.git
 cd text-generation-webui
 pip install -r <根据下表确定的依赖文件>
 ```

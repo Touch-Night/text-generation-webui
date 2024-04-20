@@ -361,7 +361,7 @@ def install_extensions_requirements():
 def update_requirements(initial_installation=False, pull=True):
     # Create .git directory if missing
     if not os.path.exists(os.path.join(script_dir, ".git")):
-        git_creation_cmd = 'git init -b main && git remote add origin https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui && git fetch && git symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/Chinese && git reset --hard origin/Chinese && git branch --set-upstream-to=origin/Chinese'
+        git_creation_cmd = 'git init -b main && git remote add origin https://gitee.com/touchnight/text-generation-webui && git fetch && git symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/Chinese && git reset --hard origin/Chinese && git branch --set-upstream-to=origin/Chinese && git submodule update --init --recursive'
         run_cmd(git_creation_cmd, environment=True, assert_success=True)
 
     if pull:

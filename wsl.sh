@@ -92,11 +92,12 @@ pushd $INSTALL_DIR 1> /dev/null || exit
 
 if [ ! -f "./server.py" ]; then
     git init -b main
-    git remote add origin https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui
+    git remote add origin https://gitee.com/touchnight/text-generation-webui
     git fetch
     #git remote set-head origin -a
     git reset origin/Chinese --hard
     git branch --set-upstream-to=origin/Chinese
+    git submodule update --init --recursive
     git restore -- . :!./CMD_FLAGS.txt
 fi
 
