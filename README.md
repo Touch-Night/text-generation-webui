@@ -107,16 +107,13 @@ pip install -r <根据下表确定的依赖文件>
 
 要使用的依赖文件：
 
-| GPU | CPU | 要使用的依赖文件 |
-|--------|---------|---------|
-| Nvidia | 有AVX2 | `requirements.txt` |
-| Nvidia | 无avx2 | `requirements_noavx2.txt` |
-| AMD | 有AVX2 | `requirements_amd.txt` |
-| AMD | 无avx2 | `requirements_amd_noavx2.txt` |
-| 仅CPU | 有AVX2 | `requirements_cpu_only.txt` |
-| 仅CPU | 无avx2 | `requirements_cpu_only_noavx2.txt` |
-| 苹果 | 英特尔 | `requirements_apple_intel.txt` |
-| 苹果 | 苹果Silicon | `requirements_apple_silicon.txt` |
+| GPU | 要使用的依赖文件 |
+|--------|---------|
+| Nvidia | `requirements.txt` |
+| AMD | `requirements_amd.txt` |
+| 仅CPU | `requirements_cpu_only.txt` |
+| 苹果（英特尔芯片） | `requirements_apple_intel.txt` |
+| 苹果Silicon | `requirements_apple_silicon.txt` |
 
 ### 启动Web UI
 
@@ -132,7 +129,7 @@ python server.py
 
 ##### Windows上的AMD GPU
 
-1) 在上面的命令中使用 `requirements_cpu_only.txt` 或者 `requirements_cpu_only_noavx2.txt`。
+1) 在上面的命令中使用 `requirements_cpu_only.txt`。
 
 2) 根据你的硬件使用适当的命令手动安装llama-cpp-python：[从PyPI安装](https://github.com/abetlen/llama-cpp-python#installation-with-hardware-acceleration) 。
     * 使用 `LLAMA_HIPBLAS=on` 切换键。
@@ -255,7 +252,6 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 
 | 命令行参数 | 描述 |
 |-------------|-------------|
-| `--tensorcores`  | 使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。仅限NVIDIA。|
 | `--n_ctx N_CTX` | 提示词上下文的大小。|
 | `--threads` | 要使用的线程数。|
 | `--threads-batch THREADS_BATCH` | 用于批处理/提示词处理的线程数。|

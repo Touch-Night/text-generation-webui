@@ -71,6 +71,7 @@ def get_model_metadata(model):
             template = template.replace('bos_token', "'{}'".format(bos_token))
 
             template = re.sub(r'raise_exception\([^)]*\)', "''", template)
+            template = re.sub(r'{% if add_generation_prompt %}.*', '', template, flags=re.DOTALL)
             model_settings['instruction_template'] = '其他（从模型元数据中获取）'
             model_settings['instruction_template_str'] = template
 
@@ -130,6 +131,7 @@ def get_model_metadata(model):
                     template = template.replace(k, "'{}'".format(value))
 
             template = re.sub(r'raise_exception\([^)]*\)', "''", template)
+            template = re.sub(r'{% if add_generation_prompt %}.*', '', template, flags=re.DOTALL)
             model_settings['instruction_template'] = '其他（从模型元数据中获取）'
             model_settings['instruction_template_str'] = template
 
