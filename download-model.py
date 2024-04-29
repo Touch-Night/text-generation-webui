@@ -21,7 +21,7 @@ import tqdm
 from requests.adapters import HTTPAdapter
 from tqdm.contrib.concurrent import thread_map
 
-base = os.environ.get("HF_ENDPOINT") or "https://hf-mirror.com"
+base = os.environ.get("HF_ENDPOINT") or "https://huggingface.co"
 
 
 class ModelDownloader:
@@ -31,8 +31,8 @@ class ModelDownloader:
     def get_session(self):
         session = requests.Session()
         if self.max_retries:
-            session.mount('https://cdn-lfs.hf-mirror.com', HTTPAdapter(max_retries=self.max_retries))
-            session.mount('https://hf-mirror.com', HTTPAdapter(max_retries=self.max_retries))
+            session.mount('https://cdn-lfs.huggingface.co', HTTPAdapter(max_retries=self.max_retries))
+            session.mount('https://huggingface.co', HTTPAdapter(max_retries=self.max_retries))
 
         if os.getenv('HF_USER') is not None and os.getenv('HF_PASS') is not None:
             session.auth = (os.getenv('HF_USER'), os.getenv('HF_PASS'))
@@ -232,7 +232,7 @@ class ModelDownloader:
         output_folder.mkdir(parents=True, exist_ok=True)
 
         if not is_llamacpp:
-            metadata = f'url: https://hf-mirror.com/{model}\n' \
+            metadata = f'url: https://huggingface.co/{model}\n' \
                        f'branch: {branch}\n' \
                        f'download date: {datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n'
 
