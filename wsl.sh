@@ -28,7 +28,7 @@ fi
 INSTALL_DIR="$INSTALL_DIR_PREFIX/text-generation-webui"
 CONDA_ROOT_PREFIX="$INSTALL_DIR/installer_files/conda"
 INSTALL_ENV_DIR="$INSTALL_DIR/installer_files/env"
-MINICONDA_DOWNLOAD_URL="https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh"
+MINICONDA_DOWNLOAD_URL="https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh"
 conda_exists="F"
 
 # environment isolation
@@ -75,7 +75,7 @@ fi
 
 # create the installer env
 if [ ! -e "$INSTALL_ENV_DIR" ]; then
-    "$CONDA_ROOT_PREFIX/bin/conda" create -y -k --prefix "$INSTALL_ENV_DIR" -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ python=3.11 git
+    "$CONDA_ROOT_PREFIX/bin/conda" create -y -k --prefix "$INSTALL_ENV_DIR" -c https://repo.anaconda.com/pkgs/main/ python=3.11 git
 fi
 
 # check if conda environment was actually created
@@ -92,10 +92,10 @@ pushd $INSTALL_DIR 1> /dev/null || exit
 
 if [ ! -f "./server.py" ]; then
     git init -b main
-    git remote add origin https://gitee.com/touchnight/text-generation-webui
+    git remote add origin https://github.com/Touch-Night/text-generation-webui
     git fetch
     #git remote set-head origin -a
-    git reset origin/Chinese --hard
+    git reset origin/ChineseHuggingface --hard
     git branch --set-upstream-to=origin/Chinese
     git submodule update --init --recursive
     git restore -- . :!./CMD_FLAGS.txt

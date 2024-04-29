@@ -106,13 +106,13 @@ def update_pytorch():
     install_pytorch = f"python -m pip install --upgrade torch=={TORCH_VERSION} torchvision=={TORCHVISION_VERSION} torchaudio=={TORCHAUDIO_VERSION} "
 
     if is_cuda118:
-        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cu118"
+        install_pytorch += "--index-url https://download.pytorch.org/whl/cu118"
     elif is_cuda:
-        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cu121"
+        install_pytorch += "--index-url https://download.pytorch.org/whl/cu121"
     elif is_rocm:
-        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/rocm5.6"
+        install_pytorch += "--index-url https://download.pytorch.org/whl/rocm5.6"
     elif is_cpu:
-        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cpu"
+        install_pytorch += "--index-url https://download.pytorch.org/whl/cpu"
     elif is_intel:
         if is_linux():
             install_pytorch = "python -m pip install --upgrade torch==2.1.0a0 torchvision==0.16.0a0 torchaudio==2.1.0a0 intel-extension-for-pytorch==2.1.10+xpu --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/"
@@ -285,13 +285,13 @@ def install_webui():
 
     if selected_gpu == "NVIDIA":
         if use_cuda118 == 'Y':
-            install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cu118"
+            install_pytorch += "--index-url https://download.pytorch.org/whl/cu118"
         else:
-            install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cu121"
+            install_pytorch += "--index-url https://download.pytorch.org/whl/cu121"
     elif selected_gpu == "AMD":
-        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/rocm5.6"
+        install_pytorch += "--index-url https://download.pytorch.org/whl/rocm5.6"
     elif selected_gpu in ["APPLE", "NONE"]:
-        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cpu"
+        install_pytorch += "--index-url https://download.pytorch.org/whl/cpu"
     elif selected_gpu == "INTEL":
         if is_linux():
             install_pytorch = "python -m pip install torch==2.1.0a0 torchvision==0.16.0a0 torchaudio==2.1.0a0 intel-extension-for-pytorch==2.1.10+xpu --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/"
@@ -299,21 +299,21 @@ def install_webui():
             install_pytorch = "python -m pip install torch==2.1.0a0 torchvision==0.16.0a0 torchaudio==2.1.0a0 intel-extension-for-pytorch==2.1.10 --extra-index-url https://pytorch-extension.intel.com/release-whl/stable/xpu/us/"
     elif selected_gpu == "HUAWEI":
         if is_linux():
-            install_pytorch = "python -m pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cpu && python -m pip install torch_npu==2.1.0"
+            install_pytorch = "python -m pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cpu && python -m pip install torch_npu==2.1.0"
         else:
             print("华为昇腾NPU仅支持Linux。正在退出...")
             sys.exit(1)
 
     # Install Git and then Pytorch
     print_big_message("正在安装PyTorch。")
-    run_cmd(f"conda install -y -k -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ ninja git && {install_pytorch}", assert_success=True, environment=True)
+    run_cmd(f"conda install -y -k ninja git && {install_pytorch}", assert_success=True, environment=True)
 
     if selected_gpu == "INTEL":
         # Install oneAPI dependencies via conda
         print_big_message("正在安装Intel oneAPI运行时库。")
         run_cmd("conda install -y -c intel dpcpp-cpp-rt=2024.0 mkl-dpcpp=2024.0")
         # Install libuv required by Intel-patched torch
-        run_cmd("conda install -y -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/ libuv")
+        run_cmd("conda install -y libuv")
 
     # Install the webui requirements
     update_requirements(initial_installation=True, pull=False)
@@ -329,13 +329,13 @@ def install_extensions_requirements():
     for i, extension in enumerate(extensions):
         print(f"\n\n--- [{i+1}/{len(extensions)}]: {extension}\n\n")
         extension_req_path = os.path.join("extensions", extension, "requirements.txt")
-        run_cmd(f"python -m pip install -r {extension_req_path} -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade", assert_success=False, environment=True)
+        run_cmd(f"python -m pip install -r {extension_req_path} --upgrade", assert_success=False, environment=True)
 
 
 def update_requirements(initial_installation=False, pull=True):
     # Create .git directory if missing
     if not os.path.exists(os.path.join(script_dir, ".git")):
-        git_creation_cmd = 'git init -b main && git remote add origin https://gitee.com/touchnight/text-generation-webui && git fetch && git symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/Chinese && git reset --hard origin/Chinese && git branch --set-upstream-to=origin/Chinese && git submodule update --init --recursive'
+        git_creation_cmd = 'git init -b main && git remote add origin https://github.com/Touch-Night/text-generation-webui && git fetch && git symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/ChineseHuggingface && git reset --hard origin/ChineseHuggingface && git branch --set-upstream-to=origin/ChineseHuggingface && git submodule update --init --recursive'
         run_cmd(git_creation_cmd, environment=True, assert_success=True)
 
     if pull:
@@ -408,7 +408,7 @@ def update_requirements(initial_installation=False, pull=True):
         print(f"已卸载 {package_name}")
 
     # Install/update the project requirements
-    run_cmd("python -m pip install -r temp_requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade", assert_success=True, environment=True)
+    run_cmd("python -m pip install -r temp_requirements.txt --upgrade", assert_success=True, environment=True)
     os.remove('temp_requirements.txt')
 
     # Check for '+cu' or '+rocm' in version string to determine if torch uses CUDA or ROCm. Check for pytorch-cuda as well for backwards compatibility
@@ -460,7 +460,7 @@ if __name__ == "__main__":
                     install_extensions_requirements()
                 else:
                     extension_req_path = os.path.join("extensions", choices[choice], "requirements.txt")
-                    run_cmd(f"python -m pip install -r {extension_req_path} -i https://pypi.tuna.tsinghua.edu.cn/simple --upgrade", assert_success=False, environment=True)
+                    run_cmd(f"python -m pip install -r {extension_req_path} --upgrade", assert_success=False, environment=True)
 
                 update_requirements(pull=False)
             elif choice == 'C':
