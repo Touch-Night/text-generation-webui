@@ -85,6 +85,7 @@ def create_ui(default_preset):
                             shared.gradio['truncation_length'] = gr.Slider(value=get_truncation_length(), minimum=shared.settings['truncation_length_min'], maximum=shared.settings['truncation_length_max'], step=256, label='将提示词截断至此长度', info='如果提示词超出这个长度，最左边的词符将被移除。大多数模型要求这个长度最多为2048。')
                             shared.gradio['prompt_lookup_num_tokens'] = gr.Slider(value=shared.settings['prompt_lookup_num_tokens'], minimum=0, maximum=10, step=1, label='提示词查找解码词符数', info='启用提示词查找解码。')
                             shared.gradio['max_tokens_second'] = gr.Slider(value=shared.settings['max_tokens_second'], minimum=0, maximum=20, step=1, label='每秒最多词符数', info='为了文本实时可读。')
+                            shared.gradio['max_updates_second'] = gr.Slider(value=shared.settings['max_updates_second'], minimum=0, maximum=24, step=1, label='每秒最大UI刷新次数', info='如果你在流式输出时感到UI卡顿，可以调整此设置。')
                             shared.gradio['seed'] = gr.Number(value=shared.settings['seed'], label='种子（-1表示随机）')
                             shared.gradio['skip_special_tokens'] = gr.Checkbox(value=shared.settings['skip_special_tokens'], label='跳过特殊词符', info='有些特定的模型需要取消这个设置。')
                             shared.gradio['stream'] = gr.Checkbox(value=shared.settings['stream'], label='激活文本流式输出')
