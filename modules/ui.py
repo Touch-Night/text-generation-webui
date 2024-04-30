@@ -11,7 +11,13 @@ from modules import shared
 
 with open(Path(__file__).resolve().parent / '../css/NotoSans/stylesheet.css', 'r', encoding='utf-8') as f:
     css = f.read()
-with open(Path(__file__).resolve().parent / '../css/main.css', 'r', encoding='utf-8') as f:
+with open(Path(__file__).resolve().parent / '../css/main.css', 'r') as f:
+    css += f.read()
+with open(Path(__file__).resolve().parent / '../css/katex/katex.min.css', 'r') as f:
+    css += f.read()
+with open(Path(__file__).resolve().parent / '../css/highlightjs/github-dark.min.css', 'r') as f:
+    css += f.read()
+with open(Path(__file__).resolve().parent / '../css/highlightjs/highlightjs-copy.min.css', 'r') as f:
     css += f.read()
 with open(Path(__file__).resolve().parent / '../js/main.js', 'r', encoding='utf-8') as f:
     js = f.read()
@@ -36,7 +42,7 @@ theme = gr.themes.Default(
     button_large_padding='6px 12px',
     body_text_color_subdued='#484848',
     background_fill_secondary='#eaeaea',
-    background_fill_primary='#fafafa',
+    background_fill_primary='var(--neutral-50)',
 )
 
 if Path("notification.mp3").exists():
@@ -116,6 +122,7 @@ def list_interface_input_elements():
         'max_new_tokens',
         'auto_max_new_tokens',
         'max_tokens_second',
+        'max_updates_second',
         'prompt_lookup_num_tokens',
         'seed',
         'temperature',
