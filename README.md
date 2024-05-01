@@ -107,13 +107,16 @@ pip install -r <根据下表确定的依赖文件>
 
 要使用的依赖文件：
 
-| GPU | 要使用的依赖文件 |
-|--------|---------|
-| Nvidia | `requirements.txt` |
-| AMD | `requirements_amd.txt` |
-| 仅CPU | `requirements_cpu_only.txt` |
-| 苹果（英特尔芯片） | `requirements_apple_intel.txt` |
-| 苹果Silicon | `requirements_apple_silicon.txt` |
+| GPU | CPU | 要使用的依赖文件 |
+|--------|---------|---------|
+| NVIDIA | 支持AVX2指令集 | `requirements.txt` |
+| NVIDIA | 不支持AVX2指令集 | `requirements_noavx2.txt` |
+| AMD | 支持AVX2指令集 | `requirements_amd.txt` |
+| AMD | 不支持AVX2指令集 | `requirements_amd_noavx2.txt` |
+| 仅CPU | 支持AVX2指令集 | `requirements_cpu_only.txt` |
+| 仅CPU | 不支持AVX2指令集 | `requirements_cpu_only_noavx2.txt` |
+| Apple | Intel | `requirements_apple_intel.txt` |
+| Apple | Apple Silicon | `requirements_apple_silicon.txt` |
 
 ### 启动Web UI
 
@@ -129,7 +132,7 @@ python server.py
 
 ##### Windows上的AMD GPU
 
-1) 在上面的命令中使用 `requirements_cpu_only.txt`。
+1) 在上面的命令中使用 `requirements_cpu_only.txt` 或者 `requirements_cpu_only_noavx2.txt`。
 
 2) 根据你的硬件使用适当的命令手动安装llama-cpp-python：[从PyPI安装](https://github.com/abetlen/llama-cpp-python#installation-with-hardware-acceleration) 。
     * 使用 `LLAMA_HIPBLAS=on` 切换键。
@@ -252,6 +255,7 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 
 | 命令行参数 | 描述 |
 |-------------|-------------|
+| `--tensorcores`  | 使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。仅限NVIDIA显卡。 |
 | `--n_ctx N_CTX` | 提示词上下文的大小。|
 | `--threads` | 要使用的线程数。|
 | `--threads-batch THREADS_BATCH` | 用于批处理/提示词处理的线程数。|
@@ -397,7 +401,7 @@ text-generation-webui
 │   │   └── tokenizer.model
 ```
 
-在这两种情况下，您都可以使用 "Model"  UI的选项卡自动从Hugging Face上下载模型。也可以通过以下命令在命令行下载它
+在这两种情况下，您都可以使用 UI 中的“模型”选项卡自动从HF Mirror上下载模型。也可以通过以下命令在命令行下载
 
 ```
 python download-model.py organization/model
@@ -421,3 +425,9 @@ https://colab.research.google.com/github/Touch-Night/text-generation-webui/blob/
 ## 致谢
 
 2023年8月， [安德烈·霍洛维茨（Andreessen Horowitz）](https://a16z.com/)  （A16Z）提供了一项慷慨的赠款，以鼓励和支持我对该项目的独立工作。我 **极其**  感谢他们的信任和认可。
+
+## GitHub 赞助
+
+下面是在Github上赞助此项目的赞助榜：
+
+* 来抢沙发吧！访问 https://github.com/sponsors/oobabooga/.

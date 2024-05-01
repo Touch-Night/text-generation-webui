@@ -114,6 +114,7 @@ group.add_argument('--quant_type', type=str, default='nf4', help='4位的量化�
 
 # llama.cpp
 group = parser.add_argument_group('llama.cpp')
+group.add_argument('--tensorcores', action='store_true', help='使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。仅限NVIDIA显卡。')
 group.add_argument('--n_ctx', type=int, default=2048, help='提示词上下文的大小。')
 group.add_argument('--threads', type=int, default=0, help='使用的线程数。')
 group.add_argument('--threads-batch', type=int, default=0, help='用于批处理/提示词处理的线程数。')
@@ -204,8 +205,7 @@ group = parser.add_argument_group('Multimodal')
 group.add_argument('--multimodal-pipeline', type=str, default=None, help='要使用的多模态管道。示例：llava-7b, llava-13b。')
 
 # Deprecated parameters
-group = parser.add_argument_group('Deprecated')
-group.add_argument('--tensorcores', action='store_true', help='DEPRECATED')
+# group = parser.add_argument_group('Deprecated')
 
 args = parser.parse_args()
 args_defaults = parser.parse_args([])
@@ -215,7 +215,7 @@ for arg in sys.argv[1:]:
     if hasattr(args, arg):
         provided_arguments.append(arg)
 
-deprecated_args = ['tensorcores']
+deprecated_args = []
 
 
 def do_cmd_flags_warnings():
