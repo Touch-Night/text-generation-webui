@@ -114,6 +114,7 @@ group.add_argument('--quant_type', type=str, default='nf4', help='4位的量化�
 
 # llama.cpp
 group = parser.add_argument_group('llama.cpp')
+group.add_argument('--flash-attn', action='store_true', help='使用flash-attention。')
 group.add_argument('--tensorcores', action='store_true', help='使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。仅限NVIDIA显卡。')
 group.add_argument('--n_ctx', type=int, default=2048, help='提示词上下文的大小。')
 group.add_argument('--threads', type=int, default=0, help='使用的线程数。')

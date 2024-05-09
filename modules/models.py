@@ -62,7 +62,7 @@ sampler_hijack.hijack_samplers()
 
 
 def load_model(model_name, loader=None):
-    logger.info(f"Loading \"{model_name}\"")
+    logger.info(f"正在加载\"{model_name}\"")
     t0 = time.time()
 
     shared.is_seq2seq = False
@@ -107,10 +107,10 @@ def load_model(model_name, loader=None):
     elif loader in ['llama.cpp', 'llamacpp_HF']:
         shared.settings['truncation_length'] = shared.args.n_ctx
 
+    logger.info(f"在{(time.time()-t0):.2f}秒内加载了\"{model_name}\"。")
     logger.info(f"加载器：\"{loader}\"")
     logger.info(f"截断长度：{shared.settings['truncation_length']}")
     logger.info(f"指令模板：\"{metadata['instruction_template']}\"")
-    logger.info(f"在{(time.time()-t0):.2f}秒内加载了模型。")
     return model, tokenizer
 
 

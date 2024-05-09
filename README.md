@@ -1,3 +1,12 @@
+# 写在前面
+
+这是原项目[text-generation-webui](https://github.com/oobabooga/text-generation-webui)的完全汉化版。  
+相较于原版，做了以下改动：
+- 用户界面、命令行内容、部分文档的完整翻译  
+- 使用上海交大的torch源，其他包使用清华大学源，使用mirror.ghproxy下载github上的软件包，使用hf-mirror下载模型。因此安装到使用的全过程都不需要挂梯子  
+- 添加对华为昇腾NPU的支持  
+
+以下是原项目的README翻译
 # Text generation web UI
 
 一个用于大型语言模型的Gradio Web UI。
@@ -256,6 +265,7 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 | 命令行参数 | 描述 |
 |-------------|-------------|
 | `--tensorcores`  | 使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。仅限NVIDIA显卡。 |
+| `--flash-attn`   | 使用flash-attention。 |
 | `--n_ctx N_CTX` | 提示词上下文的大小。|
 | `--threads` | 要使用的线程数。|
 | `--threads-batch THREADS_BATCH` | 用于批处理/提示词处理的线程数。|
@@ -425,9 +435,3 @@ https://colab.research.google.com/github/Touch-Night/text-generation-webui/blob/
 ## 致谢
 
 2023年8月， [安德烈·霍洛维茨（Andreessen Horowitz）](https://a16z.com/)  （A16Z）提供了一项慷慨的赠款，以鼓励和支持我对该项目的独立工作。我 **极其**  感谢他们的信任和认可。
-
-## GitHub 赞助
-
-下面是在Github上赞助此项目的赞助榜：
-
-* 来抢沙发吧！访问 https://github.com/sponsors/oobabooga/.
