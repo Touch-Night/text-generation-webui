@@ -45,7 +45,7 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
     generate_func = apply_extensions('custom_generate_reply')
     if generate_func is None:
         if shared.model_name == 'None' or shared.model is None:
-            logger.error("没有加载模型！请在模型选项卡中选择一个。")
+            logger.error("没有加载模型！请在模型标签页中选择一个。")
             yield ''
             return
 
@@ -56,8 +56,7 @@ def _generate_reply(question, state, stopping_strings=None, is_chat=False, escap
 
     if generate_func != generate_reply_HF and shared.args.verbose:
         logger.info("PROMPT=")
-        print(question)
-        print()
+        print_prompt(question)
 
     # Prepare the input
     original_question = question
@@ -345,8 +344,7 @@ def generate_reply_HF(question, original_question, seed, state, stopping_strings
         print()
 
         logger.info("PROMPT=")
-        print(decode(input_ids[0], skip_special_tokens=False))
-        print()
+        print_prompt(decode(input_ids[0], skip_special_tokens=False))
 
     # Handle StreamingLLM for llamacpp_HF
     if shared.model.__class__.__name__ == 'LlamacppHF' and shared.args.streaming_llm:
@@ -438,3 +436,18 @@ def generate_reply_custom(question, original_question, seed, state, stopping_str
         new_tokens = len(encode(original_question + reply)[0]) - original_tokens
         print(f'输出生成耗时{(t1-t0):.2f}秒（速率为{new_tokens/(t1-t0):.2f} 词符/秒，共{new_tokens}个词符，上下文长度为{original_tokens}，种子为{seed}）')
         return
+
+
+def print_prompt(prompt, max_chars=2000):
+    DARK_YELLOW = "\033[38;5;3m"
+    RESET = "\033[0m"
+
+    if len(prompt) > max_chars:
+        half_chars = max_chars // 2
+        hidden_len = len(prompt[half_chars:-half_chars])
+        hidden_msg = f"{DARK_YELLOW}[...已折叠{hidden_len}个字符...]{RESET}"
+        print(prompt[:half_chars] + hidden_msg + prompt[-half_chars:])
+    else:
+        print(prompt)
+
+    print()

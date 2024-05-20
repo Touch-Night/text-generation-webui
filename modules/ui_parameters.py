@@ -46,7 +46,7 @@ def create_ui(default_preset):
                                 shared.gradio['ban_eos_token'] = gr.Checkbox(value=shared.settings['ban_eos_token'], label='禁用序列终止符', info='强制模型永不过早结束生成。')
                                 shared.gradio['add_bos_token'] = gr.Checkbox(value=shared.settings['add_bos_token'], label='在提示词开头添加序列起始符', info='禁用此项可以使回复更加具有创造性。')
                                 shared.gradio['custom_stopping_strings'] = gr.Textbox(lines=2, value=shared.settings["custom_stopping_strings"] or None, label='自定义停止字符串', info='用英文半角逗号分隔，用""包裹。', placeholder='"\\n", "\\nYou:"')
-                                shared.gradio['custom_token_bans'] = gr.Textbox(value=shared.settings['custom_token_bans'] or None, label='禁用词符', info='填入要禁用的词符ID，用英文半角逗号分隔。你可以在默认或笔记本选项卡获得词符的ID。')
+                                shared.gradio['custom_token_bans'] = gr.Textbox(value=shared.settings['custom_token_bans'] or None, label='禁用词符', info='填入要禁用的词符ID，用英文半角逗号分隔。你可以在默认或笔记本标签页获得词符的ID。')
 
                             shared.gradio['penalty_alpha'] = gr.Slider(0, 5, value=generate_params['penalty_alpha'], label='惩罚系数α', info='用于对比搜索，必须取消勾选“使用采样算法”')
                             shared.gradio['guidance_scale'] = gr.Slider(-0.5, 2.5, step=0.05, value=generate_params['guidance_scale'], label='指导比例', info='用于CFG，1.5是个不错的值。')
