@@ -498,7 +498,7 @@ if __name__ == "__main__":
             os.chdir(script_dir)
 
         if os.environ.get("LAUNCH_AFTER_INSTALL", "").lower() in ("no", "n", "false", "0", "f", "off"):
-            print_big_message("由于LAUNCH_AFTER_INSTALL，现在将退出。")
+            print_big_message("由于变量LAUNCH_AFTER_INSTALL不为TRUE，现在将退出。")
             sys.exit()
 
         # Check if a model has been downloaded yet
@@ -510,7 +510,7 @@ if __name__ == "__main__":
             model_dir = 'models'
 
         if len([item for item in glob.glob(f'{model_dir}/*') if not item.endswith(('.txt', '.yaml'))]) == 0:
-            print_big_message("您还没有下载任何模型。\n等Web UI启动之后，可以转到\"模型\"选项卡去下载一个。")
+            print_big_message("您还没有下载任何模型。\n等Web UI启动之后，可以转到\"模型\"标签页去下载一个。")
 
         # Workaround for llama-cpp-python loading paths in CUDA env vars even if they do not exist
         conda_path_bin = os.path.join(conda_env_path, "bin")

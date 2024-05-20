@@ -10,8 +10,8 @@ global_scores = None
 
 def get_next_logits(prompt, state, use_samplers, previous, top_logits=25, return_dict=False):
     if shared.model is None:
-        logger.error("未加载模型！请在“模型”选项卡中选择一个。")
-        return '错误：未加载模型！请在“模型”选项卡中选择一个。', previous
+        logger.error("未加载模型！请在“模型”标签页中选择一个。")
+        return '错误：未加载模型！请在“模型”标签页中选择一个。', previous
 
     is_non_hf_exllamav2 = shared.model.__class__.__name__ == 'Exllamav2Model'
     is_non_hf_llamacpp = shared.model.__class__.__name__ == 'LlamaCppModel'

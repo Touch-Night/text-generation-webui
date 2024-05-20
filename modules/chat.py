@@ -309,7 +309,7 @@ def chatbot_wrapper(text, state, regenerate=False, _continue=False, loading_mess
                 }
 
     if shared.model_name == 'None' or shared.model is None:
-        raise ValueError("您还没有加载模型！请在模型选项卡中选择一个。")
+        raise ValueError("您还没有加载模型！请在模型标签页中选择一个。")
 
     # Generate the prompt
     kwargs = {
@@ -356,7 +356,7 @@ def impersonate_wrapper(text, state):
     static_output = chat_html_wrapper(state['history'], state['name1'], state['name2'], state['mode'], state['chat_style'], state['character_menu'])
 
     if shared.model_name == 'None' or shared.model is None:
-        logger.error("您还没有加载模型！请在模型选项卡中选择一个。")
+        logger.error("您还没有加载模型！请在模型标签页中选择一个。")
         yield '', static_output
         return
 

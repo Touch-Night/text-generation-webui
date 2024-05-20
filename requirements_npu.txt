@@ -34,11 +34,11 @@ sse-starlette==1.6.5
 tiktoken
 
 # llama-cpp-python (CPU only, AVX2)
-https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.69/llama_cpp_python-0.2.69-cp311-cp311-win_amd64.whl; platform_system == "Windows" and python_version == "3.11"
-https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.69/llama_cpp_python-0.2.69-cp311-cp311-linux_x86_64.whl; platform_system == "Linux" and platform_machine == "x86_64" and python_version == "3.11"
-https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.69/llama_cpp_python-0.2.69-cp310-cp310-win_amd64.whl; platform_system == "Windows" and python_version == "3.10"
-https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.69/llama_cpp_python-0.2.69-cp310-cp310-linux_x86_64.whl; platform_system == "Linux" and platform_machine == "x86_64" and python_version == "3.10"
-https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.69/llama_cpp_python-0.2.69-cp39-cp39-win_amd64.whl; platform_system == "Windows" and python_version == "3.9"
-https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.69/llama_cpp_python-0.2.69-cp39-cp39-linux_x86_64.whl; platform_system == "Linux" and platform_machine == "x86_64" and python_version == "3.9"
-https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.69/llama_cpp_python-0.2.69-cp38-cp38-win_amd64.whl; platform_system == "Windows" and python_version == "3.8"
-https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.69/llama_cpp_python-0.2.69-cp38-cp38-linux_x86_64.whl; platform_system == "Linux" and platform_machine == "x86_64" and python_version == "3.8"
+https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.75/llama_cpp_python-0.2.75-cp311-cp311-win_amd64.whl; platform_system == "Windows" and python_version == "3.11"
+https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.75/llama_cpp_python-0.2.75-cp311-cp311-linux_x86_64.whl; platform_system == "Linux" and platform_machine == "x86_64" and python_version == "3.11"
+https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.75/llama_cpp_python-0.2.75-cp310-cp310-win_amd64.whl; platform_system == "Windows" and python_version == "3.10"
+https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.75/llama_cpp_python-0.2.75-cp310-cp310-linux_x86_64.whl; platform_system == "Linux" and platform_machine == "x86_64" and python_version == "3.10"
+https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.75/llama_cpp_python-0.2.75-cp39-cp39-win_amd64.whl; platform_system == "Windows" and python_version == "3.9"
+https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.75/llama_cpp_python-0.2.75-cp39-cp39-linux_x86_64.whl; platform_system == "Linux" and platform_machine == "x86_64" and python_version == "3.9"
+https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.75/llama_cpp_python-0.2.75-cp38-cp38-win_amd64.whl; platform_system == "Windows" and python_version == "3.8"
+https://github.com/abetlen/llama-cpp-python/releases/download/v0.2.75/llama_cpp_python-0.2.75-cp38-cp38-linux_x86_64.whl; platform_system == "Linux" and platform_machine == "x86_64" and python_version == "3.8"
