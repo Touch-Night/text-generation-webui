@@ -1,4 +1,5 @@
 accelerate==0.30.*
+auto-gptq==0.7.1
 colorama
 datasets
 decorator
@@ -23,7 +24,7 @@ safetensors==0.4.*
 scipy
 sentencepiece
 tensorboard
-transformers==4.40.*
+transformers==4.41.*
 tqdm
 wandb
 

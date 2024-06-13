@@ -60,7 +60,7 @@ def hex_to_int(c):
         return int(c)
     elif "a" <= c.lower() <= "f":
         return ord(c.lower()) - ord("a") + 10
-    raise RuntimeError("unknown hex char " + c)
+    raise RuntimeError("未知十六进制字符 " + c)
 
 
 def remove_leading_white_space(src, newline_ok):
