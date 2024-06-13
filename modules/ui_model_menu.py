@@ -97,12 +97,10 @@ def create_ui():
                             shared.gradio['n_ctx'] = gr.Slider(minimum=0, maximum=shared.settings['truncation_length_max'], step=256, label="n_ctx", value=shared.args.n_ctx, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。')
                             shared.gradio['tensor_split'] = gr.Textbox(label='张量分割', info='将模型分割到多个GPU的比例列表。示例：18,17')
                             shared.gradio['n_batch'] = gr.Slider(label="批处理大小", minimum=1, maximum=2048, step=1, value=shared.args.n_batch)
-                            shared.gradio['threads'] = gr.Slider(label="线程数", minimum=0, step=1, maximum=32, value=shared.args.threads)
-                            shared.gradio['threads_batch'] = gr.Slider(label="批处理线程数", minimum=0, step=1, maximum=32, value=shared.args.threads_batch)
+                            shared.gradio['threads'] = gr.Slider(label="线程数", minimum=0, step=1, maximum=256, value=shared.args.threads)
+                            shared.gradio['threads_batch'] = gr.Slider(label="批处理线程数", minimum=0, step=1, maximum=256, value=shared.args.threads_batch)
                             shared.gradio['wbits'] = gr.Dropdown(label="权重位数", choices=["None", 1, 2, 3, 4, 8], value=shared.args.wbits if shared.args.wbits > 0 else "None")
                             shared.gradio['groupsize'] = gr.Dropdown(label="组大小", choices=["None", 32, 64, 128, 1024], value=shared.args.groupsize if shared.args.groupsize > 0 else "None")
-                            shared.gradio['model_type'] = gr.Dropdown(label="模型类型", choices=["None"], value=shared.args.model_type or "None")
-                            shared.gradio['pre_layer'] = gr.Slider(label="预处理层", minimum=0, maximum=100, value=shared.args.pre_layer[0] if shared.args.pre_layer is not None else 0)
                             shared.gradio['gpu_split'] = gr.Textbox(label='GPU分割', info='以逗号分隔的每个GPU使用的VRAM（以GB为单位）列表。示例：20,7,7')
                             shared.gradio['max_seq_len'] = gr.Slider(label='最大序列长度', minimum=0, maximum=shared.settings['truncation_length_max'], step=256, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。', value=shared.args.max_seq_len)
                             with gr.Blocks():
@@ -111,14 +109,13 @@ def create_ui():
                                 shared.gradio['compress_pos_emb'] = gr.Slider(label='压缩位置嵌入', minimum=1, maximum=8, step=1, info='位置嵌入的压缩因子。应设置为（上下文长度）/（模型原始上下文长度）。等于1/rope_freq_scale。', value=shared.args.compress_pos_emb)
 
                             shared.gradio['autogptq_info'] = gr.Markdown('推荐使用ExLlamav2_HF而非AutoGPTQ，适用于从Llama衍生的模型。')
-                            shared.gradio['quipsharp_info'] = gr.Markdown('QuIP#目前需要手动安装。')
 
                         with gr.Column():
                             shared.gradio['load_in_8bit'] = gr.Checkbox(label="以8位量化加载", value=shared.args.load_in_8bit)
                             shared.gradio['load_in_4bit'] = gr.Checkbox(label="以4位量化加载", value=shared.args.load_in_4bit)
                             shared.gradio['use_double_quant'] = gr.Checkbox(label="使用双重量化", value=shared.args.use_double_quant)
                             shared.gradio['use_flash_attention_2'] = gr.Checkbox(label="使用flash_attention 2", value=shared.args.use_flash_attention_2, info='加载模型时设置use_flash_attention_2=True。')
-                            shared.gradio['flash-attn'] = gr.Checkbox(label="使用flash-attn", value=shared.args.flash_attn, info='使用flash-attention。')
+                            shared.gradio['flash_attn'] = gr.Checkbox(label="使用flash_attn", value=shared.args.flash_attn, info='使用flash-attention。')
                             shared.gradio['auto_devices'] = gr.Checkbox(label="自动分配设备", value=shared.args.auto_devices)
                             shared.gradio['tensorcores'] = gr.Checkbox(label="tensorcores", value=shared.args.tensorcores, info='仅限N卡：使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。')
                             shared.gradio['streaming_llm'] = gr.Checkbox(label="streaming_llm", value=shared.args.streaming_llm, info='（实验性功能）激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。')
@@ -187,9 +184,7 @@ def create_ui():
 
 
 def create_event_handlers():
-    shared.gradio['loader'].change(
-        loaders.make_loader_params_visible, gradio('loader'), gradio(loaders.get_all_params())).then(
-        lambda value: gr.update(choices=loaders.get_model_types(value)), gradio('loader'), gradio('model_type'))
+    shared.gradio['loader'].change(loaders.make_loader_params_visible, gradio('loader'), gradio(loaders.get_all_params()))
 
     # In this event handler, the interface state is read and updated
     # with the model defaults (if any), and then the model is loaded
@@ -273,6 +268,10 @@ def load_lora_wrapper(selected_loras):
 
 def download_model_wrapper(repo_id, specific_file, progress=gr.Progress(), return_links=False, check=False):
     try:
+        if repo_id == "":
+            yield ("请输入模型路径")
+            return
+
         downloader = importlib.import_module("download-model").ModelDownloader()
 
         progress(0.0)
@@ -289,8 +288,14 @@ def download_model_wrapper(repo_id, specific_file, progress=gr.Progress(), retur
             yield output
             return
 
-        yield ("获取输出文件夹")
-        output_folder = downloader.get_output_folder(model, branch, is_lora, is_llamacpp=is_llamacpp)
+        yield ("正在获取输出文件夹")
+        output_folder = downloader.get_output_folder(
+            model,
+            branch,
+            is_lora,
+            is_llamacpp=is_llamacpp,
+            model_dir=shared.args.model_dir if shared.args.model_dir != shared.args_defaults.model_dir else None
+        )
 
         if output_folder == Path("models"):
             output_folder = Path(shared.args.model_dir)

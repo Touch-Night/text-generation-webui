@@ -38,7 +38,15 @@ def create_ui(default_preset):
                             shared.gradio['presence_penalty'] = gr.Slider(0, 2, value=generate_params['presence_penalty'], step=0.05, label='按是否存在的重复度惩罚加数')
                             shared.gradio['repetition_penalty_range'] = gr.Slider(0, 4096, step=64, value=generate_params['repetition_penalty_range'], label='用于重复度惩罚计算的词符范围')
                             shared.gradio['do_sample'] = gr.Checkbox(value=generate_params['do_sample'], label='使用采样算法')
-                            gr.Markdown("[了解更多](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-Parameters-Tab)")
+
+                            with gr.Blocks():
+                                gr.Markdown("[DRY 序列重复惩罚](https://github.com/oobabooga/text-generation-webui/pull/5677)")
+                                shared.gradio['dry_multiplier'] = gr.Slider(0, 5, value=generate_params['dry_multiplier'], step=0.01, label='DRY因子', info='将值设为大于零以启用DRY。控制被惩罚的最短序列的惩罚量级。')
+                                shared.gradio['dry_base'] = gr.Slider(1, 4, value=generate_params['dry_base'], step=0.01, label='DRY基数', info='控制随着重复的序列的长度增长，惩罚的增长有多快。')
+                                shared.gradio['dry_allowed_length'] = gr.Slider(1, 20, value=generate_params['dry_allowed_length'], step=1, label='DRY允许重复的序列长度', info='可免于被惩罚的最长重复序列。')
+                                shared.gradio['dry_sequence_breakers'] = gr.Textbox(value=generate_params['dry_sequence_breakers'], label='DRY序列匹配中断符', info='这些词符会打断并分隔序列的匹配。该参数以逗号分隔的引号字符串列表形式指定。')
+
+                            gr.Markdown("[了解更多](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-%E5%8F%82%E6%95%B0%E6%A0%87%E7%AD%BE%E9%A1%B5)")
 
                         with gr.Column():
                             with gr.Group():

@@ -292,12 +292,6 @@ def calc_trainable_parameters(model):
 
 def do_train(lora_name: str, always_override: bool, q_proj_en: bool, v_proj_en: bool, k_proj_en: bool, o_proj_en: bool, gate_proj_en: bool, down_proj_en: bool, up_proj_en: bool, save_steps: int, micro_batch_size: int, batch_size: int, epochs: int, learning_rate: str, lr_scheduler_type: str, lora_rank: int, lora_alpha: int, lora_dropout: float, cutoff_len: int, dataset: str, eval_dataset: str, format: str, eval_steps: int, raw_text_file: str, overlap_len: int, newline_favor_len: int, higher_rank_limit: bool, warmup_steps: int, optimizer: str, hard_cut_string: str, train_only_after: str, stop_at_loss: float, add_eos_token: bool, min_chars: int, report_to: str):
 
-    if shared.args.monkey_patch:
-        from alpaca_lora_4bit.monkeypatch.peft_tuners_lora_monkey_patch import (
-            replace_peft_model_with_int4_lora_model
-        )
-        replace_peft_model_with_int4_lora_model()
-
     global WANT_INTERRUPT
     WANT_INTERRUPT = False
 
@@ -328,10 +322,6 @@ def do_train(lora_name: str, always_override: bool, q_proj_en: bool, v_proj_en: 
             logger.warning(f"LoRA训练目前仅对LLaMA、OPT、GPT-J和GPT-NeoX模型进行了验证。（发现模型类型：{model_type}）")
 
         time.sleep(5)
-
-    if shared.args.loader == 'GPTQ-for-LLaMa' and not shared.args.monkey_patch:
-        yield "使用GPTQ-for-LLaMa进行LoRA训练需要启用`--monkey-patch`"
-        return
 
     if cutoff_len <= 0 or micro_batch_size <= 0 or batch_size <= 0 or actual_lr <= 0 or lora_rank <= 0 or lora_alpha <= 0:
         yield "不能输入零。"
@@ -552,15 +542,6 @@ def do_train(lora_name: str, always_override: bool, q_proj_en: bool, v_proj_en: 
     except:
         yield traceback.format_exc().replace('\n', '\n\n')
         return
-
-    if shared.args.monkey_patch:
-        from alpaca_lora_4bit.autograd_4bit import Autograd4bitQuantLinear
-        from alpaca_lora_4bit.models import Linear4bitLt
-        for _, m in lora_model.named_modules():
-            if isinstance(m, Autograd4bitQuantLinear) or isinstance(m, Linear4bitLt):
-                if m.is_v1_model:
-                    m.zeros = m.zeros.half()
-                m.scales = m.scales.half()
 
     class Tracked():
         def __init__(self):
