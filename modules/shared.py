@@ -13,6 +13,7 @@ from modules.logging_colors import logger
 model = None
 tokenizer = None
 model_name = 'None'
+previous_model_name = 'None'
 is_seq2seq = False
 model_dirty_from_training = False
 lora_names = []
@@ -84,10 +85,11 @@ group.add_argument('--settings', type=str, help='从这个yaml文件加载默认
 group.add_argument('--extensions', type=str, nargs='+', help='要加载的扩展列表。如果你想加载多于一个扩展，将名字用空格分隔。')
 group.add_argument('--verbose', action='store_true', help='在终端打印提示。')
 group.add_argument('--chat-buttons', action='store_true', help='在聊天标签页显示按钮，而不是悬浮菜单。')
+group.add_argument('--idle-timeout', type=int, default=0, help='在这么多分钟不活动后卸载模型。当您再次尝试使用它时，模型将自动重新加载。')
 
 # Model loader
 group = parser.add_argument_group('模型加载器')
-group.add_argument('--loader', type=str, help='手动选择模型加载器，否则将自动检测。有效选项包括：Transformers, llama.cpp, llamacpp_HF, ExLlamav2_HF, ExLlamav2, AutoGPTQ, AutoAWQ, GPTQ-for-LLaMa, QuIP#。')
+group.add_argument('--loader', type=str, help='手动选择模型加载器，否则将自动检测。有效选项包括：Transformers, llama.cpp, llamacpp_HF, ExLlamav2_HF, ExLlamav2, AutoGPTQ, AutoAWQ。')
 
 # Transformers/Accelerate
 group = parser.add_argument_group('Transformers/Accelerate')
@@ -147,21 +149,17 @@ group.add_argument('--num_experts_per_token', type=int, default=2, help='用于�
 # AutoGPTQ
 group = parser.add_argument_group('AutoGPTQ')
 group.add_argument('--triton', action='store_true', help='使用triton。')
-group.add_argument('--no_inject_fused_attention', action='store_true', help='禁用融合注意力机制，这将减少VRAM的使用，但会导致推理速度变慢。')
-group.add_argument('--no_inject_fused_mlp', action='store_true', help='仅Triton模式：禁用融合MLP，这将减少VRAM的使用，但会导致推理速度变慢。')
-group.add_argument('--no_use_cuda_fp16', action='store_true', help='这可以在某些系统上加快模型的速度。')
-group.add_argument('--desc_act', action='store_true', help='对于没有quantize_config.json的模型，此参数用于定义是否在BaseQuantizeConfig中设置desc_act。')
-group.add_argument('--disable_exllama', action='store_true', help='禁用ExLlama内核，这可以在某些系统上提高推理速度。')
+group.add_argument('--no_inject_fused_mlp', action='store_true', help='仅在Triton模式下应用：禁用使用Fused MLP的使用，它将以慢的推理为代价使用较少的VRAM。')
+group.add_argument('--no_use_cuda_fp16', action='store_true', help='在某些系统上可以使模型更快。')
+group.add_argument('--desc_act', action='store_true', help='对于没有quantize_config.json的模型，此参数用于定是否在BaseQuantizeConfig中设置desc_act。')
+group.add_argument('--disable_exllama', action='store_true', help='禁用ExLlama内核，这在某些系统上可以提高推理速度。')
 group.add_argument('--disable_exllamav2', action='store_true', help='禁用ExLlamav2内核。')
-
-# GPTQ-for-LLaMa
-group = parser.add_argument_group('GPTQ-for-LLaMa')
-group.add_argument('--wbits', type=int, default=0, help='以指定的位精度加载预量化模型。支持2、3、4和8位。')
-group.add_argument('--model_type', type=str, help='预量化模型的类型。目前支持LLaMA、OPT和GPT-J。')
+group.add_argument('--wbits', type=int, default=0, help='加载指定精度的预量化模型。支持2、3、4和8。')
 group.add_argument('--groupsize', type=int, default=-1, help='组大小。')
-group.add_argument('--pre_layer', type=int, nargs='+', help='分配给GPU的层数。设置此参数可启用4位模型的CPU卸载。对于多GPU，将数字用空格分隔，例如 --pre_layer 30 60。')
-group.add_argument('--checkpoint', type=str, help='量化检查点文件的路径。如果未指定，将自动检测。')
-group.add_argument('--monkey-patch', action='store_true', help='应用monkey patch以便与量化模型一起使用LoRAs。')
+
+# AutoAWQ
+group = parser.add_argument_group('AutoAWQ')
+group.add_argument('--no_inject_fused_attention', action='store_true', help='停用融合注意力，这将以较慢的推理为代价使用较少的VRAM。')
 
 # HQQ
 group = parser.add_argument_group('HQQ')
@@ -206,7 +204,11 @@ group = parser.add_argument_group('Multimodal')
 group.add_argument('--multimodal-pipeline', type=str, default=None, help='要使用的多模态管道。示例：llava-7b, llava-13b。')
 
 # Deprecated parameters
-# group = parser.add_argument_group('Deprecated')
+group = parser.add_argument_group('Deprecated')
+group.add_argument('--model_type', type=str, help='DEPRECATED')
+group.add_argument('--pre_layer', type=int, nargs='+', help='DEPRECATED')
+group.add_argument('--checkpoint', type=str, help='DEPRECATED')
+group.add_argument('--monkey-patch', action='store_true', help='DEPRECATED')
 
 args = parser.parse_args()
 args_defaults = parser.parse_args([])
@@ -251,8 +253,6 @@ def fix_loader_name(name):
         return 'Transformers'
     elif name in ['autogptq', 'auto-gptq', 'auto_gptq', 'auto gptq']:
         return 'AutoGPTQ'
-    elif name in ['gptq-for-llama', 'gptqforllama', 'gptqllama', 'gptq for llama', 'gptq_for_llama']:
-        return 'GPTQ-for-LLaMa'
     elif name in ['exllama', 'ex-llama', 'ex_llama', 'exlama']:
         return 'ExLlama'
     elif name in ['exllamav2', 'exllama-v2', 'ex_llama-v2', 'exlamav2', 'exlama-v2', 'exllama2', 'exllama-2']:
@@ -261,8 +261,6 @@ def fix_loader_name(name):
         return 'ExLlamav2_HF'
     elif name in ['autoawq', 'awq', 'auto-awq']:
         return 'AutoAWQ'
-    elif name in ['quip#', 'quip-sharp', 'quipsharp', 'quip_sharp']:
-        return 'QuIP#'
     elif name in ['hqq']:
         return 'HQQ'
 

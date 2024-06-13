@@ -167,8 +167,11 @@ class ModelDownloader:
         is_llamacpp = has_gguf and specific_file is not None
         return links, sha256, is_lora, is_llamacpp
 
-    def get_output_folder(self, model, branch, is_lora, is_llamacpp=False):
-        base_folder = 'models' if not is_lora else 'loras'
+    def get_output_folder(self, model, branch, is_lora, is_llamacpp=False, model_dir=None):
+        if model_dir:
+            base_folder = model_dir
+        else:
+            base_folder = 'models' if not is_lora else 'loras'
 
         # If the model is of type GGUF, save directly in the base_folder
         if is_llamacpp:
@@ -304,7 +307,8 @@ if __name__ == '__main__':
     parser.add_argument('--threads', type=int, default=4, help='同时下载的文件数。')
     parser.add_argument('--text-only', action='store_true', help='只下载文本文件(txt/json)。')
     parser.add_argument('--specific-file', type=str, default=None, help='要下载的特定文件的名称（如果未提供，则下载所有文件）。')
-    parser.add_argument('--output', type=str, default=None, help='保存模型的文件夹。')
+    parser.add_argument('--output', type=str, default=None, help='保存模型文件的文件夹。')
+    parser.add_argument('--model-dir', type=str, default=None, help='把模型文件保存到此文件夹的一个子文件夹，替换掉默认的(text-generation-webui/models)。')
     parser.add_argument('--clean', action='store_true', help='不恢复以前的下载。')
     parser.add_argument('--check', action='store_true', help='校验模型文件的sha256校验和。')
     parser.add_argument('--max-retries', type=int, default=5, help='在下载时出现错误时的最大重试次数。')
@@ -333,7 +337,7 @@ if __name__ == '__main__':
     if args.output:
         output_folder = Path(args.output)
     else:
-        output_folder = downloader.get_output_folder(model, branch, is_lora, is_llamacpp=is_llamacpp)
+        output_folder = downloader.get_output_folder(model, branch, is_lora, is_llamacpp=is_llamacpp, model_dir=args.model_dir)
 
     if args.check:
         # Check previously downloaded files
@@ -341,3 +345,4 @@ if __name__ == '__main__':
     else:
         # Download files
         downloader.download_model_files(model, branch, links, sha256, output_folder, specific_file=specific_file, threads=args.threads, is_llamacpp=is_llamacpp)
+        
