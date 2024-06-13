@@ -20,10 +20,10 @@
 ## 功能
 
 * 三种界面模式：默认（两列），笔记本和聊天。
-* 多种模型后端：[Transformers](https://github.com/huggingface/transformers), [llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持), [ExLlamaV2](https://github.com/turboderp/exllamav2), [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ), [AutoAWQ](https://github.com/casper-hansen/AutoAWQ), [GPTQ-for-LLaMa](https://github.com/qwopqwop200/GPTQ-for-LLaMa), [QuIP#](https://github.com/Cornell-RelaxML/quip-sharp)。
-* 下拉菜单快速切换不同的模型。
+* 多种模型后端：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持)、[ExLlamaV2](https://github.com/turboderp/exllamav2)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)。
+* 用来切换不同模型的下拉菜单。
 * 大量的扩展（内置和用户贡献），包括Coqui TTS用于逼真的语音输出，Whisper STT用于语音输入，翻译，[多模态模型](https://github.com/Touch-Night/text-generation-webui/tree/Chinese/extensions/multimodal)，向量库，Stable Diffusion集成，以及更多。请参阅[wiki](https://github.com/Touch-Night/text-generation-webui/wiki/07-%E2%80%90-Extensions)和[扩展列表](https://github.com/oobabooga/text-generation-webui-extensions)。
-* [和自定义角色聊天](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-Parameters-Tab#character)。
+* [和自定义角色聊天](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-%E5%8F%82%E6%95%B0%E6%A0%87%E7%AD%BE%E9%A1%B5#character)。
 * 精确的聊天模板，用于指令遵循模型，包括Llama-2-chat，Alpaca，Vicuna，Mistral。
 * LoRA: 使用自己的数据训练新的LoRA，即时加载/卸载LoRA。
 * Transformers库集成：通过bitsandbytes在4位或8位精度下加载模型，使用llama.cpp的同时使用transformers采样器（`llamacpp_HF` 加载器），使用PyTorch在32位精度下进行CPU推理。
@@ -209,168 +209,146 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 命令行参数列表
 </summary>
 
-#### 基本设置
+```txt
+使用方法: server.py [-h] [--multi-user] [--character CHARACTER] [--model MODEL] [--lora LORA [LORA ...]] [--model-dir MODEL_DIR] [--lora-dir LORA_DIR] [--model-menu] [--settings SETTINGS]
+                 [--extensions EXTENSIONS [EXTENSIONS ...]] [--verbose] [--chat-buttons] [--idle-timeout IDLE_TIMEOUT] [--loader LOADER] [--cpu] [--auto-devices]
+                 [--gpu-memory GPU_MEMORY [GPU_MEMORY ...]] [--cpu-memory CPU_MEMORY] [--disk] [--disk-cache-dir DISK_CACHE_DIR] [--load-in-8bit] [--bf16] [--no-cache] [--trust-remote-code]
+                 [--force-safetensors] [--no_use_fast] [--use_flash_attention_2] [--load-in-4bit] [--use_double_quant] [--compute_dtype COMPUTE_DTYPE] [--quant_type QUANT_TYPE] [--flash-attn]
+                 [--tensorcores] [--n_ctx N_CTX] [--threads THREADS] [--threads-batch THREADS_BATCH] [--no_mul_mat_q] [--n_batch N_BATCH] [--no-mmap] [--mlock] [--n-gpu-layers N_GPU_LAYERS]
+                 [--tensor_split TENSOR_SPLIT] [--numa] [--logits_all] [--no_offload_kqv] [--cache-capacity CACHE_CAPACITY] [--row_split] [--streaming-llm] [--attention-sink-size ATTENTION_SINK_SIZE]
+                 [--gpu-split GPU_SPLIT] [--autosplit] [--max_seq_len MAX_SEQ_LEN] [--cfg-cache] [--no_flash_attn] [--cache_8bit] [--cache_4bit] [--num_experts_per_token NUM_EXPERTS_PER_TOKEN]
+                 [--triton] [--no_inject_fused_mlp] [--no_use_cuda_fp16] [--desc_act] [--disable_exllama] [--disable_exllamav2] [--wbits WBITS] [--groupsize GROUPSIZE] [--no_inject_fused_attention]
+                 [--hqq-backend HQQ_BACKEND] [--deepspeed] [--nvme-offload-dir NVME_OFFLOAD_DIR] [--local_rank LOCAL_RANK] [--alpha_value ALPHA_VALUE] [--rope_freq_base ROPE_FREQ_BASE]
+                 [--compress_pos_emb COMPRESS_POS_EMB] [--listen] [--listen-port LISTEN_PORT] [--listen-host LISTEN_HOST] [--share] [--auto-launch] [--gradio-auth GRADIO_AUTH]
+                 [--gradio-auth-path GRADIO_AUTH_PATH] [--ssl-keyfile SSL_KEYFILE] [--ssl-certfile SSL_CERTFILE] [--api] [--public-api] [--public-api-id PUBLIC_API_ID] [--api-port API_PORT]
+                 [--api-key API_KEY] [--admin-key ADMIN_KEY] [--nowebui] [--multimodal-pipeline MULTIMODAL_PIPELINE] [--model_type MODEL_TYPE] [--pre_layer PRE_LAYER [PRE_LAYER ...]]
+                 [--checkpoint CHECKPOINT] [--monkey-patch]
 
-| 命令行参数 | 描述 |
-|--------------------------------------------|-------------|
-| `-h`, `--help`                             | 显示此帮助消息然后退出|
-| `--multi-user`                             | 多用户模式。聊天历史将不保存或自动加载。警告：公开分享可能不安全。|
-| `--character CHARACTER`                    | 默认情况下，要在聊天模式加载的角色名称。|
-| `--model MODEL`                            | 默认情况下加载的模型名称。|
-| `--lora LORA [LORA ...]`                   | 加载的LoRA列表。如果您想加载多个LoRA，请写下由空格分开的名称。|
-| `--model-dir MODEL_DIR`                    | 所有模型的目录路径。|
-| `--lora-dir LORA_DIR`                      | 所有LoRA的目录路径。|
-| `--model-menu`                             | 当Web UI首次启动时，在终端中显示模型菜单。|
-| `--settings SETTINGS_FILE`                 | 从此YAML文件加载默认接口设置。`settings-template.yaml` 是一个示例。如果您创建一个名为`settings.yaml`的文件，默认情况下将加载此文件，而无需使用 `--settings` 命令行参数。|
-| `--extensions EXTENSIONS [EXTENSIONS ...]` | 加载的扩展列表。如果要加载多个扩展，请写下由空格隔开的名称。|
-| `--verbose`                                | 将提示词打印到终端。|
-| `--chat-buttons`                           | 在“聊天”选项卡上显示按钮，而不是悬停菜单。|
+Text generation web UI
 
-#### 模型加载器
+可选项：
+  -h, --help                                     显示此帮助消息然后退出
 
-| 命令行参数 | 描述 |
-|--------------------------------------------|-------------|
-| `--loader LOADER`                          | 手动选择模型加载器，否则，它将被自动检测。可选选项：Transformers，llama.cpp，llamacpp_HF，Exllamav2_HF，Exllamav2，AutoGPTQ，AutoAWQ，GPTQ-for-LLaMa，QuIP#。|
+基础设置：
+  --multi-user                                   多用户模式。聊天历史将不保存或自动加载。警告：公开分享可能不安全。
+  --character CHARACTER                          默认情况下，要在聊天模式加载的角色名称。
+  --model MODEL                                  默认情况下加载的模型名称。
+  --lora LORA [LORA ...]                         加载的LoRA列表。如果您想加载多个LoRA，请写下由空格分开的名称。
+  --model-dir MODEL_DIR                          所有模型的目录路径。
+  --lora-dir LORA_DIR                            所有LoRA的目录路径。
+  --model-menu                                   UI首次启动时，在终端中显示模型菜单。
+  --settings SETTINGS                            从此YAML文件加载默认接口设置。参见settings-template.yaml以获取示例。如果您创建了一个名为settings.yaml的文件，该文件将被默认加载，无需
+                                                 使用--settings命令行参数。
+  --extensions EXTENSIONS [EXTENSIONS ...]       加载的扩展列表。如果要加载多个扩展，请写下由空格隔开的名称。
+  --verbose                                      将提示词打印到终端。
+  --chat-buttons                                 在“聊天”选项卡上显示按钮，而不是悬停菜单。
+  --idle-timeout IDLE_TIMEOUT                    在这么多分钟不活动后卸载模型。当您再次尝试使用它时，模型将自动重新加载。
 
-#### Accelerate/transformers
+模型加载器：
+  --loader LOADER                                手动选择模型加载器，否则，它将被自动检测。可选选项：Transformers，llama.cpp，llamacpp_HF，Exllamav2_HF，Exllamav2，
+                                                 AutoGPTQ，AutoAWQ。
 
-| 命令行参数 | 描述 |
-|---------------------------------------------|-------------|
-| `--cpu`                                     | 使用CPU生成文本。警告：使用CPU训练非常慢。|
-| `--auto-devices`                            | 自动将模型划分到可用的GPU和CPU上。|
-|  `--gpu-memory GPU_MEMORY [GPU_MEMORY ...]` | 为每个GPU分配的最大GPU内存，单位为GiB。例如：单个GPU使用 --gpu-memory 10，两个GPU使用 --gpu-memory 10 5。你也可以像这样用MiB来设置值 --gpu-memory 3500MiB。|
-| `--cpu-memory CPU_MEMORY`                   | 用于分配卸载权重的最大CPU内存，单位为GiB。与上面相同。|
-| `--disk`                                    | 如果模型对于你的GPU和CPU的总和来说太大了，将剩余的层发送到磁盘。|
-| `--disk-cache-dir DISK_CACHE_DIR`           | 磁盘缓存保存目录。默认为 "cache" 。|
-| `--load-in-8bit`                            | 使用8位精度加载模型（使用bitsandbytes）。|
-| `--bf16`                                    | 使用bfloat16精度加载模型。需要Nvidia Ampere GPU。|
-| `--no-cache`                                | 生成文本时设置 `use_cache` 为 `False`。这略微减少了显存的使用，但这也导致性能损失。|
-| `--trust-remote-code`                       | 加载模型时设置 `trust_remote_code=True`。这对于某些模型是必需的。|
-| `--no_use_fast`                             | 加载词符化器时设置use_fast=false（默认情况下为true）。如果您遇到与use_fast有关的任何问题，请使用此功能。|
-| `--use_flash_attention_2`                   | 在加载模型时设置use_flash_attention_2=True。|
+Transformers/Accelerate：
+  --cpu                                          使用CPU生成文本。警告：使用CPU训练非常慢。
+  --auto-devices                                 自动将模型划分到可用的GPU和CPU上。
+  --gpu-memory GPU_MEMORY [GPU_MEMORY ...]       为每个GPU分配的最大GPU内存，单位为GiB。例如：单个GPU使用 --gpu-memory 10，两个GPU使用 --gpu-memory 10 5。你也可以像这样
+                                                 用MiB来设置值 --gpu-memory 3500MiB。
+  --cpu-memory CPU_MEMORY                        用于分配卸载权重的最大CPU内存，单位为GiB。与上面相同。
+  --disk                                         如果模型对于你的GPU和CPU的总和来说太大了，将剩余的层发送到磁盘。
+  --disk-cache-dir DISK_CACHE_DIR                磁盘缓存保存目录。默认为 "cache" 。
+  --load-in-8bit                                 使用bitsandbytes以8位精度加载模型。
+  --bf16                                         使用bfloat16精度加载模型。需要Nvidia Ampere GPU。
+  --no-cache                                     生成文本时设置 `use_cache` 为 `False`。这略微减少了显存的使用，但这也导致性能损失。
+  --trust-remote-code                            加载模型时设置 `trust_remote_code=True`。这对于某些模型是必需的。
+  --force-safetensors                            在加载模型时设置 `use_safetensors=True`。这可以防止任意代码执行。
+  --no_use_fast                                  加载词符化器时设置use_fast=false（默认情况下为true）。如果您遇到与use_fast有关的任何问题，请使用此功能。
+  --use_flash_attention_2                        在加载模型时设置use_flash_attention_2=True。
 
-#### bitsandbytes 4-比特
+bitsandbytes 4-比特：
+  --load-in-4bit                                 使用bitsandbytes以4位精度加载模型。
+  --use_double_quant                             对4位精度使用use_double_quant。
+  --compute_dtype COMPUTE_DTYPE                  4位精度的计算数据类型。有效选项：bfoat16, float16, float32。
+  --quant_type QUANT_TYPE                        4位精度的量化类型。有效选项：nf4, fp4。
 
-⚠️  目前要求Windows上的最低计算水平为7.0。
+llama.cpp：
+  --flash-attn                                   使用flash-attention。
+  --tensorcores                                  使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。仅限NVIDIA显卡。
+  --n_ctx N_CTX                                  提示词上下文的大小。
+  --threads THREADS                              要使用的线程数。
+  --threads-batch THREADS_BATCH                  用于批处理/提示词处理的线程数。
+  --no_mul_mat_q                                 禁用mulmat内核。
+  --n_batch N_BATCH                              在调用llama_eval时批量处理的提示词词符的最大数量。
+  --no-mmap                                      防止使用mmap。
+  --mlock                                        强制系统将模型保留在RAM中。
+  --n-gpu-layers N_GPU_LAYERS                    卸载到GPU的层数。
+  --tensor_split TENSOR_SPLIT                    在多个GPU上分割模型。逗号分隔的比例列表。示例：18,17。
+  --numa                                         激活Llama.cpp的NUMA任务分配。
+  --logits_all                                   要使困惑度评估起效，需要设置此项。否则，请忽略它，因为它会使提示词处理变慢。
+  --no_offload_kqv                               不将K、Q、V卸载到GPU。这可以节省VRAM，但会降低性能。
+  --cache-capacity CACHE_CAPACITY                最大缓存容量（llama-cpp-python）。示例：2000MiB, 2GiB。如果没有提供单位，默认为字节。
+  --row_split                                    将模型按行分割到多个GPU上，这可能会提高多GPU的性能。
+  --streaming-llm                                激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。
+  --attention-sink-size ATTENTION_SINK_SIZE      StreamingLLM：下沉词符的数量。仅在修剪后的提示词与旧提示词前缀不同时使用。
 
-| 命令行参数 | 描述 |
-|---------------------------------------------|-------------|
-| `--load-in-4bit`                            | 以4位精度加载模型（使用bisandbytes）。|
-| `--use_double_quant`                        | 对4位精度使用use_double_quant。|
-| `--compute_dtype COMPUTE_DTYPE`             | 4位精度的计算数据类型。有效选项：bfoat16, float16, float32。|
-| `--quant_type QUANT_TYPE`                   | 4位精度的量化类型。有效选项：nf4, fp4。|
+ExLlamaV2：
+  --gpu-split GPU_SPLIT                          逗号分隔的列表，指定每个GPU设备用于模型层的VRAM（以GB为单位）。示 例：20,7,7。
+  --autosplit                                    将模型张量自动分割到可用的GPU上。这将导致--gpu-split被忽略。
+  --max_seq_len MAX_SEQ_LEN                      最大序列长度。
+  --cfg-cache                                    ExLlamav2_HF：为CFG负面提示创建一个额外的缓存。使用该加载器时，必须使用CFG。
+  --no_flash_attn                                强制不使用flash-attention。
+  --cache_8bit                                   使用8位缓存以节省VRAM。
+  --cache_4bit                                   使用Q4缓存以节省VRAM。
+  --num_experts_per_token NUM_EXPERTS_PER_TOKEN  用于生成的专家数量。适用于MoE模型，如Mixtral。
 
-#### llama.cpp
+AutoGPTQ：
+  --triton                                       使用triton。
+  --no_inject_fused_mlp                          仅在Triton模式下应用：禁用使用Fused MLP的使用，它将以慢的推理为代价使用较少的VRAM。
+  --no_use_cuda_fp16                             在某些系统上可以使模型更快。
+  --desc_act                                     对于没有quantize_config.json的模型，此参数用于定是否在BaseQuantizeConfig中设置desc_act。
+  --disable_exllama                              禁用ExLlama内核，这在某些系统上可以提高推理速度。
+  --disable_exllamav2                            禁用ExLlamav2内核。
+  --wbits WBITS                                  加载指定精度的预量化模型。支持2、3、4和8。
+  --groupsize GROUPSIZE                          组大小。
 
-| 命令行参数 | 描述 |
-|-------------|-------------|
-| `--tensorcores`  | 使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。仅限NVIDIA显卡。 |
-| `--flash-attn`   | 使用flash-attention。 |
-| `--n_ctx N_CTX` | 提示词上下文的大小。|
-| `--threads` | 要使用的线程数。|
-| `--threads-batch THREADS_BATCH` | 用于批处理/提示词处理的线程数。|
-| `--no_mul_mat_q` | 禁用mulmat内核。|
-| `--n_batch` | 在调用llama_eval时批量处理的提示词词符的最大数量。|
-| `--no-mmap`   | 防止使用mmap。|
-| `--mlock`     | 强制系统将模型保留在RAM中。|
-| `--n-gpu-layers N_GPU_LAYERS` | 卸载到GPU的层数。|
-| `--tensor_split TENSOR_SPLIT`       | 在多个GPU上分割模型。逗号分隔的比例列表。示：18,17。|
-| `--numa`      | 激活Llama.cpp的NUMA任务分配。|
-| `--logits_all`| 需要设置以使困惑度评估工作。否则，请忽略它，因为它会使提示处理变。|
-| `--no_offload_kqv` | 不将K、Q、V卸载到GPU。这可以节省VRAM，但会降低性能。|
-| `--cache-capacity CACHE_CAPACITY`   | 最大缓存容量（llama-cpp-python）。示例：2000MiB, 2GiB。如果没有提供单位，默认为字节。|
-| `--row_split`                               | 将模型按行分割到多个GPU上，这可能会提高多GPU的性能。 |
-| `--streaming-llm`                           | 激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。 |
-| `--attention-sink-size ATTENTION_SINK_SIZE` | StreamingLLM：下沉词符的数量。仅在修剪后的提示词与旧提示词前缀不同时使用。 |
+AutoAWQ：
+  --no_inject_fused_attention                    停用融合注意力，这将以较慢的推理为代价使用较少的VRAM。
 
-#### Exllamav2
+HQQ：
+  --hqq-backend HQQ_BACKEND                      HQQ加载器的后端。有效选项：PYTORCH, PYTORCH_COMPILE, ATEN。
 
-| 命令行参数 | 描述 |
-|------------------|-------------|
-|  `--gpu-split`     | 逗号分隔的列表，指定每个GPU设备用于模型层的VRAM（以GB为单位）。示 例：20,7,7。|
-|  `--max_seq_len MAX_SEQ_LEN`           | 最大序列长度。|
-|  `--cfg-cache`                         | ExLlamav2_HF：为CFG负面提示创建一个额外的缓 存。使用该加载器时，必须使用CFG。|
-|  `--no_flash_attn`                     | 强制不使用flash-attention。|
-|  `--cache_8bit`                        | 使用8位缓存以节省VRAM。|
-|`--cache_4bit`                        | 使用Q4缓存以节省VRAM。|
-|  `--num_experts_per_token NUM_EXPERTS_PER_TOKEN` | 用于生成的专家数量。适用于MoE模型，如Mixtral。|
+DeepSpeed：
+  --deepspeed                                    通过Transformers集成启用DeepSpeed ZeRO-3进行推理。
+  --nvme-offload-dir NVME_OFFLOAD_DIR            DeepSpeed：用于ZeRO-3 NVME卸载的目录。
+  --local_rank LOCAL_RANK                        DeepSpeed：分布式设置的可选参数。
 
-#### AutoGPTQ
+RoPE：
+  --alpha_value ALPHA_VALUE                      NTK RoPE缩放的位置嵌入alpha因子。使用此选项或compress_pos_emb，不要同时使用两者。
+  --rope_freq_base ROPE_FREQ_BASE                如果大于0，将代替alpha_value使用。这两者符合rope_freq_base = 10000 * alpha_value ^ (64 / 63)关系式。
+  --compress_pos_emb COMPRESS_POS_EMB            位置嵌入的压缩因子。应设置为 (上下文长度) / (模型原始上下文长度)。等于 1/rope_freq_scale。
 
-| 命令行参数 | 描述 |
-|------------------|-------------|
-| `--triton`                     | 使用triton。|
-| `--no_inject_fused_attention`  | 禁用融合注意力机制，这将以降低推理速度为代价，使用少的显存。|
-| `--no_inject_fused_mlp`        | 仅使用Triton模式：禁用使用Fused MLP的使用，它将以慢的推理为代价使用较少的VRAM。|
-| `--no_use_cuda_fp16`           | 在某些系统上可以使模型更快。|
-| `--desc_act`                   | 对于没有quantize_config.json的模型，此参数用于定是否在BaseQuantizeConfig中设置desc_act。|
-| `--disable_exllama`            | 禁用ExLlama内核，这在某些系统上可以提高推理速。|
-| `--disable_exllamav2`          | 禁用ExLlamav2内核。|
+Gradio：
+  --listen                                       使web UI能够从你的本地网络访问。
+  --listen-port LISTEN_PORT                      服务器将使用的监听端口。
+  --listen-host LISTEN_HOST                      服务器将使用的主机名。
+  --share                                        创建一个公共URL。这对于在Google Colab或类似环境上运行web UI很有用。
+  --auto-launch                                  启动时在默认浏览器中打开web UI。
+  --gradio-auth GRADIO_AUTH                      设置Gradio认证密码，格式为"uername:password"。也可以提供多个凭证，格式为"u1:p1,u2:p2,u3:p3"。
+  --gradio-auth-path GRADIO_AUTH_PATH            设置Gradio认证文件路径。文件应包含一个或多和上面相同格式的用户:密码对。
+  --ssl-keyfile SSL_KEYFILE                      SSL证书密钥文件的路径。
+  --ssl-certfile SSL_CERTFILE                    SSL证书文件的路径。
 
-#### GPTQ-for-LLaMa
+API：
+  --api                                          启用API扩展。
+  --public-api                                   使用CloudFlare为API创建公共URL。
+  --public-api-id PUBLIC_API_ID                  命名Cloudflare Tunnel的隧道ID。与public-api选项一起使用。
+  --api-port API_PORT                            API的监听端口。
+  --api-key API_KEY                              API认证密钥。
+  --admin-key ADMIN_KEY                          用于加载和卸载模型等管理员任务的API认证密钥。如果未设置，将与--api-key相同。
+  --nowebui                                      不启动Gradio UI。想要单独启动API时很有用。
 
-| 命令行参数 | 描述 |
-|---------------------------|-------------|
-| `--wbits WBITS`           | 加载指定位精度的预量化模型。支持2、3、4和8位。|
-| `--model_type MODEL_TYPE` | 预量化模型的模型类型。目前支持LLaMA、OPT和GPT-J。|
-| `--groupsize GROUPSIZE`   | 组大小。|
-| `--pre_layer PRE_LAYER [PRE_LAYER ...]`  | 分配给GPU的层数。设置此参数可启用4位模的CPU卸载。对于多GPU，将数字用空格分隔，例如`--pre_layer 30 60` 。|
-| `--checkpoint CHECKPOINT` | 量化检查点文件的路径。如果未指定，将自动检测。|
-| `--monkey-patch`          | 应用monkey patch以使用量化模型的LoRAs。|
-
-#### HQQ
-
-| 命令行参数 | 描述 |
-|-------------|-------------|
-| `--hqq-backend` | HQQ加载器的后端。有效选项：PYTORCH, PYTORCH_COMPILE, ATEN。|
-
-#### DeepSpeed
-
-| 命令行参数 | 描述 |
-|---------------------------------------|-------------|
-| `--deepspeed`                         | 通过Transformers集成启用DeepSpeed ZeRO-3进行推理。|
-| `--nvme-offload-dir NVME_OFFLOAD_DIR` | DeepSpeed：用于ZeRO-3 NVME卸载的目录。|
-| `--local_rank LOCAL_RANK`             | DeepSpeed：分布式设置的可选参数。|
-
-#### RoPE（用于llama.cpp，ExLlamaV2和transformers）
-
-| 命令行参数 | 描述 |
-|------------------|-------------|
-| `--alpha_value ALPHA_VALUE`           | NTK RoPE缩放的位置嵌入alpha因子。使用此选项或`compress_pos_emb`，不要同时使用两者。|
-| `--rope_freq_base ROPE_FREQ_BASE`     | 如果大于0，将代替alpha_value使用。这两者符合`rope_freq_base = 10000 * alpha_value ^ (64 / 63)`关系式。|
-| `--compress_pos_emb COMPRESS_POS_EMB` | 位置嵌入的压缩因子。应设置为`(上下文长度) / (模型原始上下文长度)`。等于`1/rope_freq_scale`。|
-
-#### Gradio
-
-| 命令行参数 | 描述 |
-|---------------------------------------|-------------|
-| `--listen`                            | 使web UI能够从你的本地网络访问。|
-| `--listen-port LISTEN_PORT`           | 服务器将使用的监听端口。|
-| `--listen-host LISTEN_HOST`           | 服务器将使用的主机名。|
-| `--share`                             | 创建一个公共URL。这对于在Google Colab或类环境上运行web UI很有用。|
-| `--auto-launch`                       | 启动时在默认浏览器中打开web UI。|
-| `--gradio-auth USER:PWD`              | 设置Gradio认证密码，格式为"uername:password"。也可以提供多个凭证，格式为"u1:p1,u2:p2,u3:p3"。|
-| `--gradio-auth-path GRADIO_AUTH_PATH` | 设置Gradio认证文件路径。文件应包含一个或多和上面相同格式的用户:密码对。|
-| `--ssl-keyfile SSL_KEYFILE`           | SSL证书密钥文件的路径。|
-| `--ssl-certfile SSL_CERTFILE`         | SSL证书文件的路径。|
-
-#### API
-
-| 命令行参数 | 描述 |
-|---------------------------------------|-------------|
-| `--api`                               | 启用API扩展。|
-| `--public-api`                        | 使用CloudFare为API创建公共URL。|
-| `--public-api-id PUBLIC_API_ID`       | 命名Cloudflare Tunnel的隧道ID。与pblic-api选项一起使用。|
-| `--api-port API_PORT`                 | API的监听端口。|
-| `--api-key API_KEY`                   | API认证密钥。|
-| `--admin-key ADMIN_KEY`               | 用于加载和卸载模型等管理员任务的API认证密。如果未设置，将与--api-key相同。|
-| `--nowebui`                           | 不启动Gradio UI。用于以独立模式启动API时很有用。|
-
-#### Multimodal
-
-| 命令行参数 | 描述 |
-|---------------------------------------|-------------|
-| `--multimodal-pipeline PIPELINE`      | 要使用的多模态模型pipeline。示例：`llava-7b`、`llava-13b`。|
+Multimodal：
+  --multimodal-pipeline MULTIMODAL_PIPELINE      要使用的多模态模型pipeline。示例：llava-7b、llava-13b。
+```
 
 </details>
 
