@@ -25,8 +25,7 @@ class TemperatureLogitsWarperCustom(LogitsWarper):
     def __init__(self, temperature: float):
         if not isinstance(temperature, float) or not (temperature > 0):
             except_msg = (
-                f"`temperature`（值为{temperature}）必须是一个严格正的浮点数，否则您的下一个词符
-                分数将是无效的。"
+                f"`temperature`（值为{temperature}）必须是一个严格正的浮点数，否则您的下一个词符分数将是无效的。"
             )
             if isinstance(temperature, float) and temperature == 0.0:
                 except_msg += " 如果您正在寻找贪婪解码策略，请设置`do_sample=False`。"
