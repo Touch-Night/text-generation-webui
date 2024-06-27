@@ -105,8 +105,8 @@ def create_ui():
                             shared.gradio['max_seq_len'] = gr.Slider(label='最大序列长度', minimum=0, maximum=shared.settings['truncation_length_max'], step=256, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。', value=shared.args.max_seq_len)
                             with gr.Blocks():
                                 shared.gradio['alpha_value'] = gr.Slider(label='alpha值', minimum=1, maximum=8, step=0.05, info='NTK RoPE缩放的位置嵌入alpha因子。推荐值（NTKv1）：1.5倍上下文长度用1.75，2倍上下文长度用2.5。使用此项或压缩位置嵌入，不要同时使用。', value=shared.args.alpha_value)
-                                shared.gradio['rope_freq_base'] = gr.Slider(label='rope频率基数', minimum=0, maximum=1000000, step=1000, info='如果大于0，将代替alpha值使用。这两者之间的关系是rope_freq_base = 10000 * alpha值 ^ (64 / 63)', value=shared.args.rope_freq_base)
-                                shared.gradio['compress_pos_emb'] = gr.Slider(label='压缩位置嵌入', minimum=1, maximum=8, step=1, info='位置嵌入的压缩因子。应设置为（上下文长度）/（模型原始上下文长度）。等于1/rope_freq_scale。', value=shared.args.compress_pos_emb)
+                                shared.gradio['rope_freq_base'] = gr.Slider(label='rope频率基数', minimum=0, maximum=20000000, step=1000, info='如果大于0，将代替alpha值使用。这两者之间的关系是rope_freq_base = 10000 * alpha值 ^ (64 / 63)', value=shared.args.rope_freq_base)
+                                shared.gradio['compress_pos_emb'] = gr.Slider(label='压缩位置嵌入', minimum=1, maximum=8, step=0.1, info='位置嵌入的压缩因子。应设置为（上下文长度）/（模型原始上下文长度）。等于1/rope_freq_scale。', value=shared.args.compress_pos_emb)
 
                             shared.gradio['autogptq_info'] = gr.Markdown('推荐使用ExLlamav2_HF而非AutoGPTQ，适用于从Llama衍生的模型。')
 
@@ -139,6 +139,7 @@ def create_ui():
                             shared.gradio['autosplit'] = gr.Checkbox(label="自动分割", value=shared.args.autosplit, info='自动在可用的GPU之间分割模型张量。')
                             shared.gradio['no_flash_attn'] = gr.Checkbox(label="不使用flash_attention", value=shared.args.no_flash_attn, info='强制不使用flash-attention。')
                             shared.gradio['cfg_cache'] = gr.Checkbox(label="CFG缓存", value=shared.args.cfg_cache, info='使用此加载器时，使用CFG是必需的。')
+                            shared.gradio['cpp_runner'] = gr.Checkbox(label="Cpp运行器", value=shared.args.cpp_runner, info='启用ModelRunnerCpp进行推理，它比默认的ModelRunner更快。')
                             shared.gradio['num_experts_per_token'] = gr.Number(label="每个词符的专家数量", value=shared.args.num_experts_per_token, info='仅适用于像Mixtral这样的MoE模型。')
                             with gr.Blocks():
                                 shared.gradio['trust_remote_code'] = gr.Checkbox(label="信任远程代码(trust-remote-code)", value=shared.args.trust_remote_code, info='加载词符化器/模型时设置trust_remote_code=True。要启用此选项，请使用--trust-remote-code参数启动Web UI。', interactive=shared.args.trust_remote_code)
@@ -147,9 +148,9 @@ def create_ui():
 
                             shared.gradio['disable_exllama'] = gr.Checkbox(label="禁用ExLlama", value=shared.args.disable_exllama, info='对于GPTQ模型，禁用ExLlama内核。')
                             shared.gradio['disable_exllamav2'] = gr.Checkbox(label="禁用ExLlamav2", value=shared.args.disable_exllamav2, info='对于GPTQ模型，禁用ExLlamav2内核。')
-                            shared.gradio['gptq_for_llama_info'] = gr.Markdown('用于与旧GPU兼容的传统加载器。如果支持，推荐使用ExLlamav2_HF或AutoGPTQ适用于GPTQ模型。')
                             shared.gradio['exllamav2_info'] = gr.Markdown("相比于ExLlamav2，推荐使用ExLlamav2_HF，因为它与扩展有更好的集成，并且在加载器之间提供了更一致的采样行为。")
                             shared.gradio['llamacpp_HF_info'] = gr.Markdown("llamacpp_HF将llama.cpp作为Transformers模型加载。要使用它，您需要将GGUF放在models/的子文件夹中，并提供必要的词符化器文件。\n\n您可以使用'llamacpp_HF创建器'菜单自动完成。")
+                            shared.gradio['tensorrt_llm_info'] = gr.Markdown('* 目前需要在一个单独的 Python 3.10 环境中手动安装 TensorRT-LLM。有关指南，请参阅[这个 PR](https://github.com/oobabooga/text-generation-webui/pull/5715)的描述。\n\n* `最大序列长度` 仅在选中 `Cpp运行器` 时使用。\n\n* 目前 `Cpp运行器` 不支持流式传输。')
 
             with gr.Column():
                 with gr.Row():
@@ -215,7 +216,7 @@ def create_event_handlers():
 
     shared.gradio['unload_model'].click(
         unload_model, None, None).then(
-        lambda: "Model unloaded", None, gradio('model_status'))
+        lambda: "已卸载模型", None, gradio('model_status'))
 
     shared.gradio['save_model_settings'].click(
         ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
