@@ -20,9 +20,9 @@
 ## 功能
 
 * 三种界面模式：默认（两列），笔记本和聊天。
-* 多种模型后端：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持)、[ExLlamaV2](https://github.com/turboderp/exllamav2)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)。
-* 用来切换不同模型的下拉菜单。
-* 大量的扩展（内置和用户贡献），包括Coqui TTS用于逼真的语音输出，Whisper STT用于语音输入，翻译，[多模态模型](https://github.com/Touch-Night/text-generation-webui/tree/Chinese/extensions/multimodal)，向量库，Stable Diffusion集成，以及更多。请参阅[wiki](https://github.com/Touch-Night/text-generation-webui/wiki/07-%E2%80%90-Extensions)和[扩展列表](https://github.com/oobabooga/text-generation-webui-extensions)。
+* 多种模型后端：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持)、[ExLlamaV2](https://github.com/turboderp/exllamav2)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)。
+* 用来快速切换不同模型的下拉菜单。
+* 大量的扩展（内置和用户贡献），包括Coqui TTS用于逼真的语音输出，Whisper STT用于语音输入，翻译，[多模态管线](https://github.com/Touch-Night/text-generation-webui/tree/Chinese/extensions/multimodal)，向量库，Stable Diffusion集成，以及更多。请参阅[wiki](https://github.com/Touch-Night/text-generation-webui/wiki/07-%E2%80%90-Extensions)和[扩展列表](https://github.com/oobabooga/text-generation-webui-extensions)。
 * [和自定义角色聊天](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-%E5%8F%82%E6%95%B0%E6%A0%87%E7%AD%BE%E9%A1%B5#character)。
 * 精确的聊天模板，用于指令遵循模型，包括Llama-2-chat，Alpaca，Vicuna，Mistral。
 * LoRA: 使用自己的数据训练新的LoRA，即时加载/卸载LoRA。
@@ -85,12 +85,12 @@ conda activate textgen
 
 | 系统 | GPU | 命令 |
 |--------|---------|---------|
-| Linux/WSL | Nvidia| `pip3 install torch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 --index-url https://download.pytorch.org/whl/cu121` |
-| Linux/WSL | 仅CPU | `pip3 install torch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 --index-url https://download.pytorch.org/whl/cpu` |
-| Linux | AMD | `pip3 install torch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 --index-url https://download.pytorch.org/whl/rocm5.6` |
-| MacOS + MPS | 任意 | `pip3 install torch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1` |
-| Windows | Nvidia | `pip3 install torch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 --index-url https://download.pytorch.org/whl/cu121` |
-| Windows | 仅CPU | `pip3 install torch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1` |
+| Linux/WSL | Nvidia| `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cu121` |
+| Linux/WSL | 仅CPU | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cpu` |
+| Linux | AMD | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/rocm5.6` |
+| MacOS + MPS | 任意 | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2` |
+| Windows | Nvidia | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cu121` |
+| Windows | 仅CPU | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2` |
 
 最新的命令可以在这里找到：https://pytorch.org/get-started/locally/ 。
 
@@ -155,7 +155,7 @@ python server.py
 1) 对于Kepler GPU和较早的GPU，您需要安装CUDA 11.8而不是12：
 
 ```
-pip3 install torch==2.2.1 torchvision==0.17.1 torchaudio==2.2.1 --index-url https://download.pytorch.org/whl/cu118
+pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cu118
 conda install -y -c "nvidia/label/cuda-11.8.0" cuda-runtime
 ```
 

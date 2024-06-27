@@ -40,7 +40,6 @@ def create_ui(default_preset):
                             shared.gradio['do_sample'] = gr.Checkbox(value=generate_params['do_sample'], label='使用采样算法')
 
                             with gr.Blocks():
-                                gr.Markdown("[DRY 序列重复惩罚](https://github.com/oobabooga/text-generation-webui/pull/5677)")
                                 shared.gradio['dry_multiplier'] = gr.Slider(0, 5, value=generate_params['dry_multiplier'], step=0.01, label='DRY因子', info='将值设为大于零以启用DRY。控制被惩罚的最短序列的惩罚量级。')
                                 shared.gradio['dry_base'] = gr.Slider(1, 4, value=generate_params['dry_base'], step=0.01, label='DRY基数', info='控制随着重复的序列的长度增长，惩罚的增长有多快。')
                                 shared.gradio['dry_allowed_length'] = gr.Slider(1, 20, value=generate_params['dry_allowed_length'], step=1, label='DRY允许重复的序列长度', info='可免于被惩罚的最长重复序列。')
