@@ -88,15 +88,10 @@ def create_ui():
                     shared.gradio['mode'] = gr.Radio(choices=['chat', 'chat-instruct', 'instruct'], label='模式', info='定义如何生成聊天提示。在 instruct 和 chat-instruct 模式下，参数 > 指令模板下选择的指令模板必须与当前模型匹配。', elem_id='chat-mode')
 
                 with gr.Row():
-                    shared.gradio['character_menu'] = gr.Dropdown(value=None, choices=utils.get_available_characters(), label='角色', elem_id='character-menu', elem_classes='slim-dropdown')
-                    shared.gradio['refresh_character'] = ui.create_refresh_button(shared.gradio['character_menu'], lambda: None, lambda: {'choices': utils.get_available_characters()}, 'refresh-button', interactive=not mu)
-                    shared.gradio['delete_character'] = gr.Button('🗑️', elem_classes='refresh-button', interactive=not mu)
-
-                with gr.Row():
                     shared.gradio['chat_style'] = gr.Dropdown(choices=utils.get_available_chat_styles(), label='聊天界面风格', value=shared.settings['chat_style'], visible=shared.settings['mode'] != 'instruct')
 
                 with gr.Row():
-                    shared.gradio['chat-instruct_command'] = gr.Textbox(value=shared.settings['chat-instruct_command'], lines=16, label='chat-instruct模式下的指令', info='“<|character|>”和“<|prompt|>”分别会被替换成机器人名称和常规聊天提示词。', visible=False, elem_classes=['add_scrollbar'])
+                    shared.gradio['chat-instruct_command'] = gr.Textbox(value=shared.settings['chat-instruct_command'], lines=12, label='chat-instruct模式下的指令', info='“<|character|>”和“<|prompt|>”分别会被替换成机器人名称和常规聊天提示词。', visible=False, elem_classes=['add_scrollbar'])
 
 
 def create_chat_settings_ui():
@@ -105,10 +100,15 @@ def create_chat_settings_ui():
         with gr.Row():
             with gr.Column(scale=8):
                 with gr.Tab("角色"):
+                    with gr.Row():
+                        shared.gradio['character_menu'] = gr.Dropdown(value=None, choices=utils.get_available_characters(), label='角色', elem_id='character-menu', info='用在chat和chat-instruct模式下。', elem_classes='slim-dropdown')
+                        ui.create_refresh_button(shared.gradio['character_menu'], lambda: None, lambda: {'choices': utils.get_available_characters()}, 'refresh-button', interactive=not mu)
+                        shared.gradio['save_character'] = gr.Button('💾', elem_classes='refresh-button', elem_id="save-character", interactive=not mu)
+                        shared.gradio['delete_character'] = gr.Button('🗑️', elem_classes='refresh-button', interactive=not mu)
+
                     shared.gradio['name2'] = gr.Textbox(value='', lines=1, label='角色的名字')
                     shared.gradio['context'] = gr.Textbox(value='', lines=10, label='背景', elem_classes=['add_scrollbar'])
                     shared.gradio['greeting'] = gr.Textbox(value='', lines=5, label='问候', elem_classes=['add_scrollbar'])
-                    shared.gradio['save_character'] = gr.Button('保存角色', elem_classes=['small-button'], interactive=not mu)
 
                 with gr.Tab("用户"):
                     shared.gradio['name1'] = gr.Textbox(value=shared.settings['name1'], lines=1, label='名字')
@@ -300,8 +300,10 @@ def create_event_handlers():
         lambda x: gr.update(choices=(histories := chat.find_all_histories_with_first_prompts(x)), value=histories[0][1]), gradio('interface_state'), gradio('unique_id'), show_progress=False).then(
         None, None, None, js=f'() => {{{ui.update_big_picture_js}; updateBigPicture()}}')
 
+    shared.gradio['mode'].change(None, gradio('mode'), None, js="(mode) => {mode === 'instruct' ? document.getElementById('character-menu').parentNode.parentNode.style.display = 'none' : document.getElementById('character-menu').parentNode.parentNode.style.display = ''}")
+
     shared.gradio['mode'].change(
-        lambda x: [gr.update(visible=(x != 'instruct'))] * 4 + [gr.update(visible=(x == 'chat-instruct'))], gradio('mode'), gradio('character_menu', 'refresh_character', 'delete_character', 'chat_style', 'chat-instruct_command'), show_progress=False).then(
+        lambda x: [gr.update(visible=x != 'instruct'), gr.update(visible=x == 'chat-instruct')], gradio('mode'), gradio('chat_style', 'chat-instruct_command'), show_progress=False).then(
         ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
         chat.load_latest_history, gradio('interface_state'), gradio('history')).then(
         chat.redraw_html, gradio(reload_arr), gradio('display')).then(
