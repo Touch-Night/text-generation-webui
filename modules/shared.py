@@ -106,6 +106,7 @@ group.add_argument('--trust-remote-code', action='store_true', help='加载模�
 group.add_argument('--force-safetensors', action='store_true', help='加载模型时将use_safetensors设置为True。这可以防止任意代码执行。')
 group.add_argument('--no_use_fast', action='store_true', help='加载分词器时将use_fast设置为False（默认为True）。如果您遇到与use_fast相关的问题，请使用此选项。')
 group.add_argument('--use_flash_attention_2', action='store_true', help='加载模型时将use_flash_attention_2设置为True。')
+group.add_argument('--use_eager_attention', action='store_true', help='在加载模型时将attn_implementation的值设为eager。')
 
 # bitsandbytes 4-bit
 group = parser.add_argument_group('bitsandbytes 4-bit')
