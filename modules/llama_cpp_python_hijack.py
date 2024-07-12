@@ -13,11 +13,21 @@ imported_module = None
 def llama_cpp_lib():
     global imported_module
 
+    def module_to_purpose(module_name):
+        if module_name == 'llama_cpp':
+            return 'CPU'
+        elif module_name == 'llama_cpp_cuda_tensorcores':
+            return 'tensorcores'
+        elif module_name == 'llama_cpp_cuda':
+            return 'default'
+
+        return 'unknown'
+
     return_lib = None
 
     if shared.args.cpu:
         if imported_module and imported_module != 'llama_cpp':
-            raise Exception(f"由于 '{imported_module}' 已经被导入，无法导入 'llama_cpp'。请参阅 llama-cpp-python 中的issue #1575。在尝试使用不同版本的 llama-cpp-python 之前，请重新启动后端服务器。")
+            raise Exception(f"当前已加载 {module_to_purpose(imported_module)} 版本的 llama-cpp-python。目前要切换到CPU版本需要重启服务器。")
         try:
             return_lib = importlib.import_module('llama_cpp')
             imported_module = 'llama_cpp'
@@ -26,7 +36,7 @@ def llama_cpp_lib():
 
     if shared.args.tensorcores and return_lib is None:
         if imported_module and imported_module != 'llama_cpp_cuda_tensorcores':
-            raise Exception(f"由于 '{imported_module}' 已经被导入，无法导入 'llama_cpp_cuda_tensorcores'。请参阅 llama-cpp-python 中的issue #1575。在尝试使用不同版本的 llama-cpp-python 之前，请重新启动后端服务器。")
+            raise Exception(f"当前已加载 {module_to_purpose(imported_module)} 版本的 llama-cpp-python。目前要切换到 tensorcores 版本需要重启服务器。")
         try:
             return_lib = importlib.import_module('llama_cpp_cuda_tensorcores')
             imported_module = 'llama_cpp_cuda_tensorcores'
@@ -35,7 +45,7 @@ def llama_cpp_lib():
 
     if return_lib is None:
         if imported_module and imported_module != 'llama_cpp_cuda':
-            raise Exception(f"由于 '{imported_module}' 已经被导入，无法导入 'llama_cpp_cuda'。请参阅 llama-cpp-python 中的issue #1575。在尝试使用不同版本的 llama-cpp-python 之前，请重新启动后端服务器。")
+            raise Exception(f"当前已加载 {module_to_purpose(imported_module)} 版本的 llama-cpp-python。目前要切换到默认版本需要重启服务器。")
         try:
             return_lib = importlib.import_module('llama_cpp_cuda')
             imported_module = 'llama_cpp_cuda'
@@ -44,7 +54,7 @@ def llama_cpp_lib():
 
     if return_lib is None and not shared.args.cpu:
         if imported_module and imported_module != 'llama_cpp':
-            raise Exception(f"由于 '{imported_module}' 已经被导入，无法导入 'llama_cpp'。请参阅 llama-cpp-python 中的issue #1575。在尝试使用不同版本的 llama-cpp-python 之前，请重新启动后端服务器。")
+            raise Exception(f"当前已加载 {module_to_purpose(imported_module)} 版本的 llama-cpp-python。目前要切换到CPU版本需要重启服务器。")
         try:
             return_lib = importlib.import_module('llama_cpp')
             imported_module = 'llama_cpp'
