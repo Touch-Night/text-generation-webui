@@ -1,10 +1,10 @@
-accelerate==0.31.*
+accelerate==0.32.*
 auto-gptq==0.7.1
 colorama
 datasets
 decorator
 einops
-exllamav2==0.0.20
+exllamav2==0.1.7
 gradio==4.26.*
 hqq==0.1.7.post3
 jinja2==3.1.4

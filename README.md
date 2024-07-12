@@ -401,15 +401,18 @@ python download-model.py organization/model
 
 https://colab.research.google.com/github/Touch-Night/text-generation-webui/blob/Chinese/Colab-TextGen-GPU.ipynb
 
-## 贡献
-
-如果您想为项目做出贡献，请查看 [贡献准则](https://github.com/Touch-Night/text-generation-webui/wiki/Contributing-guidelines) 。
-
-## 社区
-
-* Subreddit：https://www.reddit.com/r/oobabooga/
-* Discord: https://discord.gg/jwZCF2dPQN
-
 ## 致谢
 
 2023年8月， [安德烈·霍洛维茨（Andreessen Horowitz）](https://a16z.com/)  （A16Z）提供了一项慷慨的赠款，以鼓励和支持我对该项目的独立工作。我 **极其**  感谢他们的信任和认可。
+
+## 链接
+
+#### 社区
+
+* Subreddit: https://www.reddit.com/r/oobabooga/
+* Discord: https://discord.gg/jwZCF2dPQN
+
+#### 赞助
+
+* ko-fi: https://ko-fi.com/oobabooga
+* GitHub Sponsors: https://github.com/sponsors/oobabooga

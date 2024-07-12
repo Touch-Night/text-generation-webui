@@ -85,7 +85,7 @@ def create_ui():
                     shared.gradio['start_with'] = gr.Textbox(label='回复开头', placeholder='当然可以！', value=shared.settings['start_with'], elem_classes=['add_scrollbar'])
 
                 with gr.Row():
-                    shared.gradio['mode'] = gr.Radio(choices=['chat', 'chat-instruct', 'instruct'], label='模式', info='定义如何生成聊天提示。在 instruct 和 chat-instruct 模式下，参数 > 指令模板下选择的指令模板必须与当前模型匹配。', elem_id='chat-mode')
+                    shared.gradio['mode'] = gr.Radio(choices=['chat', 'chat-instruct', 'instruct'], label='模式', info='定义如何生成聊天提示。在 instruct 和 chat-instruct 模式下，默认使用 参数 > 指令模板下 选择的指令模板。', elem_id='chat-mode')
 
                 with gr.Row():
                     shared.gradio['chat_style'] = gr.Dropdown(choices=utils.get_available_chat_styles(), label='聊天界面风格', value=shared.settings['chat_style'], visible=shared.settings['mode'] != 'instruct')

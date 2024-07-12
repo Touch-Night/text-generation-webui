@@ -143,6 +143,8 @@ group.add_argument('--autosplit', action='store_true', help='自动将模型张�
 group.add_argument('--max_seq_len', type=int, default=2048, help='最大序列长度。')
 group.add_argument('--cfg-cache', action='store_true', help='ExLlamav2_HF：为CFG负提示词创建额外的缓存。使用该加载器进行CFG时必需。')
 group.add_argument('--no_flash_attn', action='store_true', help='强制不使用flash-attention。')
+group.add_argument('--no_xformers', action='store_true', help='强制不使用xformers。')
+group.add_argument('--no_sdpa', action='store_true', help='强制不使用Torch SDPA。')
 group.add_argument('--cache_8bit', action='store_true', help='使用8位缓存以节省VRAM。')
 group.add_argument('--cache_4bit', action='store_true', help='使用Q4缓存以节省VRAM。')
 group.add_argument('--num_experts_per_token', type=int, default=2, help='用于生成的专家数量。适用于像Mixtral这样的MoE模型。')
