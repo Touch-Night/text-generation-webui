@@ -118,7 +118,7 @@ def create_ui():
                             shared.gradio['use_eager_attention'] = gr.Checkbox(label="使用eager_attention", value=shared.args.use_eager_attention, info='在加载模型时设置attn_implementation的值为eager。')
                             shared.gradio['flash_attn'] = gr.Checkbox(label="使用flash_attn", value=shared.args.flash_attn, info='使用flash-attention。')
                             shared.gradio['auto_devices'] = gr.Checkbox(label="自动分配设备", value=shared.args.auto_devices)
-                            shared.gradio['tensorcores'] = gr.Checkbox(label="tensorcores", value=shared.args.tensorcores, info='仅限N卡：使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。')
+                            shared.gradio['tensorcores'] = gr.Checkbox(label="tensorcores", value=shared.args.tensorcores, info='仅限N卡：使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以提高性能。')
                             shared.gradio['cache_8bit'] = gr.Checkbox(label="8位缓存", value=shared.args.cache_8bit, info='使用8位缓存来节省显存。')
                             shared.gradio['cache_4bit'] = gr.Checkbox(label="4位缓存", value=shared.args.cache_4bit, info='使用4位量化缓存来节省显存。')
                             shared.gradio['streaming_llm'] = gr.Checkbox(label="streaming_llm", value=shared.args.streaming_llm, info='（实验性功能）激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。')
