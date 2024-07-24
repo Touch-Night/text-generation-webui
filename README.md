@@ -213,16 +213,16 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 使用方法: server.py [-h] [--multi-user] [--character CHARACTER] [--model MODEL] [--lora LORA [LORA ...]] [--model-dir MODEL_DIR] [--lora-dir LORA_DIR] [--model-menu] [--settings SETTINGS]
                  [--extensions EXTENSIONS [EXTENSIONS ...]] [--verbose] [--chat-buttons] [--idle-timeout IDLE_TIMEOUT] [--loader LOADER] [--cpu] [--auto-devices]
                  [--gpu-memory GPU_MEMORY [GPU_MEMORY ...]] [--cpu-memory CPU_MEMORY] [--disk] [--disk-cache-dir DISK_CACHE_DIR] [--load-in-8bit] [--bf16] [--no-cache] [--trust-remote-code]
-                 [--force-safetensors] [--no_use_fast] [--use_flash_attention_2] [--load-in-4bit] [--use_double_quant] [--compute_dtype COMPUTE_DTYPE] [--quant_type QUANT_TYPE] [--flash-attn]
-                 [--tensorcores] [--n_ctx N_CTX] [--threads THREADS] [--threads-batch THREADS_BATCH] [--no_mul_mat_q] [--n_batch N_BATCH] [--no-mmap] [--mlock] [--n-gpu-layers N_GPU_LAYERS]
-                 [--tensor_split TENSOR_SPLIT] [--numa] [--logits_all] [--no_offload_kqv] [--cache-capacity CACHE_CAPACITY] [--row_split] [--streaming-llm] [--attention-sink-size ATTENTION_SINK_SIZE]
-                 [--gpu-split GPU_SPLIT] [--autosplit] [--max_seq_len MAX_SEQ_LEN] [--cfg-cache] [--no_flash_attn] [--cache_8bit] [--cache_4bit] [--num_experts_per_token NUM_EXPERTS_PER_TOKEN]
-                 [--triton] [--no_inject_fused_mlp] [--no_use_cuda_fp16] [--desc_act] [--disable_exllama] [--disable_exllamav2] [--wbits WBITS] [--groupsize GROUPSIZE] [--no_inject_fused_attention]
-                 [--hqq-backend HQQ_BACKEND] [--deepspeed] [--nvme-offload-dir NVME_OFFLOAD_DIR] [--local_rank LOCAL_RANK] [--alpha_value ALPHA_VALUE] [--rope_freq_base ROPE_FREQ_BASE]
-                 [--compress_pos_emb COMPRESS_POS_EMB] [--listen] [--listen-port LISTEN_PORT] [--listen-host LISTEN_HOST] [--share] [--auto-launch] [--gradio-auth GRADIO_AUTH]
-                 [--gradio-auth-path GRADIO_AUTH_PATH] [--ssl-keyfile SSL_KEYFILE] [--ssl-certfile SSL_CERTFILE] [--api] [--public-api] [--public-api-id PUBLIC_API_ID] [--api-port API_PORT]
-                 [--api-key API_KEY] [--admin-key ADMIN_KEY] [--nowebui] [--multimodal-pipeline MULTIMODAL_PIPELINE] [--model_type MODEL_TYPE] [--pre_layer PRE_LAYER [PRE_LAYER ...]]
-                 [--checkpoint CHECKPOINT] [--monkey-patch]
+                 [--force-safetensors] [--no_use_fast] [--use_flash_attention_2] [--use_eager_attention] [--load-in-4bit] [--use_double_quant] [--compute_dtype COMPUTE_DTYPE] [--quant_type QUANT_TYPE]
+                 [--flash-attn] [--tensorcores] [--n_ctx N_CTX] [--threads THREADS] [--threads-batch THREADS_BATCH] [--no_mul_mat_q] [--n_batch N_BATCH] [--no-mmap] [--mlock]
+                 [--n-gpu-layers N_GPU_LAYERS] [--tensor_split TENSOR_SPLIT] [--numa] [--logits_all] [--no_offload_kqv] [--cache-capacity CACHE_CAPACITY] [--row_split] [--streaming-llm]
+                 [--attention-sink-size ATTENTION_SINK_SIZE] [--gpu-split GPU_SPLIT] [--autosplit] [--max_seq_len MAX_SEQ_LEN] [--cfg-cache] [--no_flash_attn] [--no_xformers] [--no_sdpa]
+                 [--cache_8bit] [--cache_4bit] [--num_experts_per_token NUM_EXPERTS_PER_TOKEN] [--triton] [--no_inject_fused_mlp] [--no_use_cuda_fp16] [--desc_act] [--disable_exllama]
+                 [--disable_exllamav2] [--wbits WBITS] [--groupsize GROUPSIZE] [--no_inject_fused_attention] [--hqq-backend HQQ_BACKEND] [--cpp-runner] [--deepspeed]
+                 [--nvme-offload-dir NVME_OFFLOAD_DIR] [--local_rank LOCAL_RANK] [--alpha_value ALPHA_VALUE] [--rope_freq_base ROPE_FREQ_BASE] [--compress_pos_emb COMPRESS_POS_EMB] [--listen]
+                 [--listen-port LISTEN_PORT] [--listen-host LISTEN_HOST] [--share] [--auto-launch] [--gradio-auth GRADIO_AUTH] [--gradio-auth-path GRADIO_AUTH_PATH] [--ssl-keyfile SSL_KEYFILE]
+                 [--ssl-certfile SSL_CERTFILE] [--subpath SUBPATH] [--api] [--public-api] [--public-api-id PUBLIC_API_ID] [--api-port API_PORT] [--api-key API_KEY] [--admin-key ADMIN_KEY] [--nowebui]
+                 [--multimodal-pipeline MULTIMODAL_PIPELINE] [--model_type MODEL_TYPE] [--pre_layer PRE_LAYER [PRE_LAYER ...]] [--checkpoint CHECKPOINT] [--monkey-patch]
 
 Text generation web UI
 
@@ -263,6 +263,7 @@ Transformers/Accelerate：
   --force-safetensors                            在加载模型时设置 `use_safetensors=True`。这可以防止任意代码执行。
   --no_use_fast                                  加载词符化器时设置use_fast=false（默认情况下为true）。如果您遇到与use_fast有关的任何问题，请使用此功能。
   --use_flash_attention_2                        在加载模型时设置use_flash_attention_2=True。
+  --use_eager_attention                          在加载模型时设置attn_implementation=eager。
 
 bitsandbytes 4-比特：
   --load-in-4bit                                 使用bitsandbytes以4位精度加载模型。
@@ -272,7 +273,7 @@ bitsandbytes 4-比特：
 
 llama.cpp：
   --flash-attn                                   使用flash-attention。
-  --tensorcores                                  使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。仅限NVIDIA显卡。
+  --tensorcores                                  仅限NVIDIA显卡：使用编译了tensorcores支持的llama-cpp-python。这在比较新型号的RTX显卡上可能能提高性能。
   --n_ctx N_CTX                                  提示词上下文的大小。
   --threads THREADS                              要使用的线程数。
   --threads-batch THREADS_BATCH                  用于批处理/提示词处理的线程数。
@@ -281,7 +282,7 @@ llama.cpp：
   --no-mmap                                      防止使用mmap。
   --mlock                                        强制系统将模型保留在RAM中。
   --n-gpu-layers N_GPU_LAYERS                    卸载到GPU的层数。
-  --tensor_split TENSOR_SPLIT                    在多个GPU上分割模型。逗号分隔的比例列表。示例：18,17。
+  --tensor_split TENSOR_SPLIT                    在多个GPU上分割模型。逗号分隔的比例列表。示例：60,40。
   --numa                                         激活Llama.cpp的NUMA任务分配。
   --logits_all                                   要使困惑度评估起效，需要设置此项。否则，请忽略它，因为它会使提示词处理变慢。
   --no_offload_kqv                               不将K、Q、V卸载到GPU。这可以节省VRAM，但会降低性能。
@@ -296,6 +297,8 @@ ExLlamaV2：
   --max_seq_len MAX_SEQ_LEN                      最大序列长度。
   --cfg-cache                                    ExLlamav2_HF：为CFG负面提示创建一个额外的缓存。使用该加载器时，必须使用CFG。
   --no_flash_attn                                强制不使用flash-attention。
+  --no_xformers                                  强制不使用xformers。
+  --no_sdpa                                      强制不使用Torch SDPA。
   --cache_8bit                                   使用8位缓存以节省VRAM。
   --cache_4bit                                   使用Q4缓存以节省VRAM。
   --num_experts_per_token NUM_EXPERTS_PER_TOKEN  用于生成的专家数量。适用于MoE模型，如Mixtral。
@@ -315,6 +318,9 @@ AutoAWQ：
 
 HQQ：
   --hqq-backend HQQ_BACKEND                      HQQ加载器的后端。有效选项：PYTORCH, PYTORCH_COMPILE, ATEN。
+
+TensorRT-LLM:
+  --cpp-runner                                   使用ModelRunnerCpp运行器，它比默认的ModelRunner更快，但目前不支持流式传输。
 
 DeepSpeed：
   --deepspeed                                    通过Transformers集成启用DeepSpeed ZeRO-3进行推理。
@@ -336,6 +342,7 @@ Gradio：
   --gradio-auth-path GRADIO_AUTH_PATH            设置Gradio认证文件路径。文件应包含一个或多和上面相同格式的用户:密码对。
   --ssl-keyfile SSL_KEYFILE                      SSL证书密钥文件的路径。
   --ssl-certfile SSL_CERTFILE                    SSL证书文件的路径。
+  --subpath SUBPATH                              使用反向代理时自定义gradio的子路径。
 
 API：
   --api                                          启用API扩展。
@@ -401,18 +408,11 @@ python download-model.py organization/model
 
 https://colab.research.google.com/github/Touch-Night/text-generation-webui/blob/Chinese/Colab-TextGen-GPU.ipynb
 
-## 致谢
-
-2023年8月， [安德烈·霍洛维茨（Andreessen Horowitz）](https://a16z.com/)  （A16Z）提供了一项慷慨的赠款，以鼓励和支持我对该项目的独立工作。我 **极其**  感谢他们的信任和认可。
-
-## 链接
-
-#### 社区
+## Community
 
 * Subreddit: https://www.reddit.com/r/oobabooga/
 * Discord: https://discord.gg/jwZCF2dPQN
 
-#### 赞助
+## 致谢
 
-* ko-fi: https://ko-fi.com/oobabooga
-* GitHub Sponsors: https://github.com/sponsors/oobabooga
+2023年8月， [安德烈·霍洛维茨（Andreessen Horowitz）](https://a16z.com/)  （A16Z）提供了一项慷慨的赠款，以鼓励和支持我对该项目的独立工作。我 **极其**  感谢他们的信任和认可。

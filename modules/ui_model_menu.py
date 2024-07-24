@@ -66,7 +66,6 @@ def create_ui():
                             ui.create_refresh_button(shared.gradio['model_menu'], lambda: None, lambda: {'choices': utils.get_available_models()}, 'refresh-button', interactive=not mu)
                             shared.gradio['load_model'] = gr.Button("加载", visible=not shared.settings['autoload_model'], elem_classes='refresh-button', interactive=not mu)
                             shared.gradio['unload_model'] = gr.Button("卸载", elem_classes='refresh-button', interactive=not mu)
-                            shared.gradio['reload_model'] = gr.Button("重载", elem_classes='refresh-button', interactive=not mu)
                             shared.gradio['save_model_settings'] = gr.Button("保存设置", elem_classes='refresh-button', interactive=not mu)
 
                     with gr.Column():
@@ -92,10 +91,10 @@ def create_ui():
                                 shared.gradio['compute_dtype'] = gr.Dropdown(label="计算数据类型", choices=["bfloat16", "float16", "float32"], value=shared.args.compute_dtype)
                                 shared.gradio['quant_type'] = gr.Dropdown(label="量化类型", choices=["nf4", "fp4"], value=shared.args.quant_type)
 
-                            shared.gradio['hqq_backend'] = gr.Dropdown(label="hqq后端", choices=["PYTORCH", "PYTORCH_COMPILE", "ATEN"], value=shared.args.hqq_backend)
+                            shared.gradio['hqq_backend'] = gr.Dropdown(label="HQQ后端", choices=["PYTORCH", "PYTORCH_COMPILE", "ATEN"], value=shared.args.hqq_backend)
                             shared.gradio['n_gpu_layers'] = gr.Slider(label="GPU层数", minimum=0, maximum=256, value=shared.args.n_gpu_layers, info='必须要设为大于0的值，你的GPU才会被使用。')
                             shared.gradio['n_ctx'] = gr.Slider(minimum=0, maximum=shared.settings['truncation_length_max'], step=256, label="n_ctx", value=shared.args.n_ctx, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。')
-                            shared.gradio['tensor_split'] = gr.Textbox(label='张量分割', info='将模型分割到多个GPU的比例列表。示例：18,17')
+                            shared.gradio['tensor_split'] = gr.Textbox(label='张量分割', info='将模型分割到多个GPU的比例列表。示例：60,40')
                             shared.gradio['n_batch'] = gr.Slider(label="批处理大小", minimum=1, maximum=2048, step=1, value=shared.args.n_batch)
                             shared.gradio['threads'] = gr.Slider(label="线程数", minimum=0, step=1, maximum=256, value=shared.args.threads)
                             shared.gradio['threads_batch'] = gr.Slider(label="批处理线程数", minimum=0, step=1, maximum=256, value=shared.args.threads_batch)
@@ -104,9 +103,9 @@ def create_ui():
                             shared.gradio['gpu_split'] = gr.Textbox(label='GPU分割', info='以逗号分隔的每个GPU使用的VRAM（以GB为单位）列表。示例：20,7,7')
                             shared.gradio['max_seq_len'] = gr.Slider(label='最大序列长度', minimum=0, maximum=shared.settings['truncation_length_max'], step=256, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。', value=shared.args.max_seq_len)
                             with gr.Blocks():
-                                shared.gradio['alpha_value'] = gr.Slider(label='alpha值', minimum=1, maximum=8, step=0.05, info='NTK RoPE缩放的位置嵌入alpha因子。推荐值（NTKv1）：1.5倍上下文长度用1.75，2倍上下文长度用2.5。使用此项或压缩位置嵌入，不要同时使用。', value=shared.args.alpha_value)
-                                shared.gradio['rope_freq_base'] = gr.Slider(label='rope频率基数', minimum=0, maximum=20000000, step=1000, info='如果大于0，将代替alpha值使用。这两者之间的关系是rope_freq_base = 10000 * alpha值 ^ (64 / 63)', value=shared.args.rope_freq_base)
-                                shared.gradio['compress_pos_emb'] = gr.Slider(label='压缩位置嵌入', minimum=1, maximum=8, step=0.1, info='位置嵌入的压缩因子。应设置为（上下文长度）/（模型原始上下文长度）。等于1/rope_freq_scale。', value=shared.args.compress_pos_emb)
+                                shared.gradio['alpha_value'] = gr.Number(label='alpha值', value=shared.args.alpha_value, precision=2, info='NTK RoPE缩放的位置嵌入alpha因子。推荐值（NTKv1）：1.5倍上下文长度用1.75，2倍上下文长度用2.5。使用此项或压缩位置嵌入，不要同时使用。')
+                                shared.gradio['rope_freq_base'] = gr.Number(label='rope频率基数', value=shared.args.rope_freq_base, precision=0, info='用于NTK RoPE缩放的位置嵌入频率基数。它和alpha值的关系是 rope频率基数 = 10000 * alpha值 ^ (64 / 63)。此值设为0表示使用模型自带的该参数。')
+                                shared.gradio['compress_pos_emb'] = gr.Number(label='压缩位置嵌入', value=shared.args.compress_pos_emb, precision=0, info='位置嵌入的压缩因子。应设置为（上下文长度）/（模型原始上下文长度）。等于1/rope频率基数。')
 
                             shared.gradio['autogptq_info'] = gr.Markdown('推荐使用ExLlamav2_HF而非AutoGPTQ，适用于从Llama衍生的模型。')
 
@@ -118,7 +117,7 @@ def create_ui():
                             shared.gradio['use_eager_attention'] = gr.Checkbox(label="使用eager_attention", value=shared.args.use_eager_attention, info='在加载模型时设置attn_implementation的值为eager。')
                             shared.gradio['flash_attn'] = gr.Checkbox(label="使用flash_attn", value=shared.args.flash_attn, info='使用flash-attention。')
                             shared.gradio['auto_devices'] = gr.Checkbox(label="自动分配设备", value=shared.args.auto_devices)
-                            shared.gradio['tensorcores'] = gr.Checkbox(label="tensorcores", value=shared.args.tensorcores, info='仅限N卡：使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以提高性能。')
+                            shared.gradio['tensorcores'] = gr.Checkbox(label="tensorcores", value=shared.args.tensorcores, info='仅限N卡：使用编译了tensorcores支持的llama-cpp-python。这在新款的RTX显卡上可能可以提高性能。')
                             shared.gradio['cache_8bit'] = gr.Checkbox(label="8位缓存", value=shared.args.cache_8bit, info='使用8位缓存来节省显存。')
                             shared.gradio['cache_4bit'] = gr.Checkbox(label="4位缓存", value=shared.args.cache_4bit, info='使用4位量化缓存来节省显存。')
                             shared.gradio['streaming_llm'] = gr.Checkbox(label="streaming_llm", value=shared.args.streaming_llm, info='（实验性功能）激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。')
@@ -188,39 +187,24 @@ def create_ui():
 
 
 def create_event_handlers():
-    shared.gradio['loader'].change(loaders.make_loader_params_visible, gradio('loader'), gradio(loaders.get_all_params()))
+    shared.gradio['loader'].change(loaders.make_loader_params_visible, gradio('loader'), gradio(loaders.get_all_params()), show_progress=False)
 
     # In this event handler, the interface state is read and updated
     # with the model defaults (if any), and then the model is loaded
     # unless "autoload_model" is unchecked
     shared.gradio['model_menu'].change(
         ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
-        apply_model_settings_to_state, gradio('model_menu', 'interface_state'), gradio('interface_state')).then(
-        ui.apply_interface_values, gradio('interface_state'), gradio(ui.list_interface_input_elements()), show_progress=False).then(
-        update_model_parameters, gradio('interface_state'), None).then(
+        handle_load_model_event_initial, gradio('model_menu', 'interface_state'), gradio(ui.list_interface_input_elements()) + gradio('interface_state'), show_progress=False).then(
         load_model_wrapper, gradio('model_menu', 'loader', 'autoload_model'), gradio('model_status'), show_progress=False).success(
-        update_truncation_length, gradio('truncation_length', 'interface_state'), gradio('truncation_length')).then(
-        lambda x: x, gradio('loader'), gradio('filter_by_loader'))
+        handle_load_model_event_final, gradio('truncation_length', 'loader', 'interface_state'), gradio('truncation_length', 'filter_by_loader'), show_progress=False)
 
     shared.gradio['load_model'].click(
         ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
         update_model_parameters, gradio('interface_state'), None).then(
         partial(load_model_wrapper, autoload=True), gradio('model_menu', 'loader'), gradio('model_status'), show_progress=False).success(
-        update_truncation_length, gradio('truncation_length', 'interface_state'), gradio('truncation_length')).then(
-        lambda x: x, gradio('loader'), gradio('filter_by_loader'))
+        handle_load_model_event_final, gradio('truncation_length', 'loader', 'interface_state'), gradio('truncation_length', 'filter_by_loader'), show_progress=False)
 
-    shared.gradio['reload_model'].click(
-        unload_model, None, None).then(
-        ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
-        update_model_parameters, gradio('interface_state'), None).then(
-        partial(load_model_wrapper, autoload=True), gradio('model_menu', 'loader'), gradio('model_status'), show_progress=False).success(
-        update_truncation_length, gradio('truncation_length', 'interface_state'), gradio('truncation_length')).then(
-        lambda x: x, gradio('loader'), gradio('filter_by_loader'))
-
-    shared.gradio['unload_model'].click(
-        unload_model, None, None).then(
-        lambda: "已卸载模型", None, gradio('model_status'))
-
+    shared.gradio['unload_model'].click(handle_unload_model_click, None, gradio('model_status'), show_progress=False)
     shared.gradio['save_model_settings'].click(
         ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
         save_model_settings, gradio('model_menu', 'interface_state'), gradio('model_status'), show_progress=False)
@@ -353,3 +337,20 @@ def update_truncation_length(current_length, state):
             return state['n_ctx']
 
     return current_length
+
+
+def handle_load_model_event_initial(model, state):
+    state = apply_model_settings_to_state(model, state)
+    output = ui.apply_interface_values(state)
+    update_model_parameters(state)
+    return output + [state]
+
+
+def handle_load_model_event_final(truncation_length, loader, state):
+    truncation_length = update_truncation_length(truncation_length, state)
+    return [truncation_length, loader]
+
+
+def handle_unload_model_click():
+    unload_model()
+    return "已卸载模型"
