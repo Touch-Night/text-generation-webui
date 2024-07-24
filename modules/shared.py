@@ -33,7 +33,7 @@ settings = {
     'dark_theme': True,
     'show_controls': True,
     'start_with': '',
-    'mode': 'chat',
+    'mode': 'chat-instruct',
     'chat_style': 'cai-chat',
     'prompt-default': 'QA',
     'prompt-notebook': 'QA',
@@ -118,7 +118,7 @@ group.add_argument('--quant_type', type=str, default='nf4', help='4位的量化�
 # llama.cpp
 group = parser.add_argument_group('llama.cpp')
 group.add_argument('--flash-attn', action='store_true', help='使用flash-attention。')
-group.add_argument('--tensorcores', action='store_true', help='使用编译了tensorcores支持的llama-cpp-python。这在RTX显卡上可以高性能。仅限NVIDIA显卡。')
+group.add_argument('--tensorcores', action='store_true', help='仅限NVIDIA显卡：使用编译了tensorcores支持的llama-cpp-python。这在新款RTX显卡上可能可以提高性能。')
 group.add_argument('--n_ctx', type=int, default=2048, help='提示词上下文的大小。')
 group.add_argument('--threads', type=int, default=0, help='使用的线程数。')
 group.add_argument('--threads-batch', type=int, default=0, help='用于批处理/提示词处理的线程数。')
@@ -127,7 +127,7 @@ group.add_argument('--n_batch', type=int, default=512, help='在调用llama_eval
 group.add_argument('--no-mmap', action='store_true', help='防止使用mmap。')
 group.add_argument('--mlock', action='store_true', help='强制系统将模型保留在RAM中。')
 group.add_argument('--n-gpu-layers', type=int, default=0, help='卸载到GPU的层数。')
-group.add_argument('--tensor_split', type=str, default=None, help='将模型分布在多个GPU上。逗号分隔的比例列表。例如：18,17。')
+group.add_argument('--tensor_split', type=str, default=None, help='将模型分布在多个GPU上。逗号分隔的比例列表。例如：60,40。')
 group.add_argument('--numa', action='store_true', help='为llama.cpp激活NUMA任务分配。')
 group.add_argument('--logits_all', action='store_true', help='需要设置以便困惑度评估能够工作。否则，忽略它，因为它会使提示词处理变慢。')
 group.add_argument('--no_offload_kqv', action='store_true', help='不要将K, Q, V卸载到GPU。这样可以节省VRAM，但会降低性能。')
@@ -195,6 +195,7 @@ group.add_argument('--gradio-auth', type=str, help='设置Gradio认证密码，�
 group.add_argument('--gradio-auth-path', type=str, help='设置Gradio认证文件路径。文件应包含一个或多个上述格式的用户:密码对。', default=None)
 group.add_argument('--ssl-keyfile', type=str, help='SSL证书密钥文件的路径。', default=None)
 group.add_argument('--ssl-certfile', type=str, help='SSL证书文件的路径。', default=None)
+group.add_argument('--subpath', type=str, help='使用反向代理时自定义gradio的子路径。')
 
 # API
 group = parser.add_argument_group('API')
