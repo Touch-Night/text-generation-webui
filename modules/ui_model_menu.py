@@ -127,7 +127,6 @@ def create_ui():
                             shared.gradio['no_offload_kqv'] = gr.Checkbox(label="不卸载KQV", value=shared.args.no_offload_kqv, info='不要将K、Q、V卸载到GPU。这可以节省VRAM，但会降低性能。')
                             shared.gradio['no_mul_mat_q'] = gr.Checkbox(label="禁用mul_mat_q", value=shared.args.no_mul_mat_q, info='禁用mulmat内核。')
                             shared.gradio['triton'] = gr.Checkbox(label="Triton", value=shared.args.triton)
-                            shared.gradio['no_inject_fused_attention'] = gr.Checkbox(label="不注入融合注意力", value=shared.args.no_inject_fused_attention, info='禁用融合注意力。融合注意力可以提高推理性能，但会使用更多的VRAM。融合AutoAWQ的层。如果VRAM不足，请禁用。')
                             shared.gradio['no_inject_fused_mlp'] = gr.Checkbox(label="不注入融合MLP", value=shared.args.no_inject_fused_mlp, info='仅影响Triton。禁用融合MLP。融合MLP可以提高性能，但会使用更多的VRAM。如果VRAM不足，请禁用。')
                             shared.gradio['no_use_cuda_fp16'] = gr.Checkbox(label="不使用cuda_fp16", value=shared.args.no_use_cuda_fp16, info='在某些系统上，这可以使模型更快。')
                             shared.gradio['desc_act'] = gr.Checkbox(label="按递减激活顺序量化", value=shared.args.desc_act, info='\'按递减激活顺序量化\'、\'权重位\'和\'组大小\'用于没有quantize_config.json的旧模型。')

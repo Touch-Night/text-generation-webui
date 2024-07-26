@@ -72,8 +72,6 @@ def add_lora_autogptq(lora_names):
     else:
         if len(lora_names) > 1:
             logger.warning('AutoGPTQ目前只能同时使用1个LoRA。列表中的第一个将被加载。')
-        if not shared.args.no_inject_fused_attention:
-            logger.warning('融合注意力机制 + AutoGPTQ可能会破坏LoRA加载。请禁用它。')
 
         peft_config = GPTQLoraConfig(
             inference_mode=True,

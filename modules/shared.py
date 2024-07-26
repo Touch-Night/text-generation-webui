@@ -89,7 +89,7 @@ group.add_argument('--idle-timeout', type=int, default=0, help='在这么多分�
 
 # Model loader
 group = parser.add_argument_group('模型加载器')
-group.add_argument('--loader', type=str, help='手动选择模型加载器，否则将自动检测。有效选项包括：Transformers, llama.cpp, llamacpp_HF, ExLlamav2_HF, ExLlamav2, AutoGPTQ, AutoAWQ。')
+group.add_argument('--loader', type=str, help='手动选择模型加载器，否则将自动检测。有效选项包括：Transformers, llama.cpp, llamacpp_HF, ExLlamav2_HF, ExLlamav2, AutoGPTQ。')
 
 # Transformers/Accelerate
 group = parser.add_argument_group('Transformers/Accelerate')
@@ -160,10 +160,6 @@ group.add_argument('--disable_exllamav2', action='store_true', help='禁用ExLla
 group.add_argument('--wbits', type=int, default=0, help='加载指定精度的预量化模型。支持2、3、4和8。')
 group.add_argument('--groupsize', type=int, default=-1, help='组大小。')
 
-# AutoAWQ
-group = parser.add_argument_group('AutoAWQ')
-group.add_argument('--no_inject_fused_attention', action='store_true', help='停用融合注意力，这将以较慢的推理为代价使用较少的VRAM。')
-
 # HQQ
 group = parser.add_argument_group('HQQ')
 group.add_argument('--hqq-backend', type=str, default='PYTORCH_COMPILE', help='HQQ加载器的后端。有效选项：PYTORCH, PYTORCH_COMPILE, ATEN。')
@@ -213,10 +209,11 @@ group.add_argument('--multimodal-pipeline', type=str, default=None, help='要使
 
 # Deprecated parameters
 group = parser.add_argument_group('Deprecated')
-group.add_argument('--model_type', type=str, help='DEPRECATED')
-group.add_argument('--pre_layer', type=int, nargs='+', help='DEPRECATED')
-group.add_argument('--checkpoint', type=str, help='DEPRECATED')
-group.add_argument('--monkey-patch', action='store_true', help='DEPRECATED')
+group.add_argument('--model_type', type=str, help='已过时')
+group.add_argument('--pre_layer', type=int, nargs='+', help='已过时')
+group.add_argument('--checkpoint', type=str, help='已过时')
+group.add_argument('--monkey-patch', action='store_true', help='已过时')
+group.add_argument('--no_inject_fused_attention', action='store_true', help='已过时')
 
 args = parser.parse_args()
 args_defaults = parser.parse_args([])
@@ -267,8 +264,6 @@ def fix_loader_name(name):
         return 'ExLlamav2'
     elif name in ['exllamav2-hf', 'exllamav2_hf', 'exllama-v2-hf', 'exllama_v2_hf', 'exllama-v2_hf', 'exllama2-hf', 'exllama2_hf', 'exllama-2-hf', 'exllama_2_hf', 'exllama-2_hf']:
         return 'ExLlamav2_HF'
-    elif name in ['autoawq', 'awq', 'auto-awq']:
-        return 'AutoAWQ'
     elif name in ['hqq']:
         return 'HQQ'
     elif name in ['tensorrt', 'tensorrtllm', 'tensorrt_llm', 'tensorrt-llm', 'tensort', 'tensortllm']:
