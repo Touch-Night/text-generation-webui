@@ -84,13 +84,13 @@ def create_ui():
                     shared.gradio['start_with'] = gr.Textbox(label='回复开头', placeholder='当然可以！', value=shared.settings['start_with'], elem_classes=['add_scrollbar'])
 
                 with gr.Row():
-                    shared.gradio['mode'] = gr.Radio(choices=['chat', 'chat-instruct', 'instruct'], label='模式', info='定义如何生成聊天提示。在 instruct 和 chat-instruct 模式下，默认使用 参数 > 指令模板下 选择的指令模板。', elem_id='chat-mode')
+                    shared.gradio['mode'] = gr.Radio(choices=['chat', 'chat-instruct', 'instruct'], value=shared.settings['mode'] if shared.settings['mode'] in ['chat', 'chat-instruct'] else None, label='模式', info='定义如何生成聊天提示。在 instruct 和 chat-instruct 模式下，默认使用 参数 > 指令模板下 选择的指令模板。', elem_id='chat-mode')
 
                 with gr.Row():
                     shared.gradio['chat_style'] = gr.Dropdown(choices=utils.get_available_chat_styles(), label='聊天界面风格', value=shared.settings['chat_style'], visible=shared.settings['mode'] != 'instruct')
 
                 with gr.Row():
-                    shared.gradio['chat-instruct_command'] = gr.Textbox(value=shared.settings['chat-instruct_command'], lines=12, label='chat-instruct模式下的指令', info='“<|character|>”和“<|prompt|>”分别会被替换成机器人名称和常规聊天提示词。', visible=False, elem_classes=['add_scrollbar'])
+                    shared.gradio['chat-instruct_command'] = gr.Textbox(value=shared.settings['chat-instruct_command'], lines=12, label='chat-instruct模式下的指令', info='“<|character|>”和“<|prompt|>”分别会被替换成机器人名称和常规聊天提示词。', visible=shared.settings['mode'] == 'chat-instruct', elem_classes=['add_scrollbar'])
 
 
 def create_chat_settings_ui():
