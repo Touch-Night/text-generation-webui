@@ -165,7 +165,7 @@ def create_ui():
                             stride_length = gr.Slider(label='步长', minimum=0, maximum=32768, value=512, step=256, info='以牺牲准确性为代价来加快评估速度。1 = 最慢但最准确。512是一个常见的值。')
 
                         with gr.Column():
-                            max_length = gr.Slider(label='最大长度', minimum=0, maximum=shared.settings['truncation_length_max'], value=0, step=256, info='每次评估的上下文长度。如果设置为0，将使用模型的最大上下文长度。')
+                            max_length = gr.Number(label='最大长度', precision=0, step=256, value=0, info='每次评估的上下文长度。如果设置为0，将使用模型的最大上下文长度。')
 
                     with gr.Row():
                         start_current_evaluation = gr.Button("评估已加载模型", interactive=not mu)
