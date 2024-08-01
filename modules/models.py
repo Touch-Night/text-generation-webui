@@ -370,13 +370,14 @@ def clear_torch_cache():
             torch.cuda.empty_cache()
 
 
-def unload_model():
+def unload_model(keep_model_name=False):
     shared.model = shared.tokenizer = None
-    shared.previous_model_name = shared.model_name
-    shared.model_name = 'None'
     shared.lora_names = []
     shared.model_dirty_from_training = False
     clear_torch_cache()
+
+    if not keep_model_name:
+        shared.model_name = 'None'
 
 
 def reload_model():
@@ -395,7 +396,7 @@ def unload_model_if_idle():
             if time.time() - last_generation_time > shared.args.idle_timeout * 60:
                 if shared.model is not None:
                     logger.info("由于长时间没有操作，正在卸载模型。")
-                    unload_model()
+                    unload_model(keep_model_name=True)
         finally:
             shared.generation_lock.release()
 

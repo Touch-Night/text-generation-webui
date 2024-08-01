@@ -93,7 +93,7 @@ def create_ui():
 
                             shared.gradio['hqq_backend'] = gr.Dropdown(label="HQQ后端", choices=["PYTORCH", "PYTORCH_COMPILE", "ATEN"], value=shared.args.hqq_backend)
                             shared.gradio['n_gpu_layers'] = gr.Slider(label="GPU层数", minimum=0, maximum=256, value=shared.args.n_gpu_layers, info='必须要设为大于0的值，你的GPU才会被使用。')
-                            shared.gradio['n_ctx'] = gr.Slider(minimum=0, maximum=shared.settings['truncation_length_max'], step=256, label="n_ctx", value=shared.args.n_ctx, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。')
+                            shared.gradio['n_ctx'] = gr.Number(label="上下文大小", precision=0, step=256, value=shared.args.n_ctx, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。')
                             shared.gradio['tensor_split'] = gr.Textbox(label='张量分割', info='将模型分割到多个GPU的比例列表。示例：60,40')
                             shared.gradio['n_batch'] = gr.Slider(label="批处理大小", minimum=1, maximum=2048, step=1, value=shared.args.n_batch)
                             shared.gradio['threads'] = gr.Slider(label="线程数", minimum=0, step=1, maximum=256, value=shared.args.threads)
@@ -101,11 +101,11 @@ def create_ui():
                             shared.gradio['wbits'] = gr.Dropdown(label="权重位数", choices=["None", 1, 2, 3, 4, 8], value=shared.args.wbits if shared.args.wbits > 0 else "None")
                             shared.gradio['groupsize'] = gr.Dropdown(label="组大小", choices=["None", 32, 64, 128, 1024], value=shared.args.groupsize if shared.args.groupsize > 0 else "None")
                             shared.gradio['gpu_split'] = gr.Textbox(label='GPU分割', info='以逗号分隔的每个GPU使用的VRAM（以GB为单位）列表。示例：20,7,7')
-                            shared.gradio['max_seq_len'] = gr.Slider(label='最大序列长度', minimum=0, maximum=shared.settings['truncation_length_max'], step=256, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。', value=shared.args.max_seq_len)
+                            shared.gradio['max_seq_len'] = gr.Number(label='最大序列长度', precision=0, step=256, value=shared.args.max_seq_len, info='上下文长度。如果在加载模型时内存不足，请尝试降低此值。')
                             with gr.Blocks():
                                 shared.gradio['alpha_value'] = gr.Number(label='alpha值', value=shared.args.alpha_value, precision=2, info='NTK RoPE缩放的位置嵌入alpha因子。推荐值（NTKv1）：1.5倍上下文长度用1.75，2倍上下文长度用2.5。使用此项或压缩位置嵌入，不要同时使用。')
                                 shared.gradio['rope_freq_base'] = gr.Number(label='rope频率基数', value=shared.args.rope_freq_base, precision=0, info='用于NTK RoPE缩放的位置嵌入频率基数。它和alpha值的关系是 rope频率基数 = 10000 * alpha值 ^ (64 / 63)。此值设为0表示使用模型自带的该参数。')
-                                shared.gradio['compress_pos_emb'] = gr.Number(label='压缩位置嵌入', value=shared.args.compress_pos_emb, precision=0, info='位置嵌入的压缩因子。应设置为（上下文长度）/（模型原始上下文长度）。等于1/rope频率基数。')
+                                shared.gradio['compress_pos_emb'] = gr.Number(label='压缩位置嵌入', value=shared.args.compress_pos_emb, precision=2, info='位置嵌入的压缩因子。应设置为（上下文长度）/（模型原始上下文长度）。等于1/rope频率基数。')
 
                             shared.gradio['autogptq_info'] = gr.Markdown('推荐使用ExLlamav2_HF而非AutoGPTQ，适用于从Llama衍生的模型。')
 
