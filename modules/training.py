@@ -59,7 +59,7 @@ def create_ui():
                     gr.Markdown("[教程](https://github.com/Touch-Night/text-generation-webui/wiki/05-%E2%80%90-Training-Tab)")
 
                     with gr.Row():
-                        copy_from = gr.Dropdown(label='从以下参数复制', value='None', choices=utils.get_available_loras(), elem_classes=['slim-dropdown'], interactive=not mu)
+                        copy_from = gr.Dropdown(label='从以下LoRA复制参数', value='None', choices=utils.get_available_loras(), elem_classes=['slim-dropdown'], interactive=not mu)
                         ui.create_refresh_button(copy_from, lambda: None, lambda: {'choices': utils.get_available_loras()}, 'refresh-button', interactive=not mu)
 
                     with gr.Row():
