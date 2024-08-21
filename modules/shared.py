@@ -132,6 +132,7 @@ group.add_argument('--cache-capacity', type=str, help='最大缓存容量（llam
 group.add_argument('--row_split', action='store_true', help='在GPUs之间按行分割模型。这可能会提高多GPU性能。')
 group.add_argument('--streaming-llm', action='store_true', help='激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。')
 group.add_argument('--attention-sink-size', type=int, default=5, help='StreamingLLM：下沉词符的数量。仅在修剪后的提示词不与旧提示词前缀相同时使用。')
+group.add_argument('--tokenizer-dir', type=str, help='从此指定的文件夹加载词符化器。用来通过命令行使用llamacpp_HF。')
 
 # ExLlamaV2
 group = parser.add_argument_group('ExLlamaV2')
