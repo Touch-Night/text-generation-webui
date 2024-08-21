@@ -1,4 +1,4 @@
-accelerate==0.32.*
+accelerate==0.33.*
 auto-gptq==0.7.1
 colorama
 datasets
@@ -15,7 +15,7 @@ numpy==1.26.*
 opencv-python-headless
 optimum==1.17.*
 pandas
-peft==0.8.*
+peft==0.12.*
 Pillow>=9.5.0
 pyyaml
 requests
@@ -24,7 +24,7 @@ safetensors==0.4.*
 scipy
 sentencepiece
 tensorboard
-transformers==4.43.*
+transformers==4.44.*
 tqdm
 wandb
 

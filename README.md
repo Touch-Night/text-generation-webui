@@ -19,29 +19,35 @@
 
 ## 功能
 
-* 三种界面模式：默认（两列），笔记本和聊天。
-* 多种模型后端：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持)、[ExLlamaV2](https://github.com/turboderp/exllamav2)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)。
+* 用多种后端在UI中或调用API进行文本生成，这些后端有：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持)、[ExLlamaV2](https://github.com/turboderp/exllamav2)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)和[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)。使用Transformers加载器，[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[HQQ](https://github.com/mobiusml/hqq)和[AQLM](https://github.com/Vahe1994/AQLM)也同样支持。
+* 具有聊天和补全端点的OpenAI兼容API服务器 -- 请参阅[示例](https://github.com/Touch-Night/text-generation-webui/wiki/12-%E2%80%90-OpenAI-API#examples)。
+* 自动使用模型自带的元数据中的Jinja2模板对其进行提示词格式化。
+* 三种聊天模式：`instruct`（指令）、`chat-instruct`（聊天-指令）和`chat`（聊天），既可以让模型遵循指令，也可以与角色进行随意对话。`chat-instruct`模式会自动将模型的模板应用于聊天提示词，确保输出高质量而无需手动设置。
+* “过往聊天”菜单，可快速切换对话或开始新对话。
+* 在默认/笔记本标签页中进行自由形式的生成，不受聊天轮次的限制。可以从聊天标签页将格式化的聊天对话发送到这些标签页。
+* 多种采样参数和生成选项，用于复杂的文本生成控制。
+* 使用“模型”标签页，通过用户界面轻松切换不同模型，而无需重启。
+* 简单的LoRA微调工具，可使用您的数据自定义模型。
+* 所有内容都在一个文件夹中。所需的依赖项安装在一个独立的`installer_files`文件夹中，不会干扰系统环境。
+
 * 用来快速切换不同模型的下拉菜单。
-* 大量的扩展（内置和用户贡献），包括Coqui TTS用于逼真的语音输出，Whisper STT用于语音输入，翻译，[多模态管线](https://github.com/Touch-Night/text-generation-webui/tree/Chinese/extensions/multimodal)，向量库，Stable Diffusion集成，以及更多。请参阅[wiki](https://github.com/Touch-Night/text-generation-webui/wiki/07-%E2%80%90-Extensions)和[扩展列表](https://github.com/oobabooga/text-generation-webui-extensions)。
-* [和自定义角色聊天](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-%E5%8F%82%E6%95%B0%E6%A0%87%E7%AD%BE%E9%A1%B5#character)。
-* 精确的聊天模板，用于指令遵循模型，包括Llama-2-chat，Alpaca，Vicuna，Mistral。
-* LoRA: 使用自己的数据训练新的LoRA，即时加载/卸载LoRA。
-* Transformers库集成：通过bitsandbytes在4位或8位精度下加载模型，使用llama.cpp的同时使用transformers采样器（`llamacpp_HF` 加载器），使用PyTorch在32位精度下进行CPU推理。
-* OpenAI兼容的API服务器，具有聊天和续写endpoint -- 请参阅[示例](https://github.com/Touch-Night/text-generation-webui/wiki/12-%E2%80%90-OpenAI-API#examples).
+* 支持扩展，包含大量的内置和用户贡献的扩展。请参阅[wiki](https://github.com/Touch-Night/text-generation-webui/wiki/07-%E2%80%90-%E6%89%A9%E5%B1%95)和[扩展库](https://github.com/oobabooga/text-generation-webui-extensions)。
 
 ## 如何安装
 
-1) 克隆或[下载](https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui/releases/download/7cf1402/text-generation-webui-Chinese.zip)此存储库。
+1) 克隆或[下载](https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui/releases/download/v1.14/text-generation-webui-Chinese.zip)此存储库。
 2) 根据您的操作系统运行`start_linux.sh`，`start_windows.bat`，`start_macos.sh`或`start_wsl.bat`脚本。
-3) 当要求时选择您的GPU供应商。
-4) 安装结束后，浏览到`http://localhost:7860/?__theme=dark`。
+3) 问到时选择您的GPU供应商。
+4) 安装结束后，访问`http://localhost:7860`。
 5) 玩得开心！
 
-要在将来重新启动Web UI，只需再次运行`start_`脚本。此脚本创建了一个`installer_files`文件夹，其中设置了项目的依赖。如果您需要重新安装依赖，只需删除该文件夹并再次启动Web UI。
+要在将来重新启动Web UI，只需再次运行`start_`脚本。
 
-此脚本接受命令行参数。或者，您可以使用文本编辑器编辑`CMD_FLAGS.txt`文件并在其中添加命令行参数。
+此脚本创建了一个`installer_files`文件夹，其中设置了项目的依赖。如果您需要重新安装依赖，只需删除该文件夹并再次启动Web UI。
 
-要在将来获得更新，请运行`update_wizard_linux.sh`，`update_wizard_windows.bat`，`update_wizard_macos.sh`或`update_wizard_wsl.bat`。
+此脚本接受命令行参数，例如`./start_linux.sh --help`。或者，您可以使用文本编辑器编辑`CMD_FLAGS.txt`文件并在其中添加命令行参数，例如你可以添加`--api`来启用API功能。
+
+要在将来更新此软件，请运行`update_wizard_linux.sh`，`update_wizard_windows.bat`，`update_wizard_macos.sh`或`update_wizard_wsl.bat`。
 
 <details>
 <summary>
@@ -216,13 +222,13 @@ pip install -r <你曾使用过的依赖文件> --upgrade
                  [--force-safetensors] [--no_use_fast] [--use_flash_attention_2] [--use_eager_attention] [--load-in-4bit] [--use_double_quant] [--compute_dtype COMPUTE_DTYPE] [--quant_type QUANT_TYPE]
                  [--flash-attn] [--tensorcores] [--n_ctx N_CTX] [--threads THREADS] [--threads-batch THREADS_BATCH] [--no_mul_mat_q] [--n_batch N_BATCH] [--no-mmap] [--mlock]
                  [--n-gpu-layers N_GPU_LAYERS] [--tensor_split TENSOR_SPLIT] [--numa] [--logits_all] [--no_offload_kqv] [--cache-capacity CACHE_CAPACITY] [--row_split] [--streaming-llm]
-                 [--attention-sink-size ATTENTION_SINK_SIZE] [--gpu-split GPU_SPLIT] [--autosplit] [--max_seq_len MAX_SEQ_LEN] [--cfg-cache] [--no_flash_attn] [--no_xformers] [--no_sdpa]
-                 [--cache_8bit] [--cache_4bit] [--num_experts_per_token NUM_EXPERTS_PER_TOKEN] [--triton] [--no_inject_fused_mlp] [--no_use_cuda_fp16] [--desc_act] [--disable_exllama]
-                 [--disable_exllamav2] [--wbits WBITS] [--groupsize GROUPSIZE] [--no_inject_fused_attention] [--hqq-backend HQQ_BACKEND] [--cpp-runner] [--deepspeed]
-                 [--nvme-offload-dir NVME_OFFLOAD_DIR] [--local_rank LOCAL_RANK] [--alpha_value ALPHA_VALUE] [--rope_freq_base ROPE_FREQ_BASE] [--compress_pos_emb COMPRESS_POS_EMB] [--listen]
-                 [--listen-port LISTEN_PORT] [--listen-host LISTEN_HOST] [--share] [--auto-launch] [--gradio-auth GRADIO_AUTH] [--gradio-auth-path GRADIO_AUTH_PATH] [--ssl-keyfile SSL_KEYFILE]
-                 [--ssl-certfile SSL_CERTFILE] [--subpath SUBPATH] [--api] [--public-api] [--public-api-id PUBLIC_API_ID] [--api-port API_PORT] [--api-key API_KEY] [--admin-key ADMIN_KEY] [--nowebui]
-                 [--multimodal-pipeline MULTIMODAL_PIPELINE] [--model_type MODEL_TYPE] [--pre_layer PRE_LAYER [PRE_LAYER ...]] [--checkpoint CHECKPOINT] [--monkey-patch]
+                 [--attention-sink-size ATTENTION_SINK_SIZE] [--tokenizer-dir TOKENIZER_DIR] [--gpu-split GPU_SPLIT] [--autosplit] [--max_seq_len MAX_SEQ_LEN] [--cfg-cache] [--no_flash_attn]
+                 [--no_xformers] [--no_sdpa] [--cache_8bit] [--cache_4bit] [--num_experts_per_token NUM_EXPERTS_PER_TOKEN] [--triton] [--no_inject_fused_mlp] [--no_use_cuda_fp16] [--desc_act]
+                 [--disable_exllama] [--disable_exllamav2] [--wbits WBITS] [--groupsize GROUPSIZE] [--hqq-backend HQQ_BACKEND] [--cpp-runner] [--deepspeed] [--nvme-offload-dir NVME_OFFLOAD_DIR]
+                 [--local_rank LOCAL_RANK] [--alpha_value ALPHA_VALUE] [--rope_freq_base ROPE_FREQ_BASE] [--compress_pos_emb COMPRESS_POS_EMB] [--listen] [--listen-port LISTEN_PORT]
+                 [--listen-host LISTEN_HOST] [--share] [--auto-launch] [--gradio-auth GRADIO_AUTH] [--gradio-auth-path GRADIO_AUTH_PATH] [--ssl-keyfile SSL_KEYFILE] [--ssl-certfile SSL_CERTFILE]
+                 [--subpath SUBPATH] [--api] [--public-api] [--public-api-id PUBLIC_API_ID] [--api-port API_PORT] [--api-key API_KEY] [--admin-key ADMIN_KEY] [--nowebui]
+                 [--multimodal-pipeline MULTIMODAL_PIPELINE] [--model_type MODEL_TYPE] [--pre_layer PRE_LAYER [PRE_LAYER ...]] [--checkpoint CHECKPOINT] [--monkey-patch] [--no_inject_fused_attention]
 
 Text generation web UI
 
@@ -241,12 +247,12 @@ Text generation web UI
                                                  使用--settings命令行参数。
   --extensions EXTENSIONS [EXTENSIONS ...]       加载的扩展列表。如果要加载多个扩展，请写下由空格隔开的名称。
   --verbose                                      将提示词打印到终端。
-  --chat-buttons                                 在“聊天”选项卡上显示按钮，而不是悬停菜单。
+  --chat-buttons                                 在“聊天”标签页里显示按钮，而不是悬停菜单。
   --idle-timeout IDLE_TIMEOUT                    在这么多分钟不活动后卸载模型。当您再次尝试使用它时，模型将自动重新加载。
 
 模型加载器：
   --loader LOADER                                手动选择模型加载器，否则，它将被自动检测。可选选项：Transformers，llama.cpp，llamacpp_HF，Exllamav2_HF，Exllamav2，
-                                                 AutoGPTQ，AutoAWQ。
+                                                 AutoGPTQ。
 
 Transformers/Accelerate：
   --cpu                                          使用CPU生成文本。警告：使用CPU训练非常慢。
@@ -290,6 +296,7 @@ llama.cpp：
   --row_split                                    将模型按行分割到多个GPU上，这可能会提高多GPU的性能。
   --streaming-llm                                激活StreamingLLM以避免在删除旧消息时重新评估整个提示词。
   --attention-sink-size ATTENTION_SINK_SIZE      StreamingLLM：下沉词符的数量。仅在修剪后的提示词与旧提示词前缀不同时使用。
+  --tokenizer-dir TOKENIZER_DIR                  从此指定的文件夹加载词符化器。用于通过命令行使用llamacpp_HF加载器。
 
 ExLlamaV2：
   --gpu-split GPU_SPLIT                          逗号分隔的列表，指定每个GPU设备用于模型层的VRAM（以GB为单位）。示 例：20,7,7。
@@ -313,10 +320,7 @@ AutoGPTQ：
   --wbits WBITS                                  加载指定精度的预量化模型。支持2、3、4和8。
   --groupsize GROUPSIZE                          组大小。
 
-AutoAWQ：
-  --no_inject_fused_attention                    停用融合注意力，这将以较慢的推理为代价使用较少的VRAM。
-
-HQQ：
+HQQ:
   --hqq-backend HQQ_BACKEND                      HQQ加载器的后端。有效选项：PYTORCH, PYTORCH_COMPILE, ATEN。
 
 TensorRT-LLM:
@@ -410,7 +414,7 @@ https://colab.research.google.com/github/Touch-Night/text-generation-webui/blob/
 
 ## Community
 
-* Subreddit: https://www.reddit.com/r/oobabooga/
+* Subreddit: https://www.reddit.com/r/Oobabooga/
 * Discord: https://discord.gg/jwZCF2dPQN
 
 ## 致谢
