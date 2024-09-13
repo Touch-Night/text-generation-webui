@@ -3,6 +3,7 @@ colorama
 datasets
 decorator
 einops
+fastapi==0.112.4
 exllamav2==0.1.7
 gradio==4.26.*
 hqq==0.1.7.post3
@@ -16,6 +17,7 @@ optimum==1.17.*
 pandas
 peft==0.12.*
 Pillow>=9.5.0
+pydantic==2.8.2
 pyyaml
 requests
 rich
