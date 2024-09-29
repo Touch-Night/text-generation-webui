@@ -91,12 +91,12 @@ conda activate textgen
 
 | 系统 | GPU | 命令 |
 |--------|---------|---------|
-| Linux/WSL | Nvidia| `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cu121` |
-| Linux/WSL | 仅CPU | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cpu` |
-| Linux | AMD | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/rocm5.6` |
-| MacOS + MPS | 任意 | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2` |
-| Windows | Nvidia | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cu121` |
-| Windows | 仅CPU | `pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2` |
+| Linux/WSL | Nvidia | `pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cu121` |
+| Linux/WSL | 仅CPU | `pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cpu` |
+| Linux | AMD | `pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/rocm6.1` |
+| MacOS + MPS | 任意 | `pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1` |
+| Windows | Nvidia | `pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cu121` |
+| Windows | 仅CPU | `pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1` |
 
 最新的命令可以在这里找到：https://pytorch.org/get-started/locally/ 。
 
@@ -161,7 +161,7 @@ python server.py
 1) 对于Kepler GPU和较早的GPU，您需要安装CUDA 11.8而不是12：
 
 ```
-pip3 install torch==2.2.2 torchvision==0.17.2 torchaudio==2.2.2 --index-url https://download.pytorch.org/whl/cu118
+pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cu118
 conda install -y -c "nvidia/label/cuda-11.8.0" cuda-runtime
 ```
 

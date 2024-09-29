@@ -17,9 +17,9 @@ import sys
 
 
 # Define the required PyTorch version
-TORCH_VERSION = "2.2.2"
-TORCHVISION_VERSION = "0.17.2"
-TORCHAUDIO_VERSION = "2.2.2"
+TORCH_VERSION = "2.4.1"
+TORCHVISION_VERSION = "0.19.1"
+TORCHAUDIO_VERSION = "2.4.1"
 
 # Environment
 script_dir = os.getcwd()
@@ -136,7 +136,7 @@ def update_pytorch():
     elif is_cuda:
         install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cu121"
     elif is_rocm:
-        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/rocm5.6"
+        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/rocm6.1"
     elif is_cpu:
         install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cpu"
     elif is_intel:
@@ -209,7 +209,7 @@ def run_cmd(cmd, assert_success=False, environment=False, capture_output=False, 
             cmd = f'. "{conda_sh_path}" && conda activate "{conda_env_path}" && {cmd}'
 
     # Run shell commands
-    result = subprocess.run(cmd, shell=True, capture_output=capture_output, env=env)
+    result = subprocess.run(cmd, shell=True, executable='/bin/bash', capture_output=capture_output, env=env)
 
     # Assert the command ran successfully
     if assert_success and result.returncode != 0:
@@ -258,7 +258,7 @@ def install_webui():
             "您的GPU是什么型号的?",
             {
                 'A': 'NVIDIA/英伟达',
-                'B': 'AMD (仅限Linux/MacOS。在Linux上需要ROCm SDK 5.6)',
+                'B': 'AMD (仅限Linux/MacOS。在Linux上需要ROCm SDK 6.1)',
                 'C': 'Apple M 系列',
                 'D': 'Intel Arc (IPEX)',
                 'E': '华为昇腾',
@@ -315,7 +315,7 @@ def install_webui():
         else:
             install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cu121"
     elif selected_gpu == "AMD":
-        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/rocm5.6"
+        install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/rocm6.1"
     elif selected_gpu in ["APPLE", "NONE"]:
         install_pytorch += "--index-url https://mirror.sjtu.edu.cn/pytorch-wheels/cpu"
     elif selected_gpu == "INTEL":
