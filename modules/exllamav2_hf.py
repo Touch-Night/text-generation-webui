@@ -21,13 +21,6 @@ from modules.logging_colors import logger
 
 try:
     import flash_attn
-except ModuleNotFoundError:
-    logger.warning(
-        '您正在运行 ExLlamaV2 而没有使用 flash-attention。这将导致显存使用量比可能的情况要高得多。\n'
-        '尝试按照这里的说明安装 flash-attention：'
-        'https://github.com/Dao-AILab/flash-attention#installation-and-features'
-    )
-    pass
 except Exception:
     logger.warning('由于以下错误，加载 flash-attention 失败：\n')
     traceback.print_exc()

@@ -19,7 +19,7 @@
 
 ## 功能
 
-* 用多种后端在UI中或调用API进行文本生成，这些后端有：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp) (通过[llama-cpp-python](https://github.com/abetlen/llama-cpp-python)支持)、[ExLlamaV2](https://github.com/turboderp/exllamav2)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)和[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)。使用Transformers加载器，[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[HQQ](https://github.com/mobiusml/hqq)和[AQLM](https://github.com/Vahe1994/AQLM)也同样支持。
+* 用多种后端在UI中或调用API进行文本生成，这些后端有：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp)和[ExLlamaV2](https://github.com/turboderp/exllamav2)。[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[HQQ](https://github.com/mobiusml/hqq)以及[AQLM](https://github.com/Vahe1994/AQLM)也支持，但需要手动安装。
 * 具有聊天和补全端点的OpenAI兼容API服务器 -- 请参阅[示例](https://github.com/Touch-Night/text-generation-webui/wiki/12-%E2%80%90-OpenAI-API#examples)。
 * 自动使用模型自带的元数据中的Jinja2模板对其进行提示词格式化。
 * 三种聊天模式：`instruct`（指令）、`chat-instruct`（聊天-指令）和`chat`（聊天），既可以让模型遵循指令，也可以与角色进行随意对话。`chat-instruct`模式会自动将模型的模板应用于聊天提示词，确保输出高质量而无需手动设置。
