@@ -685,8 +685,6 @@ def do_train(lora_name: str, always_override: bool, q_proj_en: bool, v_proj_en: 
 
     def threaded_run():
         log_train_dataset(trainer)
-        if is_torch_npu_available():
-            torch.npu.set_device(0)
         trainer.train()
         # Note: save in the thread in case the gradio thread breaks (eg browser closed)
         lora_model.save_pretrained(lora_file_path)
