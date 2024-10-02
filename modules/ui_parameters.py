@@ -45,6 +45,10 @@ def create_ui(default_preset):
                                 shared.gradio['dry_base'] = gr.Slider(1, 4, value=generate_params['dry_base'], step=0.01, label='DRY基数', info='控制随着重复的序列的长度增长，惩罚的增长有多快。')
                                 shared.gradio['dry_sequence_breakers'] = gr.Textbox(value=generate_params['dry_sequence_breakers'], label='DRY序列匹配中断符', info='这些词符会打断并分隔序列的匹配。该参数以逗号分隔的引号字符串列表形式指定。')
 
+                            with gr.Blocks():
+                                shared.gradio['xtc_threshold'] = gr.Slider(0, 0.5, value=generate_params['xtc_threshold'], step=0.01, label='XTC阈值', info='以一定的可能性移除除概率最小的词符以外的概率超过此阈值的词符。')
+                                shared.gradio['xtc_probability'] = gr.Slider(0, 1, value=generate_params['xtc_probability'], step=0.01, label='XTC可能性', info='被纳入移除考虑的词符实际被移除的可能性。值为0表示此采样器不生效，1表示移除总是发生。')
+
                             gr.Markdown("[了解更多](https://github.com/Touch-Night/text-generation-webui/wiki/03-%E2%80%90-%E5%8F%82%E6%95%B0%E6%A0%87%E7%AD%BE%E9%A1%B5)")
 
                         with gr.Column():

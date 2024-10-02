@@ -9,6 +9,7 @@ from exllamav2 import (
     ExLlamaV2Cache,
     ExLlamaV2Cache_8bit,
     ExLlamaV2Cache_Q4,
+    ExLlamaV2Cache_TP,
     ExLlamaV2Config
 )
 from torch.nn import CrossEntropyLoss
@@ -20,13 +21,6 @@ from modules.logging_colors import logger
 
 try:
     import flash_attn
-except ModuleNotFoundError:
-    logger.warning(
-        '您正在运行 ExLlamaV2 而没有使用 flash-attention。这将导致显存使用量比可能的情况要高得多。\n'
-        '尝试按照这里的说明安装 flash-attention：'
-        'https://github.com/Dao-AILab/flash-attention#installation-and-features'
-    )
-    pass
 except Exception:
     logger.warning('由于以下错误，加载 flash-attention 失败：\n')
     traceback.print_exc()
@@ -41,21 +35,30 @@ class Exllamav2HF(PreTrainedModel):
 
         self.ex_model = ExLlamaV2(config)
 
-        if not shared.args.autosplit:
-            split = None
-            if shared.args.gpu_split:
-                split = [float(alloc) for alloc in shared.args.gpu_split.split(",")]
+        split = None
+        if shared.args.gpu_split:
+            split = [float(alloc) for alloc in shared.args.gpu_split.split(",")]
 
+        if shared.args.enable_tp:
+            self.ex_model.load_tp(split)
+        elif not shared.args.autosplit:
             self.ex_model.load(split)
 
+        # Determine the correct cache type
         if shared.args.cache_8bit:
-            self.ex_cache = ExLlamaV2Cache_8bit(self.ex_model, lazy=shared.args.autosplit)
+            cache_type = ExLlamaV2Cache_8bit
         elif shared.args.cache_4bit:
-            self.ex_cache = ExLlamaV2Cache_Q4(self.ex_model, lazy=shared.args.autosplit)
+            cache_type = ExLlamaV2Cache_Q4
         else:
-            self.ex_cache = ExLlamaV2Cache(self.ex_model, lazy=shared.args.autosplit)
+            cache_type = ExLlamaV2Cache
 
-        if shared.args.autosplit:
+        # Use TP if specified
+        if shared.args.enable_tp:
+            self.ex_cache = ExLlamaV2Cache_TP(self.ex_model, base=cache_type)
+        else:
+            self.ex_cache = cache_type(self.ex_model, lazy=shared.args.autosplit)
+
+        if shared.args.autosplit and not shared.args.enable_tp:
             self.ex_model.load_autosplit(self.ex_cache)
 
         self.past_seq = None
