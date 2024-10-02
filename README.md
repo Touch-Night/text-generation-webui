@@ -17,7 +17,7 @@
 |:---:|:---:|
 |![Image1](https://github.com/oobabooga/screenshots/raw/main/print_default.png) | ![Image2](https://github.com/oobabooga/screenshots/raw/main/print_parameters.png) |
 
-## Features
+## 功能
 
 - 用多种后端在UI中或调用API进行文本生成，这些后端有：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp)和[ExLlamaV2](https://github.com/turboderp/exllamav2)。[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[HQQ](https://github.com/mobiusml/hqq)，以及[AQLM](https://github.com/Vahe1994/AQLM)也支持但你得手动安装。
 - 具有聊天和补全端点的OpenAI兼容API服务器 -- 请参阅[示例](https://github.com/Touch-Night/text-generation-webui/wiki/12-%E2%80%90-OpenAI-API#examples)。
@@ -31,7 +31,7 @@
 - 简单的LoRA微调工具，可使用您的数据自定义模型。
 - 所有内容都在一个文件夹中。所需的依赖项安装在一个独立的`installer_files`文件夹中，不会干扰系统环境。
 
-## How to install
+## 如何安装
 
 1) 克隆或[下载](https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui/releases/download/v1.15/text-generation-webui-Chinese.zip)此存储库。
 2) 根据您的操作系统运行`start_linux.sh`，`start_windows.bat`，`start_macos.sh`或`start_wsl.bat`脚本。
@@ -92,9 +92,9 @@ conda activate textgen
 | Windows | Nvidia | `pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1 --index-url https://download.pytorch.org/whl/cu121` |
 | Windows | 仅CPU | `pip3 install torch==2.4.1 torchvision==0.19.1 torchaudio==2.4.1` |
 
-The up-to-date commands can be found here: https://pytorch.org/get-started/locally/.
+最新的命令可以在这里找到：https://pytorch.org/get-started/locally/ 。
 
-For NVIDIA, you also need to install the CUDA runtime libraries:
+对于NVIDIA，您还需要安装CUDA运行时库：
 
 ```
 conda install -y -c "nvidia/label/cuda-12.1.1" cuda-runtime
