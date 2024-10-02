@@ -321,7 +321,7 @@ def AutoGPTQ_loader(model_name):
     try:
         import modules.AutoGPTQ_loader
     except ModuleNotFoundError:
-        raise ModuleNotFoundError("Failed to import 'autogptq'. Please install it manually following the instructions in the AutoGPTQ GitHub repository.")
+        raise ModuleNotFoundError("导入“autogptq”失败。请按照AutoGPTQ GitHub存储库中的说明手动安装它。")
 
     return modules.AutoGPTQ_loader.load_quantized(model_name)
 
@@ -331,7 +331,7 @@ def HQQ_loader(model_name):
         from hqq.core.quantize import HQQBackend, HQQLinear
         from hqq.models.hf.base import AutoHQQHFModel
     except ModuleNotFoundError:
-        raise ModuleNotFoundError("Failed to import 'hqq'. Please install it manually following the instructions in the HQQ GitHub repository.")
+        raise ModuleNotFoundError("导入“hqq”失败。请按照HQQ GitHub存储库中的说明手动安装它。")
 
     logger.info(f"正在使用后端“{shared.args.hqq_backend}”加载HQQ模型")
 
@@ -345,7 +345,7 @@ def TensorRT_LLM_loader(model_name):
     try:
         from modules.tensorrt_llm import TensorRTLLMModel
     except ModuleNotFoundError:
-        raise ModuleNotFoundError("Failed to import 'tensorrt_llm'. Please install it manually following the instructions in the TensorRT-LLM GitHub repository.")
+        raise ModuleNotFoundError("导入“tensorrt_llm”失败。请按照TensorRT-LLM GitHub存储库中的说明手动安装它。")
 
     model = TensorRTLLMModel.from_pretrained(model_name)
     return model

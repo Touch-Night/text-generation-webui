@@ -19,35 +19,29 @@
 
 ## 功能
 
-* 用多种后端在UI中或调用API进行文本生成，这些后端有：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp)和[ExLlamaV2](https://github.com/turboderp/exllamav2)。[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[HQQ](https://github.com/mobiusml/hqq)以及[AQLM](https://github.com/Vahe1994/AQLM)也支持，但需要手动安装。
-* 具有聊天和补全端点的OpenAI兼容API服务器 -- 请参阅[示例](https://github.com/Touch-Night/text-generation-webui/wiki/12-%E2%80%90-OpenAI-API#examples)。
-* 自动使用模型自带的元数据中的Jinja2模板对其进行提示词格式化。
-* 三种聊天模式：`instruct`（指令）、`chat-instruct`（聊天-指令）和`chat`（聊天），既可以让模型遵循指令，也可以与角色进行随意对话。`chat-instruct`模式会自动将模型的模板应用于聊天提示词，确保输出高质量而无需手动设置。
-* “过往聊天”菜单，可快速切换对话或开始新对话。
-* 在默认/笔记本标签页中进行自由形式的生成，不受聊天轮次的限制。可以从聊天标签页将格式化的聊天对话发送到这些标签页。
-* 多种采样参数和生成选项，用于复杂的文本生成控制。
-* 使用“模型”标签页，通过用户界面轻松切换不同模型，而无需重启。
-* 简单的LoRA微调工具，可使用您的数据自定义模型。
-* 所有内容都在一个文件夹中。所需的依赖项安装在一个独立的`installer_files`文件夹中，不会干扰系统环境。
-
-* 用来快速切换不同模型的下拉菜单。
-* 支持扩展，包含大量的内置和用户贡献的扩展。请参阅[wiki](https://github.com/Touch-Night/text-generation-webui/wiki/07-%E2%80%90-%E6%89%A9%E5%B1%95)和[扩展库](https://github.com/oobabooga/text-generation-webui-extensions)。
+- 用多种后端在UI中或调用API进行文本生成，这些后端有：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp)和[ExLlamaV2](https://github.com/turboderp/exllamav2)。[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[HQQ](https://github.com/mobiusml/hqq)，以及[AQLM](https://github.com/Vahe1994/AQLM)也支持但你得手动安装。
+- 具有聊天和补全端点的OpenAI兼容API服务器 -- 请参阅[示例](https://github.com/Touch-Night/text-generation-webui/wiki/12-%E2%80%90-OpenAI-API#examples)。
+- 自动使用模型自带的元数据中的Jinja2模板对其进行提示词格式化。
+- 三种聊天模式：`instruct`（指令）、`chat-instruct`（聊天-指令）和`chat`（聊天），既可以让模型遵循指令，也可以与角色进行随意对话。`chat-instruct`模式会自动将模型的模板应用于聊天提示词，确保输出高质量而无需手动设置。
+- “过往聊天”菜单，可快速切换对话或开始新对话。
+- 在默认/笔记本标签页中进行自由形式的生成，不受聊天轮次的限制。可以从聊天标签页将格式化的聊天对话发送到这些标签页。
+- 在默认/笔记本标签页中进行自由形式的生成，不受聊天轮次的限制。可以从聊天标签页将格式化的聊天对话发送到这些标签页。
+- 多种采样参数和生成选项，用于复杂的文本生成控制。
+- 使用“模型”标签页，通过用户界面轻松切换不同模型，而无需重启。
+- 简单的LoRA微调工具，可使用您的数据自定义模型。
+- 所有内容都在一个文件夹中。所需的依赖项安装在一个独立的`installer_files`文件夹中，不会干扰系统环境。
 
 ## 如何安装
 
-1) 克隆或[下载](https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui/releases/download/v1.14/text-generation-webui-Chinese.zip)此存储库。
+1) 克隆或[下载](https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui/releases/download/v1.15/text-generation-webui-Chinese.zip)此存储库。
 2) 根据您的操作系统运行`start_linux.sh`，`start_windows.bat`，`start_macos.sh`或`start_wsl.bat`脚本。
 3) 问到时选择您的GPU供应商。
 4) 安装结束后，访问`http://localhost:7860`。
 5) 玩得开心！
 
-要在将来重新启动Web UI，只需再次运行`start_`脚本。
+要在将来重新启动Web UI，只需再次运行`start_`脚本。如果您需要重新安装依赖，只需删除该文件夹并再次启动Web UI。
 
-此脚本创建了一个`installer_files`文件夹，其中设置了项目的依赖。如果您需要重新安装依赖，只需删除该文件夹并再次运行`start_`脚本。
-
-此脚本接受命令行参数，例如`./start_linux.sh --help`。或者，您可以使用文本编辑器编辑`CMD_FLAGS.txt`文件并在其中添加命令行参数，例如你可以添加`--api`来启用API功能。
-
-要在将来更新此软件，请运行`update_wizard_linux.sh`，`update_wizard_windows.bat`，`update_wizard_macos.sh`或`update_wizard_wsl.bat`。
+此脚本接受命令行参数，例如`./start_linux.sh --help`。或者，您可以使用文本编辑器编辑`CMD_FLAGS.txt`文件并在其中添加命令行参数，例如你可以添加`--api`来启用API功能。要在将来更新此软件，请运行`update_wizard_linux.sh`，`update_wizard_windows.bat`，`update_wizard_macos.sh`或`update_wizard_wsl.bat`。
 
 <details>
 <summary>

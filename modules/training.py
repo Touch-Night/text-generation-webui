@@ -18,7 +18,7 @@ import gradio as gr
 import torch
 import transformers
 from datasets import Dataset, load_dataset
-from transformers import is_torch_xpu_available
+from transformers import is_torch_npu_available, is_torch_xpu_available
 from transformers.models.auto.modeling_auto import (
     MODEL_FOR_CAUSAL_LM_MAPPING_NAMES
 )

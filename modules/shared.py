@@ -146,7 +146,7 @@ group.add_argument('--no_sdpa', action='store_true', help='强制不使用Torch 
 group.add_argument('--cache_8bit', action='store_true', help='使用8位缓存以节省VRAM。')
 group.add_argument('--cache_4bit', action='store_true', help='使用Q4缓存以节省VRAM。')
 group.add_argument('--num_experts_per_token', type=int, default=2, help='用于生成的专家数量。适用于像Mixtral这样的MoE模型。')
-group.add_argument('--enable_tp', action='store_true', help='在ExLlamaV2中启用张量并行。')
+group.add_argument('--enable_tp', action='store_true', help='启用ExLlamaV2的张量并行功能。')
 
 # AutoGPTQ
 group = parser.add_argument_group('AutoGPTQ')
