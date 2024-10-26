@@ -136,7 +136,7 @@ def create_ui():
                             shared.gradio['disk'] = gr.Checkbox(label="磁盘", value=shared.args.disk)
                             shared.gradio['bf16'] = gr.Checkbox(label="bf16", value=shared.args.bf16)
                             shared.gradio['autosplit'] = gr.Checkbox(label="自动分割", value=shared.args.autosplit, info='自动在可用的GPU之间分割模型张量。')
-                            shared.gradio['enable_tp'] = gr.Checkbox(label="enable_tp", value=shared.args.enable_tp, info='启用张量并行。')
+                            shared.gradio['enable_tp'] = gr.Checkbox(label="启用张量并行", value=shared.args.enable_tp, info='启用张量并行。')
                             shared.gradio['no_flash_attn'] = gr.Checkbox(label="不使用flash_attn", value=shared.args.no_flash_attn)
                             shared.gradio['no_xformers'] = gr.Checkbox(label="不使用xformers", value=shared.args.no_xformers)
                             shared.gradio['no_sdpa'] = gr.Checkbox(label="不使用sdpa", value=shared.args.no_sdpa)
