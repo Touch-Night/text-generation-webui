@@ -81,7 +81,6 @@ group.add_argument('--model-menu', action='store_true', help='当web UI首次启
 group.add_argument('--settings', type=str, help='从这个yaml文件加载默认界面设置。参见settings-template.yaml的示例。如果你创建了一个叫做settings.yaml的文件，这个文件将会默认加载，无需使用--settings命令行参数。')
 group.add_argument('--extensions', type=str, nargs='+', help='要加载的扩展列表。如果你想加载多于一个扩展，将名字用空格分隔。')
 group.add_argument('--verbose', action='store_true', help='在终端打印提示。')
-group.add_argument('--chat-buttons', action='store_true', help='在聊天标签页显示按钮，而不是悬浮菜单。')
 group.add_argument('--idle-timeout', type=int, default=0, help='在这么多分钟不活动后卸载模型。当您再次尝试使用它时，模型将自动重新加载。')
 
 # Model loader
@@ -143,8 +142,6 @@ group.add_argument('--cfg-cache', action='store_true', help='ExLlamav2_HF：为C
 group.add_argument('--no_flash_attn', action='store_true', help='强制不使用flash-attention。')
 group.add_argument('--no_xformers', action='store_true', help='强制不使用xformers。')
 group.add_argument('--no_sdpa', action='store_true', help='强制不使用Torch SDPA。')
-group.add_argument('--cache_8bit', action='store_true', help='使用8位缓存以节省VRAM。')
-group.add_argument('--cache_4bit', action='store_true', help='使用Q4缓存以节省VRAM。')
 group.add_argument('--num_experts_per_token', type=int, default=2, help='用于生成的专家数量。适用于像Mixtral这样的MoE模型。')
 group.add_argument('--enable_tp', action='store_true', help='启用ExLlamaV2的张量并行功能。')
 
@@ -166,6 +163,10 @@ group.add_argument('--hqq-backend', type=str, default='PYTORCH_COMPILE', help='H
 # TensorRT-LLM
 group = parser.add_argument_group('TensorRT-LLM')
 group.add_argument('--cpp-runner', action='store_true', help='使用ModelRunnerCpp运行器，它比默认的ModelRunner快，但还不支持流式传输。')
+
+# Cache
+group = parser.add_argument_group('Cache')
+group.add_argument('--cache_type', type=str, default='fp16', help='KV 缓存类型; 可选项: llama.cpp - fp16, q8_0, q4_0; ExLlamaV2 - fp16, fp8, q8, q6, q4。')
 
 # DeepSpeed
 group = parser.add_argument_group('DeepSpeed')
@@ -191,6 +192,7 @@ group.add_argument('--gradio-auth-path', type=str, help='设置Gradio认证文�
 group.add_argument('--ssl-keyfile', type=str, help='SSL证书密钥文件的路径。', default=None)
 group.add_argument('--ssl-certfile', type=str, help='SSL证书文件的路径。', default=None)
 group.add_argument('--subpath', type=str, help='使用反向代理时自定义gradio的子路径。')
+group.add_argument('--old-colors', action='store_true', help='使用2024年12月更新前的旧版Gradio颜色方案。')
 
 # API
 group = parser.add_argument_group('API')
@@ -213,6 +215,9 @@ group.add_argument('--pre_layer', type=int, nargs='+', help='已过时')
 group.add_argument('--checkpoint', type=str, help='已过时')
 group.add_argument('--monkey-patch', action='store_true', help='已过时')
 group.add_argument('--no_inject_fused_attention', action='store_true', help='已过时')
+group.add_argument('--cache_4bit', action='store_true', help='已过时')
+group.add_argument('--cache_8bit', action='store_true', help='已过时')
+group.add_argument('--chat-buttons', action='store_true', help='已过时')
 
 args = parser.parse_args()
 args_defaults = parser.parse_args([])
@@ -269,6 +274,58 @@ def fix_loader_name(name):
         return 'TensorRT-LLM'
 
 
+def transform_legacy_kv_cache_options(opts):
+    # Handle both argparse.Namespace and dict here
+    def get(key):
+        return opts.get(key) if isinstance(opts, dict) else getattr(opts, key, None)
+
+    def set(key, value):
+        if isinstance(opts, dict):
+            opts[key] = value
+        else:
+            setattr(opts, key, value)
+
+    def del_key(key, fallback_set):
+        # only remove from user dict, can't delete from argparse.Namespace
+        if type(opts) is dict:
+            if key in opts:
+                del opts[key]
+        else:
+            setattr(opts, key, fallback_set)
+
+    # Retrieve values
+    loader = get('loader')
+    cache_8bit = get('cache_8bit')
+    cache_4bit = get('cache_4bit')
+
+    # Determine cache type based on loader or legacy flags
+    if cache_8bit or cache_4bit:
+        if not loader:
+            # Legacy behavior: prefer 8-bit over 4-bit to minimize breakage
+            if cache_8bit:
+                set('cache_type', 'fp8')
+            elif cache_4bit:
+                set('cache_type', 'q4')
+        elif loader.lower() in ['exllamav2', 'exllamav2_hf']:
+            # ExLlamaV2 loader-specific cache type
+            if cache_8bit:
+                set('cache_type', 'fp8')
+            elif cache_4bit:
+                set('cache_type', 'q4')
+        elif loader.lower() in ['llama.cpp', 'llamacpp_hf']:
+            # Llama.cpp loader-specific cache type
+            if cache_4bit:
+                set('cache_type', 'q4_0')
+            elif cache_8bit:
+                set('cache_type', 'q8_0')
+
+    # Clean up legacy keys
+    del_key('cache_4bit', False)
+    del_key('cache_8bit', False)
+
+    return opts
+
+
 def add_extension(name, last=False):
     if args.extensions is None:
         args.extensions = [name]
@@ -297,10 +354,14 @@ def load_user_config():
     else:
         user_config = {}
 
+    for model_name in user_config:
+        user_config[model_name] = transform_legacy_kv_cache_options(user_config[model_name])
+
     return user_config
 
 
 args.loader = fix_loader_name(args.loader)
+args = transform_legacy_kv_cache_options(args)
 
 # Activate the multimodal extension
 if args.multimodal_pipeline is not None:
