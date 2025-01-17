@@ -18,16 +18,19 @@ def create_ui():
     mu = shared.args.multi_user
 
     shared.gradio['Chat input'] = gr.State()
-    shared.gradio['history'] = gr.JSON({'internal': [], 'visible': []}, visible=False)
+    shared.gradio['history'] = gr.JSON(visible=False)
 
-    with gr.Tab('聊天', elem_id='chat-tab'):
+    with gr.Tab('聊天', id='Chat', elem_id='chat-tab'):
         with gr.Row(elem_id='past-chats-row', elem_classes=['pretty_scrollbar']):
             with gr.Column():
                 with gr.Row(elem_id='past-chats-buttons'):
+                    shared.gradio['branch_chat'] = gr.Button('分支', elem_classes='refresh-button', interactive=not mu)
                     shared.gradio['rename_chat'] = gr.Button('重命名', elem_classes='refresh-button', interactive=not mu)
                     shared.gradio['delete_chat'] = gr.Button('🗑️', elem_classes='refresh-button', interactive=not mu)
                     shared.gradio['Start new chat'] = gr.Button('新建聊天', elem_classes=['refresh-button', 'focus-on-chat-input'])
 
+                shared.gradio['search_chat'] = gr.Textbox(placeholder='搜索聊天...', max_lines=1, elem_id='search_chat')
+                
                 with gr.Row(elem_id='delete-chat-row', visible=False) as shared.gradio['delete-chat-row']:
                     shared.gradio['delete_chat-cancel'] = gr.Button('取消', elem_classes=['refresh-button', 'focus-on-chat-input'])
                     shared.gradio['delete_chat-confirm'] = gr.Button('确认', variant='stop', elem_classes=['refresh-button', 'focus-on-chat-input'])
@@ -43,8 +46,8 @@ def create_ui():
 
         with gr.Row():
             with gr.Column(elem_id='chat-col'):
-                shared.gradio['display'] = gr.HTML(value=chat_html_wrapper({'internal': [], 'visible': []}, '', '', 'chat', 'cai-chat', ''))
-
+                shared.gradio['html_display'] = gr.HTML(value=chat_html_wrapper({'internal': [], 'visible': []}, '', '', 'chat', 'cai-chat', ''), visible=True)
+                shared.gradio['display'] = gr.Textbox(value="", visible=False)  # Hidden buffer
                 with gr.Row(elem_id="chat-input-row"):
                     with gr.Column(scale=1, elem_id='gr-hover-container'):
                         gr.HTML(value='<div class="hover-element" onclick="void(0)"><span style="width: 100px; display: block" id="hover-element-button">&#9776;</span><div class="hover-menu" id="hover-menu"></div>', elem_id='gr-hover')
@@ -161,7 +164,7 @@ def create_chat_settings_ui():
         with gr.Row():
             with gr.Column():
                 shared.gradio['custom_system_message'] = gr.Textbox(value=shared.settings['custom_system_message'], lines=2, label='自定义系统消息', info='如果不为空，将代替默认消息使用。', elem_classes=['add_scrollbar'])
-                shared.gradio['instruction_template_str'] = gr.Textbox(value='', label='指令模板', lines=24, info='根据您正在使用的模型/LoRA进行更改。在指令和聊天指令模式下使用。', elem_classes=['add_scrollbar', 'monospace'])
+                shared.gradio['instruction_template_str'] = gr.Textbox(value='', label='指令模板', lines=24, info='这个选项会自动检测，您通常不需要手动更改。在指令和聊天指令模式下使用。', elem_classes=['add_scrollbar', 'monospace'])
                 with gr.Row():
                     shared.gradio['send_instruction_to_default'] = gr.Button('发送至默认', elem_classes=['small-button'])
                     shared.gradio['send_instruction_to_notebook'] = gr.Button('发送至笔记本', elem_classes=['small-button'])
@@ -176,6 +179,9 @@ def create_event_handlers():
     # Obsolete variables, kept for compatibility with old extensions
     shared.input_params = gradio(inputs)
     shared.reload_inputs = gradio(reload_arr)
+
+    # Morph HTML updates instead of updating everything
+    shared.gradio['display'].change(None, gradio('display'), None, js="(text) => handleMorphdomUpdate(text)")
 
     shared.gradio['Generate'].click(
         ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
@@ -250,6 +256,10 @@ def create_event_handlers():
         ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
         chat.handle_delete_chat_confirm_click, gradio('interface_state'), gradio('history', 'display', 'unique_id', 'delete-chat-row'), show_progress=False)
 
+    shared.gradio['branch_chat'].click(
+        ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
+        chat.handle_branch_chat_click, gradio('interface_state'), gradio('history', 'display', 'unique_id'), show_progress=False)
+
     shared.gradio['rename_chat'].click(chat.handle_rename_chat_click, None, gradio('rename_to', 'rename-row'), show_progress=False)
     shared.gradio['rename_to-cancel'].click(lambda: gr.update(visible=False), None, gradio('rename-row'), show_progress=False)
     shared.gradio['rename_to-confirm'].click(
@@ -259,6 +269,10 @@ def create_event_handlers():
     shared.gradio['rename_to'].submit(
         ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
         chat.handle_rename_chat_confirm, gradio('rename_to', 'interface_state'), gradio('unique_id', 'rename-row'), show_progress=False)
+
+    shared.gradio['search_chat'].change(
+        ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(
+        chat.handle_search_chat_change, gradio('interface_state'), gradio('unique_id'), show_progress=False)
 
     shared.gradio['load_chat_history'].upload(
         ui.gather_interface_values, gradio(shared.input_elements), gradio('interface_state')).then(

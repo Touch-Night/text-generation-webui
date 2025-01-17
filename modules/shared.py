@@ -29,39 +29,40 @@ need_restart = False
 
 # UI defaults
 settings = {
-    'dark_theme': True,
     'show_controls': True,
     'start_with': '',
     'mode': 'chat-instruct',
     'chat_style': 'cai-chat',
+    'chat-instruct_command': 'Continue the chat dialogue below. Write a single reply for the character "<|character|>".\n\n<|prompt|>',
     'prompt-default': 'QA',
     'prompt-notebook': 'QA',
-    'preset': 'min_p',
-    'max_new_tokens': 512,
-    'max_new_tokens_min': 1,
-    'max_new_tokens_max': 4096,
-    'negative_prompt': '',
-    'seed': -1,
-    'truncation_length': 2048,
-    'max_tokens_second': 0,
-    'max_updates_second': 0,
-    'prompt_lookup_num_tokens': 0,
-    'custom_stopping_strings': '',
-    'custom_token_bans': '',
-    'auto_max_new_tokens': False,
-    'ban_eos_token': False,
-    'add_bos_token': True,
-    'skip_special_tokens': True,
-    'stream': True,
     'character': 'Assistant',
     'name1': 'You',
     'user_bio': '',
     'custom_system_message': '',
+    'preset': 'min_p',
+    'max_new_tokens': 512,
+    'max_new_tokens_min': 1,
+    'max_new_tokens_max': 4096,
+    'prompt_lookup_num_tokens': 0,
+    'max_tokens_second': 0,
+    'max_updates_second': 0,
+    'auto_max_new_tokens': True,
+    'ban_eos_token': False,
+    'add_bos_token': True,
+    'skip_special_tokens': True,
+    'stream': True,
+    'static_cache': False,
+    'truncation_length': 2048,
+    'seed': -1,
+    'custom_stopping_strings': '',
+    'custom_token_bans': '',
+    'negative_prompt': '',
+    'autoload_model': False,
+    'dark_theme': True,
+    'default_extensions': [],
     'instruction_template_str': "{%- set ns = namespace(found=false) -%}\n{%- for message in messages -%}\n    {%- if message['role'] == 'system' -%}\n        {%- set ns.found = true -%}\n    {%- endif -%}\n{%- endfor -%}\n{%- if not ns.found -%}\n    {{- '' + 'Below is an instruction that describes a task. Write a response that appropriately completes the request.' + '\\n\\n' -}}\n{%- endif %}\n{%- for message in messages %}\n    {%- if message['role'] == 'system' -%}\n        {{- '' + message['content'] + '\\n\\n' -}}\n    {%- else -%}\n        {%- if message['role'] == 'user' -%}\n            {{-'### Instruction:\\n' + message['content'] + '\\n\\n'-}}\n        {%- else -%}\n            {{-'### Response:\\n' + message['content'] + '\\n\\n' -}}\n        {%- endif -%}\n    {%- endif -%}\n{%- endfor -%}\n{%- if add_generation_prompt -%}\n    {{-'### Response:\\n'-}}\n{%- endif -%}",
     'chat_template_str': "{%- for message in messages %}\n    {%- if message['role'] == 'system' -%}\n        {%- if message['content'] -%}\n            {{- message['content'] + '\\n\\n' -}}\n        {%- endif -%}\n        {%- if user_bio -%}\n            {{- user_bio + '\\n\\n' -}}\n        {%- endif -%}\n    {%- else -%}\n        {%- if message['role'] == 'user' -%}\n            {{- name1 + ': ' + message['content'] + '\\n'-}}\n        {%- else -%}\n            {{- name2 + ': ' + message['content'] + '\\n' -}}\n        {%- endif -%}\n    {%- endif -%}\n{%- endfor -%}",
-    'chat-instruct_command': 'Continue the chat dialogue below. Write a single reply for the character "<|character|>".\n\n<|prompt|>',
-    'autoload_model': False,
-    'default_extensions': [],
 }
 
 default_settings = copy.deepcopy(settings)
@@ -85,7 +86,7 @@ group.add_argument('--idle-timeout', type=int, default=0, help='在这么多分�
 
 # Model loader
 group = parser.add_argument_group('模型加载器')
-group.add_argument('--loader', type=str, help='手动选择模型加载器，否则将自动检测。有效选项包括：Transformers, llama.cpp, llamacpp_HF, ExLlamav2_HF, ExLlamav2, AutoGPTQ。')
+group.add_argument('--loader', type=str, help='手动选择模型加载器，否则将自动检测。有效选项包括：Transformers, llama.cpp, llamacpp_HF, ExLlamav2_HF, ExLlamav2, HQQ, TensorRT-LLM。')
 
 # Transformers/Accelerate
 group = parser.add_argument_group('Transformers/Accelerate')
@@ -103,6 +104,7 @@ group.add_argument('--force-safetensors', action='store_true', help='加载模�
 group.add_argument('--no_use_fast', action='store_true', help='加载分词器时将use_fast设置为False（默认为True）。如果您遇到与use_fast相关的问题，请使用此选项。')
 group.add_argument('--use_flash_attention_2', action='store_true', help='加载模型时将use_flash_attention_2设置为True。')
 group.add_argument('--use_eager_attention', action='store_true', help='在加载模型时将attn_implementation的值设为eager。')
+group.add_argument('--torch-compile', action='store_true', help='使用torch.compile编译模型以提高性能。')
 
 # bitsandbytes 4-bit
 group = parser.add_argument_group('bitsandbytes 4-bit')
@@ -114,7 +116,7 @@ group.add_argument('--quant_type', type=str, default='nf4', help='4位的量化�
 # llama.cpp
 group = parser.add_argument_group('llama.cpp')
 group.add_argument('--flash-attn', action='store_true', help='使用flash-attention。')
-group.add_argument('--tensorcores', action='store_true', help='仅限NVIDIA显卡：使用编译了tensorcores支持的llama-cpp-python。这在新款RTX显卡上可能可以提高性能。')
+group.add_argument('--tensorcores', action='store_true', help='仅限NVIDIA显卡：使用不带GGML_CUDA_FORCE_MMQ的llama-cpp-python。这在新款显卡上可能可以提高性能。')
 group.add_argument('--n_ctx', type=int, default=2048, help='提示词上下文的大小。')
 group.add_argument('--threads', type=int, default=0, help='使用的线程数。')
 group.add_argument('--threads-batch', type=int, default=0, help='用于批处理/提示词处理的线程数。')
@@ -144,17 +146,6 @@ group.add_argument('--no_xformers', action='store_true', help='强制不使用xf
 group.add_argument('--no_sdpa', action='store_true', help='强制不使用Torch SDPA。')
 group.add_argument('--num_experts_per_token', type=int, default=2, help='用于生成的专家数量。适用于像Mixtral这样的MoE模型。')
 group.add_argument('--enable_tp', action='store_true', help='启用ExLlamaV2的张量并行功能。')
-
-# AutoGPTQ
-group = parser.add_argument_group('AutoGPTQ')
-group.add_argument('--triton', action='store_true', help='使用triton。')
-group.add_argument('--no_inject_fused_mlp', action='store_true', help='仅在Triton模式下应用：禁用使用Fused MLP的使用，它将以慢的推理为代价使用较少的VRAM。')
-group.add_argument('--no_use_cuda_fp16', action='store_true', help='在某些系统上可以使模型更快。')
-group.add_argument('--desc_act', action='store_true', help='对于没有quantize_config.json的模型，此参数用于定是否在BaseQuantizeConfig中设置desc_act。')
-group.add_argument('--disable_exllama', action='store_true', help='禁用ExLlama内核，这在某些系统上可以提高推理速度。')
-group.add_argument('--disable_exllamav2', action='store_true', help='禁用ExLlamav2内核。')
-group.add_argument('--wbits', type=int, default=0, help='加载指定精度的预量化模型。支持2、3、4和8。')
-group.add_argument('--groupsize', type=int, default=-1, help='组大小。')
 
 # HQQ
 group = parser.add_argument_group('HQQ')
@@ -202,6 +193,8 @@ group.add_argument('--public-api-id', type=str, help='指定Cloudflare Tunnel的
 group.add_argument('--api-port', type=int, default=5000, help='API的监听端口。')
 group.add_argument('--api-key', type=str, default='', help='API认证密钥。')
 group.add_argument('--admin-key', type=str, default='', help='用于管理任务的API认证密钥，如加载和卸载模型。如果未设置，将与--api-key相同。')
+group.add_argument('--api-enable-ipv6', action='store_true', help='为API启用IPv6。')
+group.add_argument('--api-disable-ipv4', action='store_true', help='为API禁用IPv4。')
 group.add_argument('--nowebui', action='store_true', help='不启动Gradio UI。适用于以独立模式启动API。')
 
 # Multimodal
@@ -210,14 +203,17 @@ group.add_argument('--multimodal-pipeline', type=str, default=None, help='要使
 
 # Deprecated parameters
 group = parser.add_argument_group('Deprecated')
-group.add_argument('--model_type', type=str, help='已过时')
-group.add_argument('--pre_layer', type=int, nargs='+', help='已过时')
-group.add_argument('--checkpoint', type=str, help='已过时')
-group.add_argument('--monkey-patch', action='store_true', help='已过时')
-group.add_argument('--no_inject_fused_attention', action='store_true', help='已过时')
-group.add_argument('--cache_4bit', action='store_true', help='已过时')
-group.add_argument('--cache_8bit', action='store_true', help='已过时')
-group.add_argument('--chat-buttons', action='store_true', help='已过时')
+group.add_argument('--cache_4bit', action='store_true', help='DEPRECATED')
+group.add_argument('--cache_8bit', action='store_true', help='DEPRECATED')
+group.add_argument('--chat-buttons', action='store_true', help='DEPRECATED')
+group.add_argument('--triton', action='store_true', help='DEPRECATED')
+group.add_argument('--no_inject_fused_mlp', action='store_true', help='DEPRECATED')
+group.add_argument('--no_use_cuda_fp16', action='store_true', help='DEPRECATED')
+group.add_argument('--desc_act', action='store_true', help='DEPRECATED')
+group.add_argument('--disable_exllama', action='store_true', help='DEPRECATED')
+group.add_argument('--disable_exllamav2', action='store_true', help='DEPRECATED')
+group.add_argument('--wbits', type=int, default=0, help='DEPRECATED')
+group.add_argument('--groupsize', type=int, default=-1, help='DEPRECATED')
 
 args = parser.parse_args()
 args_defaults = parser.parse_args([])
@@ -227,14 +223,26 @@ for arg in sys.argv[1:]:
     if hasattr(args, arg):
         provided_arguments.append(arg)
 
-deprecated_args = []
+deprecated_args = [
+    'cache_4bit',
+    'cache_8bit',
+    'chat_buttons',
+    'triton',
+    'no_inject_fused_mlp',
+    'no_use_cuda_fp16',
+    'desc_act',
+    'disable_exllama',
+    'disable_exllamav2',
+    'wbits',
+    'groupsize'
+]
 
 
 def do_cmd_flags_warnings():
 
     # Deprecation warnings
     for k in deprecated_args:
-        if getattr(args, k):
+        if k in provided_arguments:
             logger.warning(f'--{k}命令行参数已被弃用，即将被移除。请移除该参数。')
 
     # Security warnings
@@ -260,10 +268,6 @@ def fix_loader_name(name):
         return 'llamacpp_HF'
     elif name in ['transformers', 'huggingface', 'hf', 'hugging_face', 'hugging face']:
         return 'Transformers'
-    elif name in ['autogptq', 'auto-gptq', 'auto_gptq', 'auto gptq']:
-        return 'AutoGPTQ'
-    elif name in ['exllama', 'ex-llama', 'ex_llama', 'exlama']:
-        return 'ExLlama'
     elif name in ['exllamav2', 'exllama-v2', 'ex_llama-v2', 'exlamav2', 'exlama-v2', 'exllama2', 'exllama-2']:
         return 'ExLlamav2'
     elif name in ['exllamav2-hf', 'exllamav2_hf', 'exllama-v2-hf', 'exllama_v2_hf', 'exllama-v2_hf', 'exllama2-hf', 'exllama2_hf', 'exllama-2-hf', 'exllama_2_hf', 'exllama-2_hf']:

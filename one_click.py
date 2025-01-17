@@ -251,35 +251,49 @@ def get_user_choice(question, options_dict):
 
 
 def install_webui():
-
     # Ask the user for the GPU vendor
     if "GPU_CHOICE" in os.environ:
         choice = os.environ["GPU_CHOICE"].upper()
         print_big_message(f"已基于GPU_CHOICE环境变量选择\"{choice}\"。")
+
+        # Warn about changed meanings and handle old NVIDIA choice
+        if choice == "B":
+            print_big_message("警告：GPU_CHOICE='B'在新版本中意味着'NVIDIA (CUDA 11.8)'。")
+        elif choice == "C":
+            print_big_message("警告：GPU_CHOICE='C'在新版本中意味着'AMD'。")
+        elif choice == "D":
+            print_big_message("警告：GPU_CHOICE='D'在新版本中意味着'Apple M Series'。")
+        elif choice == "E":
+            print_big_message("警告：GPU_CHOICE='E'在新版本中意味着'Intel Arc'。")
+        elif choice == "A" and "USE_CUDA118" in os.environ:
+            choice = "B" if os.environ.get("USE_CUDA118", "").lower() in ("yes", "y", "true", "1", "t", "on") else "A"
     else:
         choice = get_user_choice(
             "您的GPU是什么型号的?",
             {
-                'A': 'NVIDIA/英伟达',
-                'B': 'AMD (仅限Linux/MacOS。在Linux上需要ROCm SDK 6.1)',
-                'C': 'Apple M 系列',
-                'D': 'Intel Arc (IPEX)',
-                'E': '华为昇腾',
-                'N': 'None (我想在CPU模式下运行模型)'
+                'A': 'NVIDIA - CUDA 12.1 (推荐)',
+                'B': 'NVIDIA - CUDA 11.8 (老款GPU)',
+                'C': 'AMD - 仅限Linux/macOS, 需要ROCm 6.1',
+                'D': 'Apple M 系列',
+                'E': 'Intel Arc (beta)',
+                'F': '华为昇腾NPU',
+                'N': 'CPU 模式'
             },
         )
 
+    # Convert choices to GPU names for compatibility
     gpu_choice_to_name = {
         "A": "NVIDIA",
-        "B": "AMD",
-        "C": "APPLE",
-        "D": "INTEL",
-        'E': "HUAWEI",
+        "B": "NVIDIA",
+        "C": "AMD",
+        "D": "APPLE",
+        "E": "INTEL",
+        'F': "HUAWEI",
         "N": "NONE"
     }
 
     selected_gpu = gpu_choice_to_name[choice]
-    use_cuda118 = "N"
+    use_cuda118 = (choice == "B")  # CUDA version is now determined by menu choice
 
     # Write a flag to CMD_FLAGS.txt for CPU mode
     if selected_gpu == "NONE":
@@ -288,18 +302,9 @@ def install_webui():
                 print_big_message("正在添加--cpu命令行参数到CMD_FLAGS.txt。")
                 cmd_flags_file.write("\n--cpu\n")
 
-    # Check if the user wants CUDA 11.8
+    # Handle CUDA version display
     elif any((is_windows(), is_linux())) and selected_gpu == "NVIDIA":
-        if "USE_CUDA118" in os.environ:
-            use_cuda118 = "Y" if os.environ.get("USE_CUDA118", "").lower() in ("yes", "y", "true", "1", "t", "on") else "N"
-        else:
-            print("\n您想要使用CUDA 11.8而不是12.1吗？\n仅当您的 GPU 非常旧（Kepler 或更早）时才选择此选项。\n\n对于RTX和GTX系列GPU，请选择 \"N\"。\n如果不确定，选 \"N\"。\n")
-            use_cuda118 = input("输入 (Y/N)> ").upper().strip('"\'').strip()
-            while use_cuda118 not in 'YN':
-                print("非法选择，请重试。")
-                use_cuda118 = input("输入> ").upper().strip('"\'').strip()
-
-        if use_cuda118 == 'Y':
+        if use_cuda118:
             print("CUDA: 11.8")
         else:
             print("CUDA: 12.1")
@@ -423,7 +428,7 @@ def update_requirements(initial_installation=False, pull=True):
         textgen_requirements = [
             req.replace('+cu121', '+cu118').replace('+cu122', '+cu118')
             for req in textgen_requirements
-            if "auto-gptq" not in req.lower() and "autoawq" not in req.lower()
+            if "autoawq" not in req.lower()
         ]
 
     if is_windows() and is_cuda118:  # No flash-attention on Windows for CUDA 11
