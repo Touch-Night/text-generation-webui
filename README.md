@@ -368,7 +368,7 @@ text-generation-webui
     └── llama-2-13b-chat.Q4_K_M.gguf
 ```
 
-* 其余的模型类型（例如16-位transformers模型和GPTQ模型）由多个文件组成，必须放置在子文件夹中。例如：
+* 其余的模型类型（例如16-位Transformers模型和EXL2模型）由多个文件组成，必须放置在子文件夹中。例如：
 
 ```
 text-generation-webui
@@ -400,11 +400,6 @@ python download-model.py organization/model
 ## Google Colab笔记本
 
 https://colab.research.google.com/github/Touch-Night/text-generation-webui/blob/Chinese/Colab-TextGen-GPU.ipynb
-
-## 社区
-
-* Subreddit: https://www.reddit.com/r/Oobabooga/
-* Discord: https://discord.gg/jwZCF2dPQN
 
 ## 致谢
 
