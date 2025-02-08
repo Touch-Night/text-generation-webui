@@ -4,7 +4,7 @@ cd /D "%~dp0"
 
 set PATH=%PATH%;%SystemRoot%\system32
 
-echo "%CD%"| findstr /C:" " >nul && echo ´Ë½Å±¾ÒÀÀµMiniconda£¬¶øËüÎÞ·¨ÔÚ°üº¬¿Õ¸ñµÄÂ·¾¶ÏÂ¾²Ä¬°²×°¡£ && goto end
+echo "%CD%"| findstr /C:" " >nul && echo ï¿½Ë½Å±ï¿½ï¿½ï¿½ï¿½ï¿½Minicondaï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½Ú°ï¿½ï¿½ï¿½ï¿½Õ¸ï¿½ï¿½Â·ï¿½ï¿½ï¿½Â¾ï¿½Ä¬ï¿½ï¿½×°ï¿½ï¿½ && goto end
 
 @rem fix failed install when installing to a separate drive
 set TMP=%cd%\installer_files
@@ -25,12 +25,12 @@ set "CUDA_PATH=%INSTALL_ENV_DIR%"
 set "CUDA_HOME=%CUDA_PATH%"
 
 @rem activate installer env
-call "%CONDA_ROOT_PREFIX%\condabin\conda.bat" activate "%INSTALL_ENV_DIR%" || ( echo. && echo ÕÒ²»µ½Miniconda¹³×Ó¡£ && goto end )
+call "%CONDA_ROOT_PREFIX%\condabin\conda.bat" activate "%INSTALL_ENV_DIR%" || ( echo. && echo ï¿½Ò²ï¿½ï¿½ï¿½Minicondaï¿½ï¿½ï¿½Ó¡ï¿½ && goto end )
 
 @rem update installer env
 call python one_click.py --update-wizard && (
     echo.
-    echo ÒÑÍê³É£¡
+    echo ï¿½ï¿½ï¿½ï¿½É£ï¿½
 )
 
 :end

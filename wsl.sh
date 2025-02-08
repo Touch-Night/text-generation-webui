@@ -4,15 +4,15 @@ export LANG=zh_CN.UTF-8
 
 # detect if build-essential is missing or broken
 if ! dpkg-query -W -f'${Status}' "build-essential" 2>/dev/null | grep -q "ok installed"; then
-echo "build-essential未找到或已损坏！
+echo "build-essentialδ??????????
 
-要编译所需的Python包，需要C++编译器！
-要安装一个，请运行cmd_wsl.bat并输入以下命令：
+??????????Python???????C++????????
+???????????????cmd_wsl.bat??????????????
 
 sudo apt-get update
 sudo apt-get install build-essential
 "
-read -n1 -p "[y,n]仍要继续安装吗？[y,n]" EXIT_PROMPT
+read -n1 -p "[y,n]????????????[y,n]" EXIT_PROMPT
 # only continue if user inputs 'y' else exit
 if ! [[ $EXIT_PROMPT == "Y" || $EXIT_PROMPT == "y" ]]; then exit; fi
 fi
@@ -28,7 +28,7 @@ fi
 INSTALL_DIR="$INSTALL_DIR_PREFIX/text-generation-webui"
 CONDA_ROOT_PREFIX="$INSTALL_DIR/installer_files/conda"
 INSTALL_ENV_DIR="$INSTALL_DIR/installer_files/env"
-MINICONDA_DOWNLOAD_URL="https://repo.anaconda.com/miniconda/Miniconda3-py310_23.3.1-0-Linux-x86_64.sh"
+MINICONDA_DOWNLOAD_URL="https://repo.anaconda.com/miniconda/Miniconda3-py311_24.11.1-0-Linux-x86_64.sh"
 conda_exists="F"
 
 # environment isolation
@@ -47,7 +47,7 @@ if [ "$1" == "cmd" ]; then
     exit
 fi
 
-if [[ "$INSTALL_DIR" =~ " " ]]; then echo 此脚本依赖Miniconda，而它无法在包含空格的路径下静默安装。 && exit; fi
+if [[ "$INSTALL_DIR" =~ " " ]]; then echo ????????Miniconda??????????????????·??????????? && exit; fi
 
 # create install dir if missing
 if [ ! -d "$INSTALL_DIR" ]; then mkdir -p "$INSTALL_DIR" || exit; fi
@@ -58,7 +58,7 @@ if "$CONDA_ROOT_PREFIX/bin/conda" --version &>/dev/null; then conda_exists="T"; 
 # (if necessary) install git and conda into a contained environment
 # download miniconda
 if [ "$conda_exists" == "F" ]; then
-    echo "正在从 $MINICONDA_DOWNLOAD_URL 下载Miniconda至 $INSTALL_DIR/miniconda_installer.sh"
+    echo "????? $MINICONDA_DOWNLOAD_URL ????Miniconda?? $INSTALL_DIR/miniconda_installer.sh"
 
     curl -L "$MINICONDA_DOWNLOAD_URL" > "$INSTALL_DIR/miniconda_installer.sh"
 
@@ -66,7 +66,7 @@ if [ "$conda_exists" == "F" ]; then
     bash "$INSTALL_DIR/miniconda_installer.sh" -b -p $CONDA_ROOT_PREFIX
 
     # test the conda binary
-    echo "Miniconda版本："
+    echo "Miniconda?汾??"
     "$CONDA_ROOT_PREFIX/bin/conda" --version
 
     # delete the Miniconda installer
@@ -80,7 +80,7 @@ fi
 
 # check if conda environment was actually created
 if [ ! -e "$INSTALL_ENV_DIR/bin/python" ]; then
-    echo "Conda 环境未创建。"
+    echo "Conda ????δ??????"
     exit
 fi
 

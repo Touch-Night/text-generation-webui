@@ -14,6 +14,7 @@ import json
 import os
 import re
 import sys
+from multiprocessing import Array
 from pathlib import Path
 from time import sleep
 
@@ -27,9 +28,10 @@ base = os.environ.get("HF_ENDPOINT") or "https://huggingface.co"
 
 
 class ModelDownloader:
-    def __init__(self, max_retries=5):
+    def __init__(self, max_retries=7):
         self.max_retries = max_retries
         self.session = self.get_session()
+        self._progress_bar_slots = None
 
     def get_session(self):
         session = requests.Session()
@@ -72,7 +74,7 @@ class ModelDownloader:
 
         return model, branch
 
-    def get_download_links_from_huggingface(self, model, branch, text_only=False, specific_file=None):
+    def get_download_links_from_huggingface(self, model, branch, text_only=False, specific_file=None, exclude_pattern=None):
         session = self.session
         page = f"/api/models/{model}/tree/{branch}"
         cursor = b""
@@ -100,13 +102,17 @@ class ModelDownloader:
                 if specific_file not in [None, ''] and fname != specific_file:
                     continue
 
+                # Exclude files matching the exclude pattern
+                if exclude_pattern is not None and re.match(exclude_pattern, fname):
+                    continue
+
                 if not is_lora and fname.endswith(('adapter_config.json', 'adapter_model.bin')):
                     is_lora = True
 
                 is_pytorch = re.match(r"(pytorch|adapter|gptq)_model.*\.bin", fname)
                 is_safetensors = re.match(r".*\.safetensors", fname)
                 is_pt = re.match(r".*\.pt", fname)
-                is_gguf = re.match(r'.*\.gguf', fname)
+                is_gguf = re.match(r".*\.gguf", fname)
                 is_tiktoken = re.match(r".*\.tiktoken", fname)
                 is_tokenizer = re.match(r"(tokenizer|ice|spiece).*\.model", fname) or is_tiktoken
                 is_text = re.match(r".*\.(txt|json|py|md)", fname) or is_tokenizer
@@ -140,7 +146,6 @@ class ModelDownloader:
 
         # If both pytorch and safetensors are available, download safetensors only
         # Also if GGUF and safetensors are available, download only safetensors
-        # (why do people do this?)
         if (has_pytorch or has_pt or has_gguf) and has_safetensors:
             has_gguf = False
             for i in range(len(classifications) - 1, -1, -1):
@@ -148,8 +153,6 @@ class ModelDownloader:
                     links.pop(i)
 
         # For GGUF, try to download only the Q4_K_M if no specific file is specified.
-        # If not present, exclude all GGUFs, as that's likely a repository with both
-        # GGUF and fp16 files.
         if has_gguf and specific_file is None:
             has_q4km = False
             for i in range(len(classifications) - 1, -1, -1):
@@ -185,73 +188,112 @@ class ModelDownloader:
         output_folder = Path(base_folder) / output_folder
         return output_folder
 
+    @property
+    def progress_bar_slots(self):
+        if self._progress_bar_slots is None:
+            raise RuntimeError("Progress bar slots not initialized. Start download threads first.")
+
+        return self._progress_bar_slots
+
+    def initialize_progress_bar_slots(self, num_threads):
+        self._progress_bar_slots = Array("B", [0] * num_threads)
+
+    def get_progress_bar_position(self):
+        with self.progress_bar_slots.get_lock():
+            for i in range(len(self.progress_bar_slots)):
+                if self.progress_bar_slots[i] == 0:
+                    self.progress_bar_slots[i] = 1
+                    return i
+
+        return 0  # fallback
+
+    def release_progress_bar_position(self, slot):
+        with self.progress_bar_slots.get_lock():
+            self.progress_bar_slots[slot] = 0
+
     def get_single_file(self, url, output_folder, start_from_scratch=False):
         filename = Path(url.rsplit('/', 1)[1])
         output_path = output_folder / filename
+        progress_bar_position = self.get_progress_bar_position()
 
-        max_retries = 7
+        max_retries = self.max_retries
         attempt = 0
-        while attempt < max_retries:
-            attempt += 1
-            session = self.session
-            headers = {}
-            mode = 'wb'
+        try:
+            while attempt < max_retries:
+                attempt += 1
+                session = self.session
+                headers = {}
+                mode = 'wb'
 
-            try:
-                if output_path.exists() and not start_from_scratch:
-                    # Resume download
-                    r = session.get(url, stream=True, timeout=20)
-                    total_size = int(r.headers.get('content-length', 0))
-                    if output_path.stat().st_size >= total_size:
-                        return
+                try:
+                    if output_path.exists() and not start_from_scratch:
+                        # Resume download
+                        r = session.get(url, stream=True, timeout=20)
+                        total_size = int(r.headers.get('content-length', 0))
+                        if output_path.stat().st_size >= total_size:
+                            return
 
-                    headers = {'Range': f'bytes={output_path.stat().st_size}-'}
-                    mode = 'ab'
+                        headers = {'Range': f'bytes={output_path.stat().st_size}-'}
+                        mode = 'ab'
 
-                with session.get(url, stream=True, headers=headers, timeout=30) as r:
-                    r.raise_for_status()  # If status is not 2xx, raise an error
-                    total_size = int(r.headers.get('content-length', 0))
-                    block_size = 1024 * 1024  # 1MB
+                    with session.get(url, stream=True, headers=headers, timeout=30) as r:
+                        r.raise_for_status()  # If status is not 2xx, raise an error
+                        total_size = int(r.headers.get('content-length', 0))
+                        block_size = 1024 * 1024  # 1MB
 
-                    filename_str = str(filename)  # Convert PosixPath to string if necessary
+                        filename_str = str(filename)  # Convert PosixPath to string if necessary
 
-                    tqdm_kwargs = {
-                        'total': total_size,
-                        'unit': 'B',
-                        'unit_scale': True,
-                        'unit_divisor': 1024,
-                        'bar_format': '{desc}{percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]',
-                        'desc': f"{filename_str}: "
-                    }
+                        tqdm_kwargs = {
+                            'total': total_size,
+                            'unit': 'B',
+                            'unit_scale': True,
+                            'unit_divisor': 1024,
+                            'bar_format': '{desc}{percentage:3.0f}%|{bar:50}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}]',
+                            'desc': f"{filename_str}: ",
+                            'position': progress_bar_position,
+                            'leave': False
+                        }
 
-                    if 'COLAB_GPU' in os.environ:
-                        tqdm_kwargs.update({
-                            'position': 0,
-                            'leave': True
-                        })
+                        if 'COLAB_GPU' in os.environ:
+                            tqdm_kwargs.update({
+                                'position': 0,
+                                'leave': True
+                            })
 
-                    with open(output_path, mode) as f:
-                        with tqdm.tqdm(**tqdm_kwargs) as t:
-                            count = 0
-                            for data in r.iter_content(block_size):
-                                f.write(data)
-                                t.update(len(data))
-                                if total_size != 0 and self.progress_bar is not None:
-                                    count += len(data)
-                                    self.progress_bar(float(count) / float(total_size), f"{filename_str}")
+                        with open(output_path, mode) as f:
+                            with tqdm.tqdm(**tqdm_kwargs) as t:
+                                count = 0
+                                for data in r.iter_content(block_size):
+                                    f.write(data)
+                                    t.update(len(data))
+                                    if total_size != 0 and self.progress_bar is not None:
+                                        count += len(data)
+                                        self.progress_bar(float(count) / float(total_size), f"{filename_str}")
 
-                    break  # Exit loop if successful
-            except (RequestException, ConnectionError, Timeout) as e:
-                print(f"下载 {filename} 时出现错误：{e}。")
-                print(f"尝试次数：{attempt}/{max_retries}。", end=' ')
-                if attempt < max_retries:
-                    print(f"将在 {2 ** attempt} 秒后重试。")
-                    sleep(2 ** attempt)
-                else:
-                    print("最大尝试次数后仍下载失败。")
+                        break  # Exit loop if successful
+                except (RequestException, ConnectionError, Timeout) as e:
+                    print(f"下载 {filename} 时出现错误：{e}。")
+                    print(f"尝试次数：{attempt}/{max_retries}。", end=' ')
+                    if attempt < max_retries:
+                        print(f"将在 {2 ** attempt} 秒后重试。")
+                        sleep(2 ** attempt)
+                    else:
+                        print("最大尝试次数后仍下载失败。")
+        finally:
+            self.release_progress_bar_position(progress_bar_position)
 
     def start_download_threads(self, file_list, output_folder, start_from_scratch=False, threads=4):
-        thread_map(lambda url: self.get_single_file(url, output_folder, start_from_scratch=start_from_scratch), file_list, max_workers=threads, disable=True)
+        self.initialize_progress_bar_slots(threads)
+        tqdm.tqdm.set_lock(tqdm.tqdm.get_lock())
+        try:
+            thread_map(
+                lambda url: self.get_single_file(url, output_folder, start_from_scratch=start_from_scratch),
+                file_list,
+                max_workers=threads,
+                disable=True
+            )
+        finally:
+            print(f"成功将 {len(file_list)} 个文件下载到 {output_folder}。")
 
     def download_model_files(self, model, branch, links, sha256, output_folder, progress_bar=None, start_from_scratch=False, threads=4, specific_file=None, is_llamacpp=False):
         self.progress_bar = progress_bar
@@ -312,16 +354,18 @@ if __name__ == '__main__':
     parser.add_argument('--threads', type=int, default=4, help='同时下载的文件数。')
     parser.add_argument('--text-only', action='store_true', help='只下载文本文件(txt/json)。')
     parser.add_argument('--specific-file', type=str, default=None, help='要下载的特定文件的名称（如果未提供，则下载所有文件）。')
+    parser.add_argument('--exclude-pattern', type=str, default=None, help='用于从下载中排除某些文件的正则表达式。')
     parser.add_argument('--output', type=str, default=None, help='保存模型文件的文件夹。')
     parser.add_argument('--model-dir', type=str, default=None, help='把模型文件保存到此文件夹的一个子文件夹，替换掉默认的(text-generation-webui/models)。')
     parser.add_argument('--clean', action='store_true', help='不恢复以前的下载。')
     parser.add_argument('--check', action='store_true', help='校验模型文件的sha256校验和。')
-    parser.add_argument('--max-retries', type=int, default=5, help='在下载时出现错误时的最大重试次数。')
+    parser.add_argument('--max-retries', type=int, default=7, help='在下载时出现错误时的最大重试次数。')
     args = parser.parse_args()
 
     branch = args.branch
     model = args.MODEL
     specific_file = args.specific_file
+    exclude_pattern = args.exclude_pattern
 
     if model is None:
         print("错误：请指定要下载的模型（例如'python download-model.py facebook/opt-1.3b'）。")
@@ -336,7 +380,9 @@ if __name__ == '__main__':
         sys.exit()
 
     # Get the download links from Hugging Face
-    links, sha256, is_lora, is_llamacpp = downloader.get_download_links_from_huggingface(model, branch, text_only=args.text_only, specific_file=specific_file)
+    links, sha256, is_lora, is_llamacpp = downloader.get_download_links_from_huggingface(
+        model, branch, text_only=args.text_only, specific_file=specific_file, exclude_pattern=exclude_pattern
+    )
 
     # Get the output folder
     if args.output:
@@ -349,5 +395,8 @@ if __name__ == '__main__':
         downloader.check_model_files(model, branch, links, sha256, output_folder)
     else:
         # Download files
-        downloader.download_model_files(model, branch, links, sha256, output_folder, specific_file=specific_file, threads=args.threads, is_llamacpp=is_llamacpp)
+        downloader.download_model_files(
+            model, branch, links, sha256, output_folder,
+            specific_file=specific_file, threads=args.threads, is_llamacpp=is_llamacpp
+        )
         

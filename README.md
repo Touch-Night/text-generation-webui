@@ -19,21 +19,21 @@
 
 ## 功能
 
-- 用多种后端在UI中或调用API进行文本生成，这些后端有：[Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp)和[ExLlamaV2](https://github.com/turboderp/exllamav2)。[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM)、[AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[HQQ](https://github.com/mobiusml/hqq)，以及[AQLM](https://github.com/Vahe1994/AQLM)也支持但你得手动安装。
+- 在一个UI/API中支持多种文本生成后端，包括 [Transformers](https://github.com/huggingface/transformers)、[llama.cpp](https://github.com/ggerganov/llama.cpp) 和 [ExLlamaV2](https://github.com/turboderp-org/exllamav2)。[TensorRT-LLM](https://github.com/NVIDIA/TensorRT-LLM) 可以通过其专属的 [Dockerfile](https://github.com/oobabooga/text-generation-webui/blob/main/docker/TensorRT-LLM/Dockerfile) 使用。Transformers 加载器兼容诸如 [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)、[AutoAWQ](https://github.com/casper-hansen/AutoAWQ)、[HQQ](https://github.com/mobiusml/hqq) 和 [AQLM](https://github.com/Vahe1994/AQLM) 等库，但这些库需要手动安装。
 - 具有聊天和补全端点的OpenAI兼容API服务器 -- 请参阅[示例](https://github.com/Touch-Night/text-generation-webui/wiki/12-%E2%80%90-OpenAI-API#examples)。
 - 自动使用模型自带的元数据中的Jinja2模板对其进行提示词格式化。
 - 三种聊天模式：`instruct`（指令）、`chat-instruct`（聊天-指令）和`chat`（聊天），既可以让模型遵循指令，也可以与角色进行随意对话。`chat-instruct`模式会自动将模型的模板应用于聊天提示词，确保输出高质量而无需手动设置。
 - “过往聊天”菜单，可快速切换对话或开始新对话。
 - 在默认/笔记本标签页中进行自由形式的生成，不受聊天轮次的限制。可以从聊天标签页将格式化的聊天对话发送到这些标签页。
-- 在默认/笔记本标签页中进行自由形式的生成，不受聊天轮次的限制。可以从聊天标签页将格式化的聊天对话发送到这些标签页。
 - 多种采样参数和生成选项，用于复杂的文本生成控制。
 - 使用“模型”标签页，通过用户界面轻松切换不同模型，而无需重启。
 - 简单的LoRA微调工具，可使用您的数据自定义模型。
 - 所有内容都在一个文件夹中。所需的依赖项安装在一个独立的`installer_files`文件夹中，不会干扰系统环境。
+- 支持扩展功能，提供众多内置和用户贡献的扩展。有关详细信息，请参阅 [Wiki](https://github.com/Touch-Night/text-generation-webui/wiki/07-%E2%80%90-%E6%89%A9%E5%B1%95) 和 [扩展目录](https://github.com/oobabooga/text-generation-webui-extensions)。
 
 ## 如何安装
 
-1) 克隆或[下载](https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui/releases/download/v1.15/text-generation-webui-Chinese.zip)此存储库。
+1) 克隆或[下载](https://github.com/Touch-Night/text-generation-webui/releases/download/v1.15/text-generation-webui-Chinese.zip)此存储库。
 2) 根据您的操作系统运行`start_linux.sh`，`start_windows.bat`，`start_macos.sh`或`start_wsl.bat`脚本。
 3) 问到时选择您的GPU供应商。
 4) 安装结束后，访问`http://localhost:7860`。
@@ -213,17 +213,16 @@ pip install -r <你曾使用过的依赖文件> --upgrade
 使用方法: server.py [-h] [--multi-user] [--character CHARACTER] [--model MODEL] [--lora LORA [LORA ...]] [--model-dir MODEL_DIR] [--lora-dir LORA_DIR] [--model-menu] [--settings SETTINGS]
                  [--extensions EXTENSIONS [EXTENSIONS ...]] [--verbose] [--idle-timeout IDLE_TIMEOUT] [--loader LOADER] [--cpu] [--auto-devices] [--gpu-memory GPU_MEMORY [GPU_MEMORY ...]]
                  [--cpu-memory CPU_MEMORY] [--disk] [--disk-cache-dir DISK_CACHE_DIR] [--load-in-8bit] [--bf16] [--no-cache] [--trust-remote-code] [--force-safetensors] [--no_use_fast]
-                 [--use_flash_attention_2] [--use_eager_attention] [--load-in-4bit] [--use_double_quant] [--compute_dtype COMPUTE_DTYPE] [--quant_type QUANT_TYPE] [--flash-attn] [--tensorcores]
-                 [--n_ctx N_CTX] [--threads THREADS] [--threads-batch THREADS_BATCH] [--no_mul_mat_q] [--n_batch N_BATCH] [--no-mmap] [--mlock] [--n-gpu-layers N_GPU_LAYERS]
+                 [--use_flash_attention_2] [--use_eager_attention] [--torch-compile] [--load-in-4bit] [--use_double_quant] [--compute_dtype COMPUTE_DTYPE] [--quant_type QUANT_TYPE] [--flash-attn]
+                 [--tensorcores] [--n_ctx N_CTX] [--threads THREADS] [--threads-batch THREADS_BATCH] [--no_mul_mat_q] [--n_batch N_BATCH] [--no-mmap] [--mlock] [--n-gpu-layers N_GPU_LAYERS]
                  [--tensor_split TENSOR_SPLIT] [--numa] [--logits_all] [--no_offload_kqv] [--cache-capacity CACHE_CAPACITY] [--row_split] [--streaming-llm] [--attention-sink-size ATTENTION_SINK_SIZE]
                  [--tokenizer-dir TOKENIZER_DIR] [--gpu-split GPU_SPLIT] [--autosplit] [--max_seq_len MAX_SEQ_LEN] [--cfg-cache] [--no_flash_attn] [--no_xformers] [--no_sdpa]
-                 [--num_experts_per_token NUM_EXPERTS_PER_TOKEN] [--enable_tp] [--triton] [--no_inject_fused_mlp] [--no_use_cuda_fp16] [--desc_act] [--disable_exllama] [--disable_exllamav2]
-                 [--wbits WBITS] [--groupsize GROUPSIZE] [--hqq-backend HQQ_BACKEND] [--cpp-runner] [--cache_type CACHE_TYPE] [--deepspeed] [--nvme-offload-dir NVME_OFFLOAD_DIR]
+                 [--num_experts_per_token NUM_EXPERTS_PER_TOKEN] [--enable_tp] [--hqq-backend HQQ_BACKEND] [--cpp-runner] [--cache_type CACHE_TYPE] [--deepspeed] [--nvme-offload-dir NVME_OFFLOAD_DIR]
                  [--local_rank LOCAL_RANK] [--alpha_value ALPHA_VALUE] [--rope_freq_base ROPE_FREQ_BASE] [--compress_pos_emb COMPRESS_POS_EMB] [--listen] [--listen-port LISTEN_PORT]
                  [--listen-host LISTEN_HOST] [--share] [--auto-launch] [--gradio-auth GRADIO_AUTH] [--gradio-auth-path GRADIO_AUTH_PATH] [--ssl-keyfile SSL_KEYFILE] [--ssl-certfile SSL_CERTFILE]
-                 [--subpath SUBPATH] [--old-colors] [--api] [--public-api] [--public-api-id PUBLIC_API_ID] [--api-port API_PORT] [--api-key API_KEY] [--admin-key ADMIN_KEY] [--nowebui]
-                 [--multimodal-pipeline MULTIMODAL_PIPELINE] [--model_type MODEL_TYPE] [--pre_layer PRE_LAYER [PRE_LAYER ...]] [--checkpoint CHECKPOINT] [--monkey-patch] [--no_inject_fused_attention]
-                 [--cache_4bit] [--cache_8bit] [--chat-buttons]
+                 [--subpath SUBPATH] [--old-colors] [--api] [--public-api] [--public-api-id PUBLIC_API_ID] [--api-port API_PORT] [--api-key API_KEY] [--admin-key ADMIN_KEY] [--api-enable-ipv6]
+                 [--api-disable-ipv4] [--nowebui] [--multimodal-pipeline MULTIMODAL_PIPELINE] [--cache_4bit] [--cache_8bit] [--chat-buttons] [--triton] [--no_inject_fused_mlp] [--no_use_cuda_fp16]
+                 [--desc_act] [--disable_exllama] [--disable_exllamav2] [--wbits WBITS] [--groupsize GROUPSIZE]
 
 Text generation web UI
 
@@ -246,7 +245,7 @@ Text generation web UI
 
 模型加载器：
   --loader LOADER                                手动选择模型加载器，否则，它将被自动检测。可选选项：Transformers，llama.cpp，llamacpp_HF，Exllamav2_HF，Exllamav2，
-                                                 AutoGPTQ。
+                                                 HQQ，TensorRT-LLM。
 
 Transformers/Accelerate：
   --cpu                                          使用CPU生成文本。警告：使用CPU训练非常慢。
@@ -264,6 +263,7 @@ Transformers/Accelerate：
   --no_use_fast                                  加载词符化器时设置use_fast=false（默认情况下为true）。如果您遇到与use_fast有关的任何问题，请使用此功能。
   --use_flash_attention_2                        在加载模型时设置use_flash_attention_2=True。
   --use_eager_attention                          在加载模型时设置attn_implementation=eager。
+  --torch-compile                                使用torch.compile编译模型以提高性能。
 
 bitsandbytes 4-比特：
   --load-in-4bit                                 使用bitsandbytes以4位精度加载模型。
@@ -273,7 +273,7 @@ bitsandbytes 4-比特：
 
 llama.cpp：
   --flash-attn                                   使用flash-attention。
-  --tensorcores                                  仅限NVIDIA显卡：使用编译了tensorcores支持的llama-cpp-python。这在比较新型号的RTX显卡上可能能提高性能。
+  --tensorcores                                  仅限NVIDIA显卡：使用不带GGML_CUDA_FORCE_MMQ的llama-cpp-python。这在比较新型号的显卡上可能能提高性能。
   --n_ctx N_CTX                                  提示词上下文的大小。
   --threads THREADS                              要使用的线程数。
   --threads-batch THREADS_BATCH                  用于批处理/提示词处理的线程数。
@@ -302,16 +302,6 @@ ExLlamaV2：
   --no_sdpa                                      强制不使用Torch SDPA。
   --num_experts_per_token NUM_EXPERTS_PER_TOKEN  用于生成的专家数量。适用于MoE模型，如Mixtral。
   --enable_tp                                    启用ExLlamav2的张量并行。
-
-AutoGPTQ：
-  --triton                                       使用triton。
-  --no_inject_fused_mlp                          仅在Triton模式下应用：禁用使用Fused MLP的使用，它将以慢的推理为代价使用较少的VRAM。
-  --no_use_cuda_fp16                             在某些系统上可以使模型更快。
-  --desc_act                                     对于没有quantize_config.json的模型，此参数用于定是否在BaseQuantizeConfig中设置desc_act。
-  --disable_exllama                              禁用ExLlama内核，这在某些系统上可以提高推理速度。
-  --disable_exllamav2                            禁用ExLlamav2内核。
-  --wbits WBITS                                  加载指定精度的预量化模型。支持2、3、4和8。
-  --groupsize GROUPSIZE                          组大小。
 
 HQQ:
   --hqq-backend HQQ_BACKEND                      HQQ加载器的后端。有效选项：PYTORCH, PYTORCH_COMPILE, ATEN。
@@ -352,10 +342,12 @@ API：
   --api-port API_PORT                            API的监听端口。
   --api-key API_KEY                              API认证密钥。
   --admin-key ADMIN_KEY                          用于加载和卸载模型等管理员任务的API认证密钥。如果未设置，将与--api-key相同。
+  --api-enable-ipv6                              为API启用IPv6。
+  --api-disable-ipv4                             为API禁用IPv4。
   --nowebui                                      不启动Gradio UI。想要单独启动API时很有用。
 
 Multimodal：
-  --multimodal-pipeline MULTIMODAL_PIPELINE      要使用的多模态模型pipeline。示例：llava-7b、llava-13b。
+  --multimodal-pipeline MULTIMODAL_PIPELINE      要使用的多模态模型管线。示例：llava-7b、llava-13b。
 ```
 
 </details>
@@ -376,7 +368,7 @@ text-generation-webui
     └── llama-2-13b-chat.Q4_K_M.gguf
 ```
 
-* 其余的模型类型（例如16-位transformers模型和GPTQ模型）由多个文件组成，必须放置在子文件夹中。例如：
+* 其余的模型类型（例如16-位Transformers模型和EXL2模型）由多个文件组成，必须放置在子文件夹中。例如：
 
 ```
 text-generation-webui
@@ -408,11 +400,6 @@ python download-model.py organization/model
 ## Google Colab笔记本
 
 https://colab.research.google.com/github/Touch-Night/text-generation-webui/blob/Chinese/Colab-TextGen-GPU.ipynb
-
-## Community
-
-* Subreddit: https://www.reddit.com/r/Oobabooga/
-* Discord: https://discord.gg/jwZCF2dPQN
 
 ## 致谢
 
