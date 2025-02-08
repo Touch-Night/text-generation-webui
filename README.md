@@ -33,7 +33,7 @@
 
 ## 如何安装
 
-1) 克隆或[下载](https://mirror.ghproxy.com/https://github.com/Touch-Night/text-generation-webui/releases/download/v1.15/text-generation-webui-Chinese.zip)此存储库。
+1) 克隆或[下载](https://ghfast.top/https://github.com/Touch-Night/text-generation-webui/releases/download/v1.15/text-generation-webui-Chinese.zip)此存储库。
 2) 根据您的操作系统运行`start_linux.sh`，`start_windows.bat`，`start_macos.sh`或`start_wsl.bat`脚本。
 3) 问到时选择您的GPU供应商。
 4) 安装结束后，访问`http://localhost:7860`。
