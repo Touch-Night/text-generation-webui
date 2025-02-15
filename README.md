@@ -13,6 +13,8 @@
 
 此项目的目标是成为文本生成领域的[AUTOMATIC1111/stable-diffusion-webui](https://github.com/AUTOMATIC1111/stable-diffusion-webui).
 
+[试试看深度思考扩展](https://oobabooga.gumroad.com/l/deep_reason)
+
 |![Image1](https://github.com/oobabooga/screenshots/raw/main/AFTER-INSTRUCT.png) | ![Image2](https://github.com/oobabooga/screenshots/raw/main/AFTER-CHAT.png) |
 |:---:|:---:|
 |![Image1](https://github.com/oobabooga/screenshots/raw/main/AFTER-DEFAULT.png) | ![Image2](https://github.com/oobabooga/screenshots/raw/main/AFTER-PARAMETERS.png) |
@@ -165,7 +167,7 @@ conda install -y -c "nvidia/label/cuda-11.8.0" cuda-runtime
 
 ##### 手动安装
 
-`requirements*.txt` 包含通过GitHub Action预编译的各种轮子。如果您想手动编译它们，或者您因为没有合适的车轮可用于您的硬件而需要这么做，则可以使用 `requirements_nowheels.txt` 然后手动安装所需的加载器。
+`requirements*.txt` 包含通过GitHub Action预编译的各种轮子。如果您想手动编译它们，或者您因为没有合适的轮子可用于您的硬件而需要这么做，则可以使用 `requirements_nowheels.txt` 然后手动安装所需的加载器。
 
 ### 另一可选方案：Docker
 
