@@ -92,6 +92,7 @@ def create_ui(default_preset):
                             shared.gradio['sampler_priority'] = gr.Textbox(value=generate_params['sampler_priority'], lines=12, label='采样器优先级', info='参数名用新行或逗号分隔。', elem_classes=['add_scrollbar'])
                             shared.gradio['custom_stopping_strings'] = gr.Textbox(lines=2, value=shared.settings["custom_stopping_strings"] or None, label='自定义停止字符串', info='用英文半角逗号分隔，用""包裹。', placeholder='"\\n", "\\nYou:"')
                             shared.gradio['custom_token_bans'] = gr.Textbox(value=shared.settings['custom_token_bans'] or None, label='禁用词符', info='填入要禁用的词符ID，用英文半角逗号分隔。你可以在默认或笔记本标签页获得词符的ID。')
+                            shared.gradio['show_after'] = gr.Textbox(value=shared.settings['show_after'] or None, label='在此后显示', info='在出现此处指定的文本之前隐藏回复。', placeholder="</think>")
                             shared.gradio['negative_prompt'] = gr.Textbox(value=shared.settings['negative_prompt'], label='反向提示词', info='用于CFG。只有在指导比例不为1时使用。', lines=3, elem_classes=['add_scrollbar'])
                             shared.gradio['dry_sequence_breakers'] = gr.Textbox(value=generate_params['dry_sequence_breakers'], label='DRY序列匹配中断符', info='这些词符会打断并分隔序列的匹配。该参数以逗号分隔的引号字符串列表形式指定。')
                             with gr.Row() as shared.gradio['grammar_file_row']:
