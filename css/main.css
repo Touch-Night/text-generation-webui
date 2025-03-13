@@ -2,7 +2,7 @@
     --darker-gray: #202123;
     --dark-gray: #343541;
     --light-gray: #444654;
-    --light-theme-gray: #f4f4f4;
+    --light-theme-gray: #f5f5f5;
     --border-color-dark: #525252;
     --header-width: 112px;
     --selected-item-color-dark: #32333e;
@@ -38,7 +38,7 @@ div.svelte-iyf88w {
 
 /* "info" messages without a title above */
 .block > .svelte-e8n7p6:not(:only-of-type, #chat-mode *) {
-    margin-bottom: 2px;
+    margin-bottom: 0;
 }
 
 .py-6 {
@@ -226,6 +226,7 @@ button {
     max-width: 500px;
     background-color: var(--input-background-fill);
     border: var(--input-border-width) solid var(--input-border-color) !important;
+    padding: 10px;
 }
 
 .file-saver > :first-child > :last-child {
@@ -499,8 +500,8 @@ div.svelte-362y77>*, div.svelte-362y77>.form>* {
     margin-bottom: 0.5em !important;
 }
 
-.message-body ul.long-list li,
-.message-body ol.long-list li {
+.message-body ul.long-list > li,
+.message-body ol.long-list > li {
     margin-top: 1.25em !important;
     margin-bottom: 1.25em !important;
 }
@@ -538,8 +539,9 @@ div.svelte-362y77>*, div.svelte-362y77>.form>* {
 }
 
 .message-body pre > code {
-    white-space: pre-wrap !important;
-    word-wrap: break-word !important;
+    white-space: pre !important;
+    overflow-x: auto !important;
+    max-width: calc(100dvw - 39px);
     border: 1px solid #666;
     border-radius: 5px;
     font-size: 82%;
@@ -838,7 +840,11 @@ div.svelte-362y77>*, div.svelte-362y77>.form>* {
   Past chats menus
 ---------------------------------------------- */
 #rename-row label {
-    margin-top: var(--layout-gap);
+    margin-top: 0;
+}
+
+#rename-row > :nth-child(2) {
+    justify-content: center;
 }
 
 /* ----------------------------------------------
@@ -873,6 +879,10 @@ div.svelte-362y77>*, div.svelte-362y77>.form>* {
     width: unset;
     flex-grow: 1;
     flex-shrink: 1;
+}
+
+#search_chat > :nth-child(2) > :first-child {
+    display: none;
 }
 
 /* ----------------------------------------------
@@ -910,7 +920,7 @@ div.svelte-362y77>*, div.svelte-362y77>.form>* {
 }
 
 #past-chats {
-    max-height: calc(100dvh - 90px);
+    max-height: calc(100dvh - 135px);
     overflow-y: scroll !important;
     border-radius: 0;
     scrollbar-width: auto;
@@ -980,6 +990,7 @@ div.svelte-362y77>*, div.svelte-362y77>.form>* {
 #rename-row {
     width: 100%;
     justify-content: center;
+    gap: 9px;
 }
 
 
@@ -1131,7 +1142,6 @@ div.svelte-362y77>*, div.svelte-362y77>.form>* {
 }
 
 .dark svg {
-    fill: white;
     color: white;
 }
 
@@ -1209,4 +1219,75 @@ div.svelte-362y77>*, div.svelte-362y77>.form>* {
     #chat-controls-toggle.chat-controls-open {
         background: var(--light-theme-gray);
     }
+}
+
+/* ----------------------------------------------
+  Copy button for chat messages
+---------------------------------------------- */
+.message .text,
+.message .text-you,
+.message .text-bot,
+.user-message .text,
+.assistant-message .text {
+    position: relative;
+}
+
+.message, .user-message, .assistant-message {
+    position: relative;
+}
+
+.footer-button {
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s;
+}
+
+.footer-button.footer-copy-button {
+    bottom: -23px;
+    left: 0;
+}
+
+.footer-button.footer-refresh-button {
+    bottom: -23px;
+    left: 25px;
+}
+
+.footer-button.footer-continue-button {
+    bottom: -23px;
+    left: 50px;
+}
+
+.footer-button.footer-remove-button {
+    bottom: -23px;
+    left: 75px;
+}
+
+.message:hover .footer-button,
+.user-message:hover .footer-button,
+.assistant-message:hover .footer-button {
+    opacity: 1;
+}
+
+.footer-button svg {
+    stroke: rgb(156 163 175);
+    transition: stroke 0.2s;
+}
+
+.footer-button:hover svg {
+    stroke: rgb(107 114 128);
+}
+
+.dark .footer-button svg {
+    stroke: rgb(156 163 175);
+}
+
+.dark .footer-button:hover svg {
+    stroke: rgb(209 213 219);
 }

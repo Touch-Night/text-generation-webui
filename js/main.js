@@ -147,10 +147,9 @@ const observer = new MutationObserver(function(mutations) {
 
   doSyntaxHighlighting();
 
-  if(!isScrolled) {
+  if (!isScrolled && targetElement.scrollTop !== targetElement.scrollHeight) {
     targetElement.scrollTop = targetElement.scrollHeight;
   }
-
 });
 
 // Configure the observer to watch for changes in the subtree and attributes
@@ -178,47 +177,30 @@ function isElementVisibleOnScreen(element) {
   );
 }
 
-function getVisibleMessagesIndexes() {
-  const elements = document.querySelectorAll(".message-body");
-  const visibleIndexes = [];
-
-  elements.forEach((element, index) => {
-    if (isElementVisibleOnScreen(element) && !element.hasAttribute("data-highlighted")) {
-      visibleIndexes.push(index);
-    }
-  });
-
-  return visibleIndexes;
-}
-
 function doSyntaxHighlighting() {
-  const indexes = getVisibleMessagesIndexes();
-  const elements = document.querySelectorAll(".message-body");
+  const messageBodies = document.querySelectorAll(".message-body");
 
-  if (indexes.length > 0) {
+  if (messageBodies.length > 0) {
     observer.disconnect();
 
-    indexes.forEach((index) => {
-      const element = elements[index];
+    messageBodies.forEach((messageBody) => {
+      if (isElementVisibleOnScreen(messageBody)) {
+        // Handle both code and math in a single pass through each message
+        const codeBlocks = messageBody.querySelectorAll("pre code:not([data-highlighted])");
+        codeBlocks.forEach((codeBlock) => {
+          hljs.highlightElement(codeBlock);
+          codeBlock.setAttribute("data-highlighted", "true");
+        });
 
-      // Tag this element to prevent it from being highlighted twice
-      element.setAttribute("data-highlighted", "true");
-
-      // Perform syntax highlighting
-      const codeBlocks = element.querySelectorAll("pre code");
-
-      codeBlocks.forEach((codeBlock) => {
-        hljs.highlightElement(codeBlock);
-      });
-
-      renderMathInElement(element, {
-        delimiters: [
-          { left: "$$", right: "$$", display: true },
-          { left: "$", right: "$", display: false },
-          { left: "\\(", right: "\\)", display: false },
-          { left: "\\[", right: "\\]", display: true },
-        ],
-      });
+        renderMathInElement(messageBody, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false },
+            { left: "\\[", right: "\\]", display: true },
+          ],
+        });
+      }
     });
 
     observer.observe(targetElement, config);
@@ -446,25 +428,33 @@ function toggleBigPicture() {
 //------------------------------------------------
 // Handle the chat input box growth
 //------------------------------------------------
-let currentChatInputHeight = 0;
+
+// Cache DOM elements
+const chatContainer = document.getElementById("chat").parentNode.parentNode.parentNode;
+const chatInput = document.querySelector("#chat-input textarea");
+
+// Variables to store current dimensions
+let currentChatInputHeight = chatInput.clientHeight;
 
 // Update chat layout based on chat and input dimensions
 function updateCssProperties() {
-  const chatContainer = document.getElementById("chat").parentNode.parentNode.parentNode;
-  const chatInputHeight = document.querySelector("#chat-input textarea").clientHeight;
+  const chatInputHeight = chatInput.clientHeight;
 
   // Check if the chat container is visible
   if (chatContainer.clientHeight > 0) {
-    const newChatHeight = `${chatContainer.parentNode.clientHeight - chatInputHeight + 40 - 100 - 20}px`;
+    const chatContainerParentHeight = chatContainer.parentNode.clientHeight;
+    const newChatHeight = `${chatContainerParentHeight - chatInputHeight - 80}px`;
+
     document.documentElement.style.setProperty("--chat-height", newChatHeight);
     document.documentElement.style.setProperty("--input-delta", `${chatInputHeight - 40}px`);
 
     // Adjust scrollTop based on input height change
     if (chatInputHeight !== currentChatInputHeight) {
-      if (!isScrolled && chatInputHeight < currentChatInputHeight) {
+      const deltaHeight = chatInputHeight - currentChatInputHeight;
+      if (!isScrolled && deltaHeight < 0) {
         chatContainer.scrollTop = chatContainer.scrollHeight;
       } else {
-        chatContainer.scrollTop += chatInputHeight - currentChatInputHeight;
+        chatContainer.scrollTop += deltaHeight;
       }
 
       currentChatInputHeight = chatInputHeight;
